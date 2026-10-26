@@ -1,0 +1,116 @@
+---
+id: final-exam
+title: 期末考试：20 题摸底 + AP 分数预估
+description: 全课程的期末检阅——按真实权重抽样的 20 道选择题、两道限时 FRQ，再按 College Board 历年分数线换算你的预估 AP 分数。
+order: 50
+group: 期末 · Final Exam
+minutes: 60
+---
+
+## 期末考试说明
+
+这套期末卷为**摸底与估分**设计：MCQ 按四个单元的真实考试权重抽样（U1 约 20%、U2 约 30%、U3 约 15%、U4 约 35%），题型对齐真题四分类。
+
+**规则**：无 AI、无笔记、无 Quick Reference 纸条；先在纸上作答再点选项；限时 40 分钟完成 MCQ 部分。做完后按第 4 节的换算表估分。
+
+## 第一部分：Unit 1（4 题）
+
+<MultipleChoice id="fx-q1" question={'以下代码段输出什么？\n\nSystem.out.println((int) 7.9 * 2);'} options={[{id:'a',label:'15.8'},{id:'b',label:'14'},{id:'c',label:'15'},{id:'d',label:'16'}]} answer={['b']} explanation="运算优先级：cast 是一元运算，先于乘法执行。(int) 7.9 截断为 7，7 × 2 = 14。选 c 的同学把截断当成了四舍五入。" />
+
+<MultipleChoice id="fx-q2" question={'表达式 "computer".substring(1, 4) 的值是什么？'} options={[{id:'a',label:'"omp"'},{id:'b',label:'"ompu"'},{id:'c',label:'"cmpp"'},{id:'d',label:'"mp"'}]} answer={['a']} explanation="substring(1, 4) 取索引 1 到 3：c-o-m-p-u-t-e-r 中索引 1 是 o、2 是 m、3 是 p——omp。速算：结果长度 = 4 − 1 = 3。" />
+
+<MultipleChoice id="fx-q3" question="表达式 (int)(Math.random() * 12) + 10 可能的最小值是？" options={[{id:'a',label:'0'},{id:'b',label:'9'},{id:'c',label:'10'},{id:'d',label:'12'}]} answer={['c']} explanation="random ∈ [0, 12) 截断成 0–11，加 10 得 10–21。最小值 10。口诀：乘 12 就有 12 种结果、加 10 就从 10 起步——范围题先算边界。" />
+
+<MultipleChoice id="fx-q4" question={'以下代码段输出什么？\n\nString a = new String("ok");\nString b = new String("ok");\nSystem.out.println(a == b);'} options={[{id:'a',label:'true'},{id:'b',label:'false'},{id:'c',label:'编译错误'},{id:'d',label:'null'}]} answer={['b']} explanation="== 比较引用（是同一个对象吗）——两个 new 是两栋不同的房子，即使内容一样也是 false。a.equals(b) 才是 true。年年必考。" />
+
+## 第二部分：Unit 2（6 题）
+
+<MultipleChoice id="fx-q5" question={'以下循环体执行几次？\n\nint x = 100;\nwhile (x > 90) {\n    x -= 3;\n}'} options={[{id:'a',label:'3 次'},{id:'b',label:'4 次'},{id:'c',label:'10 次'},{id:'d',label:'死循环'}]} answer={['b']} explanation="列序列：100 → 97（第 1 轮）→ 94（2）→ 91（3）→ 88（4），此刻 88 > 90 为假退出——共 4 轮。步长不是 1 时更要老实列。" />
+
+<MultipleChoice id="fx-q6" question="表达式 !(true && false) 的值是？" options={[{id:'a',label:'true'},{id:'b',label:'false'},{id:'c',label:'无法确定'},{id:'d',label:'编译错误'}]} answer={['a']} explanation="运算顺序：括号优先，&& 得 false，! 取反得 true。也可用 De Morgan 速验：!true || !false = false || true = true。" />
+
+<MultipleChoice id="fx-q7" question={'以下代码段输出什么？\n\nint score = 88;\nif (score >= 90) {\n    System.out.println("A");\n} else if (score >= 80) {\n    System.out.println("B");\n} else {\n    System.out.println("C");\n}'} options={[{id:'a',label:'A'},{id:'b',label:'B'},{id:'c',label:'C'},{id:'d',label:'B 和 C 各一次'}]} answer={['b']} explanation="else if 链从上往下、命中即止：88 >= 90 假、88 >= 80 真——输出 B。条件从严到宽排列，链子走两步就停。" />
+
+<MultipleChoice id="fx-q8" question={'以下代码段执行后 total 的值是什么？\n\nint total = 0;\nfor (int i = 1; i <= 5; i += 2) {\n    total += i;\n}'} options={[{id:'a',label:'15'},{id:'b',label:'9'},{id:'c',label:'6'},{id:'d',label:'10'}]} answer={['b']} explanation="取值序列 1、3、5（下一个 7 越界），求和 9。步长为 2 的循环先列序列再求和，别用等差公式心算。" />
+
+<MultipleChoice id="fx-q9" question={'以下代码段打印几个星号？\n\nfor (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 2; j++) {\n        System.out.print("*");\n    }\n}'} options={[{id:'a',label:'5 个'},{id:'b',label:'6 个'},{id:'c',label:'3 个'},{id:'d',label:'2 个'}]} answer={['b']} explanation="嵌套相乘：外层 3 轮，每轮内层完整打 2 个——共 6 个，全在同一行（println 不在循环里）。计数口诀最后再服务你一次：嵌套相乘、顺序相加。" />
+
+<MultipleChoice id="fx-q10" question={'list 是一个空的 ArrayList<Integer>。表达式 list.size() > 0 && list.get(0) == 5 的结果是？'} options={[{id:'a',label:'抛异常'},{id:'b',label:'false'},{id:'c',label:'true'},{id:'d',label:'编译错误'}]} answer={['b']} explanation="短路是护身符的标准用法：安全检查（非空）在左、危险操作（取首元素）在右。空列表时左边为假，右边不执行——不会越界。" />
+
+## 第三部分：Unit 3（3 题）
+
+<MultipleChoice id="fx-q11" question={'以下代码段输出什么？\n\nAccount p = new Account("A", 100);\nAccount q = p;\nq.deposit(50);\nSystem.out.println(p.getBalance());'} options={[{id:'a',label:'100'},{id:'b',label:'150'},{id:'c',label:'0'},{id:'d',label:'编译错误'}]} answer={['b']} explanation="没有 new 就没有新对象：q 和 p 指向同一个 Account，通过任何一个改状态，另一个都看得见——aliasing 的标准表现。" />
+
+<MultipleChoice id="fx-q12" question="某类的 private boolean active 字段在构造器中未被赋值。对象创建后，active 的值是？" options={[{id:'a',label:'true'},{id:'b',label:'false'},{id:'c',label:'null'},{id:'d',label:'随机值'}]} answer={['b']} explanation="默认值四连：int 0、double 0.0、boolean false、引用 null。null 只属于引用类型——active 是 boolean，安静地 false。" />
+
+<MultipleChoice id="fx-q13" question={'Ticket 类有 static int sold（初值 0），构造器中 sold++。new 三张票后 Ticket.getSold() 返回多少？'} options={[{id:'a',label:'1'},{id:'b',label:'3'},{id:'c',label:'0'},{id:'d',label:'编译错误'}]} answer={['b']} explanation="sold 挂在类上不挂在票上：三次 new 各加 1，共享格子最终 3——「每人一份」要靠实例变量，static 是「全队一份」。" />
+
+## 第四部分：Unit 4（7 题）
+
+<MultipleChoice id="fx-q14" question="执行 int[] a = new int[4]; 后（未存值），a[3] 的值是？" options={[{id:'a',label:'0'},{id:'b',label:'null'},{id:'c',label:'4'},{id:'d',label:'访问会崩溃'}]} answer={['a']} explanation="new 出来的每个格子自带默认值：int 是 0。a[3] 合法（长度 4，下标 0–3），安静地躺着 0——越界才会崩。" />
+
+<MultipleChoice id="fx-q15" question={'以下代码段的运行表现是？\n\nint[] arr = {1, 3, 5};\nfor (int i = 0; i <= arr.length; i++) {\n    System.out.println(arr[i]);\n}'} options={[{id:'a',label:'打印 1、3、5 后崩溃'},{id:'b',label:'打印 1、3、5 后正常结束'},{id:'c',label:'编译错误'},{id:'d',label:'打印 1、3、5、0'}]} answer={['a']} explanation="条件带等号是数组头号虫：合法下标 0–2，i = 3 时越界抛异常。前三轮正常打印——崩溃在最后一刻，编译期无感。" />
+
+<MultipleChoice id="fx-q16" question={'list 为 [x, y, z]。执行 list.add(1, w) 后 list 是？'} options={[{id:'a',label:'[x, w, y, z]'},{id:'b',label:'[w, x, y, z]'},{id:'c',label:'[x, y, w, z]'},{id:'d',label:'[x, w, z]'}]} answer={['a']} explanation="带下标的 add 是插入：新元素落位、后面右移、size 加一。覆盖是 set 的行为——insert 靠右移、remove 靠左移。" />
+
+<MultipleChoice id="fx-q17" question={'list 为 [5, 10, 15]。执行 list.remove(1) 后，list.get(1) 返回什么？'} options={[{id:'a',label:'10'},{id:'b',label:'15'},{id:'c',label:'null'},{id:'d',label:'0'}]} answer={['b']} explanation="删除不留洞：后面的元素左移补位。get(1) 拿到的是滑过来的 15。这个「左移」是边遍历边删跳元素的病根——倒序删除才是正解。" />
+
+<MultipleChoice id="fx-q18" question="在无序数组上使用二分查找，可能发生什么？" options={[{id:'a',label:'一定崩溃'},{id:'b',label:'可能静默漏掉真实存在的目标'},{id:'c',label:'自动退化为线性查找'},{id:'d',label:'编译错误'}]} answer={['b']} explanation="二分的前提只有一条：有序。无序时「中间值偏大 → 目标在左」的推断变瞎猜，目标可能被区间收缩悄悄甩掉——不崩溃、结果错，比崩溃更毒。" />
+
+<MultipleChoice id="fx-q19" question="int[][] g = new int[4][6]; 之后，g.length 和 g[0].length 分别是？" options={[{id:'a',label:'6 和 4'},{id:'b',label:'4 和 6'},{id:'c',label:'都是 4'},{id:'d',label:'都是 6'}]} answer={['b']} explanation="外层管行（4），内层管列（6）：双重遍历外层 row < g.length、内层 col < g[row].length。两个 length 各数一维。" />
+
+<MultipleChoice id="fx-q20" question={'按定义：mystery(n) 在 n == 0 时返回 10，否则返回 mystery(n - 1) + 5。mystery(2) 的值是？'} options={[{id:'a',label:'20'},{id:'b',label:'15'},{id:'c',label:'10'},{id:'d',label:'无限递归'}]} answer={['a']} explanation="三问法：参数每层减 1（朝基线走）、n == 0 停、每层加 5。m(0)=10 → m(1)=15 → m(2)=20。规律是 10 + 5n，但考场上老实展开两层。" />
+
+## 第五部分：FRQ 限时实战（选做，强烈建议）
+
+MCQ 做完后，从题库的 8 道 FRQ（侧栏「Exam Bank · 题库」分组）中**任选两道**，各限时 22 分钟、白纸手写，然后发给评分官批改。评分官按逐点独立判分，不会因为一处错误把整题判成零分。建议组合：一道方法/类题（frq1、frq2、frq5、frq6 任选）+ 一道数据题（frq3、frq4、frq7、frq8 任选）。
+
+## 对答案与 AP 分数换算
+
+### 第一步：算 MCQ 卷面
+
+数出 20 题里答对的题数（每题判分后有明确反馈）。**蒙对不算**——把蒙对的当错题算。
+
+### 第二步：折算 composite（百分制）
+
+真实考试的 composite 结构：MCQ 占 55%、FRQ 占 45%。期末卷的折算：
+
+- **MCQ 部分** = 对题数 ÷ 20 × 55（每题 2.75 分）；
+- **FRQ 部分** = 两道 FRQ 的总得分率 × 45（评分官给的分数除以该题满分，两道平均后乘 45；没做 FRQ 就按 MCQ 同水平估——MCQ 正确率通常与 FRQ 得分率高度相关，作参考）；
+- **composite 总分** = 两部分相加（满分 100）。
+
+### 第三步：对照历年分数线
+
+依据 College Board 历年公布的分数分布与真题换算规律（每年由标准设定流程微调，以下是**区间估计**，非官方当届线）：
+
+| composite | 预估 AP 分 | 参考信息 |
+| --- | --- | --- |
+| 65 分及以上 | **5** | 历年 5 分线约在 62–70 之间浮动；70 以上是「稳 5」 |
+| 52–64 | **4** | |
+| 40–51 | **3** | 大学换学分的通行证线 |
+| 28–39 | **2** | |
+| 28 以下 | **1** | |
+
+背景数据（[College Board 官方分布](https://apstudents.collegeboard.org/about-ap-scores/score-distributions/ap-computer-science-a)）：2026 年考生中 5 分占 25%、4 分 26%、3 分 15%，通过率（3+）66%——CSA 是「高分多、低分也多」的两极科目，认真学完一套课程的考生大多落在 4–5 档。
+
+**MCQ 速查版**（FRQ 按 MCQ 同水平估算）：
+
+| 20 题对题数 | 预估方向 |
+| --- | --- |
+| 17–20 | 5（冲刺期只需保温） |
+| 14–16 | 4–5（补弱项即可上 5） |
+| 11–13 | 4 |
+| 8–10 | 3（重点回归错题本） |
+| 0–7 | 1–2（回炉对应单元，虫库陪你） |
+
+### 免责三连
+
+1. 分数线**逐年浮动**，上表是区间估计，不是当届官方线；
+2. FRQ 由 AI 按官方 rubric 逐点批改，与真人阅卷高度一致但有偏差；
+3. 期末卷 20 题是抽样摸底，真实考试 42 题——预估 4 分的同学，真实波动通常在 ±1 档内。
+
+## 让评分官给你出诊断报告
+
+<LLMPractice id="fx-report" preset="frq-grader" instructions={'任务：把你的期末成绩单发给评分官做诊断报告：1) 逐单元的对错（如 U1 对 3/4、U2 对 5/6、U3 对 2/3、U4 对 4/7）；2) FRQ 两道的得分率（没做就说明）；3) 请它按本课换算表估 composite 与 AP 档位，并指出最薄弱的一个单元和冲刺期的三条具体建议。'} starterMessage="我刚完成期末摸底考，请按 College Board 口径给我出诊断报告。我的逐单元成绩是：/ 填入 /；FRQ 得分率：/ 填入 /。" />
+
+<Callout title="放下 AI · 期末之后">1) 错题全部录入 P4 的 bank.txt，错因按单元分类；2) 把换算结果和目标分写在错题本首页——冲刺期的每一步都朝着这个差距打；3) 无论预估几档：距离考试还有充足时间，预估只是「此刻的位置」，不是「终点的判决」。回到《终点线》那课的模考计划，按部就班——5 月 12 日见。</Callout>

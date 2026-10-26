@@ -1,0 +1,97 @@
+---
+id: bank-frq7
+title: 题库 · FRQ 第 7 题：ArrayList 数据分析（第二轮）
+description: 真实考试 Q3 的嵌套计数形态：Election.winner()——统计 ArrayList 中出现最多的元素。双重遍历 + 计数比较，与过滤/删除题型互补。
+order: 101
+group: Exam Bank · 题库
+minutes: 18
+---
+
+## 题目说明（考试真实格式）
+
+**Question 3: Data Analysis with ArrayList**（建议限时 18 分钟）
+
+`Election` 类维护一个投票列表，部分声明如下：
+
+```java
+public class Election
+{
+    /** 全部选票，每个元素是一个候选人的名字 */
+    private ArrayList<String> votes;
+
+    /**
+     * 返回得票最多的候选人名字。
+     * Precondition: votes 至少包含一个元素；
+     *               恰好有一个名字的票数严格多于其他所有名字。
+     * Postcondition: votes 不被修改。
+     */
+    public String winner()
+    { /* to be implemented */ }
+
+    /* There may be instance variables, constructors, and methods
+       that are not shown. */
+}
+```
+
+示例：`votes` 依次为 `["Lin", "Zhou", "Lin", "Lin", "Zhou"]` 时，`winner()` 返回 `"Lin"`（3 票，严格多于 Zhou 的 2 票）。
+
+注意：precondition 保证唯一的胜者存在——**不需要**处理并列；「把票数做成第二个列表再找最大值」与「对每个候选人都数一遍」都是可行思路，选你能写对的。
+
+<CodeExercise
+  id="bank-frq7"
+  title="FRQ7：Election.winner"
+  prompt="实现 Election 的 winner()：返回 votes 中出现次数最多的名字（precondition 保证唯一）。示例：[Lin, Zhou, Lin, Lin, Zhou] 返回 Lin。votes 不得被修改。"
+  starter={`public String winner()
+{
+    // 思路 A：对每个候选数一遍票数，记住最多者
+    // 思路 B：先把全部名字去重收进一个新列表再数（需小心不修改 votes）
+
+}`}
+  rubric={['正确统计每个名字的出现次数（嵌套遍历或等价方法）', '正确比较并记录当前最高票数对应的名字', '返回名字本身而不是票数', 'votes 不被修改（不调用 remove/set，或修改仅发生在本地副本上）']}
+  hints={['双层循环：外层逐个取候选 name = votes.get(i)，内层数它在整个列表中出现的次数', '票数更多时更新：if (count > bestCount) { bestCount = count; bestName = name; }——严格大于即可，precondition 保证不会并列', '千万别在 votes 本身上 remove 来去重——那是 postcondition 红线；要么不动它，要么先 new 一个副本']}
+/>
+
+## 官方风格评分标准（Scoring Guidelines）
+
+**Question 7 — 共 5 分（单 part）**
+
+### Canonical solution（标准答案，供对照）
+
+```java
+public String winner()
+{
+    String bestName = votes.get(0);
+    int bestCount = 0;
+    for (int i = 0; i < votes.size(); i++)
+    {
+        String name = votes.get(i);
+        int count = 0;
+        for (int j = 0; j < votes.size(); j++)
+        {
+            if (votes.get(j).equals(name))
+            {
+                count++;
+            }
+        }
+        if (count > bestCount)
+        {
+            bestCount = count;
+            bestName = name;
+        }
+    }
+    return bestName;
+}
+```
+
+### Scoring Criteria 与 Decision Rules
+
+| # | Scoring Criteria | Decision Rules | 分 |
+| --- | --- | --- | --- |
+| 1 | 遍历 votes，访问每一个元素（外层候选循环） | 仍可得分：enhanced for 的等价形式 | 1 |
+| 2 | 对每个候选统计其出现次数（内层**完整**遍历整张票列表） | 不得分：内层只从外层下标之后开始数（会把前面的票漏掉）；内层循环没有覆盖全部元素 | 1 |
+| 3 | 比较票数并记录当前最高者（名字与票数同时更新） | 仍可得分：先收集每个候选的票数到辅助结构再找最大。不得分：只记票数没记名字，最后无法返回名字 | 1 |
+| 4 | 返回得票最多的**名字**（不是票数）** (algorithm)** | 不得分：返回票数；返回 null；votes 被修改（remove/set 等——违反 postcondition，属「修改持久数据」）；并列处理破坏 precondition 假设而引入错误 | 1 |
+| 5 | 算法整体正确：对 precondition 保证的任意输入（唯一胜者）返回正确结果 **(algorithm)** | 不得分：串联的两层逻辑组装错误（如比较用的票数与记录的名字不同步）；初始化缺失导致首候选永远或从不入选。仍可得分：用「把每个名字去重收进新列表再统计」的等价策略（新列表是本地对象，不违反 postcondition） | 1 |
+| | **Total** | | **5** |
+
+**Scoring Notes**：precondition 保证唯一胜者，因此比较用严格 `>` 即可，**不需要**也不应该写并列分支；`bestCount` 初值取 0 配合严格 `>` 是安全的（胜者票数至少为 1）。若学生把「去重列表」作为辅助，注意其必须建在本地（new 出来的），否则触碰 postcondition。

@@ -1,0 +1,131 @@
+---
+id: 2d-arrays
+title: 二维数组：从一条线到一张表
+description: 行、列、两种 length——数据放进表格，FRQ 第四题的主角登场。
+order: 38
+group: Unit 4 · Data Collections
+minutes: 35
+---
+
+## 一条线摊开成一张表
+
+成绩单、座位表、棋盘——真实数据常是**二维**的。Java 用「数组的数组」表达：`int[][]`（二维数组，2D array）。
+
+```java
+int[][] grid = new int[3][4];     // 3 行 4 列的一张表
+```
+
+把它想成座位表：**3 行**，每行 **4 个座位**。初始化列表版：
+
+```java
+int[][] table = {
+    {1, 2, 3},
+    {4, 5, 6}
+};                                  // 2 行 3 列
+```
+
+## 访问与两种 length
+
+```java
+grid[1][2] = 99;        // 第 1 行、第 2 列的格子（行列都从 0 起）
+int x = grid[1][2];     // 读
+```
+
+二维数组有**两个长度**，这是本课的头号考点：
+
+| 表达式 | 含义 |
+| --- | --- |
+| `grid.length` | **行数**（第一维） |
+| `grid[0].length` | 第 0 行的**列数**（第二维） |
+
+记忆法：`grid` 本身是「行的数组」（所以 length 是行数）；`grid[0]` 是一行，是个普通一维数组（所以 length 是这行的列数）。
+
+## 双重遍历：外层行、内层列
+
+遍历一张表 = 嵌套循环（第 20 课的老朋友）：**外层走行，内层走列**——
+
+```java
+for (int row = 0; row < grid.length; row++) {           // 每一行
+    for (int col = 0; col < grid[row].length; col++) {  // 这一行的每一列
+        System.out.print(grid[row][col] + " ");
+    }
+    System.out.println();                                // 一行打完换行
+}
+```
+
+注意内层条件用 `grid[row].length`（**当前行**的列数）——虽然 AP 不考锯齿数组（每行列数不同的表格，考纲边界声明不考），写 `grid[row].length` 是通用好习惯。
+
+## 每日一虫 🐛：拿行数当列数
+
+```java
+int[][] grid = new int[3][5];    // 3 行 5 列
+int count = 0;
+for (int row = 0; row < grid.length; row++) {
+    for (int col = 0; col < grid.length; col++) {   // 虫在这：内层也用了行数 3
+        count++;
+    }
+}
+```
+
+<MultipleChoice id="td-bug" question="count 最终是几？正确应该是几？" options={[{id:'a',label:'count 是 15，正确'},{id:'b',label:'count 是 9（3×3），正确应扫 3×5=15 格'},{id:'c',label:'count 是 5'},{id:'d',label:'数组越界崩溃'}]} answer={['b']} explanation="grid.length 是 3（行数），内层条件用它意味着每行只扫列 0、1、2——列 3、4 整整两列被静默跳过。行列数不等时这个虫必现：症状是「漏扫一部分」，不崩溃、答案偏小。修法：内层条件用 grid[row].length（当前行列数 5）。行列两个 length，各行其道。" />
+
+## 练习场
+
+<FillBlank
+  id="td-fill"
+  question="补全创建 3 行 4 列表格与双重遍历的两个关键部位。"
+  answers={['new', 'length']}
+  explanation="第一空：创建二维数组 new int[3][4]。第二空：内层条件 col < grid[row].length——当前行的列数。外层用 grid.length（行数），内层用 grid[row].length（列数），两个 length 各管一维。"
+>
+
+```java
+int[][] grid = ??? int[3][4];
+for (int row = 0; row < grid.length; row++) {
+    for (int col = 0; col < grid[row].???; col++) {
+        System.out.print(grid[row][col]);
+    }
+}
+```
+
+</FillBlank>
+
+<MultipleChoice id="td-length" question="int[][] g = new int[5][8]; 之后，g.length 和 g[0].length 分别是？" options={[{id:'a',label:'8 和 5'},{id:'b',label:'5 和 8'},{id:'c',label:'都是 5'},{id:'d',label:'都是 8'}]} answer={['b']} explanation="new int[5][8] 是 5 行 8 列。g.length = 5（行数）；g[0] 取出第 0 行（一个长度 8 的一维数组），其 length = 8（列数）。记忆：外层括号管行，取出一行后才谈列。" />
+
+<MultipleChoice id="td-default" question="执行 int[][] m = new int[2][3]; 后，m[1][1] 的值是？" options={[{id:'a',label:'0'},{id:'b',label:'null'},{id:'c',label:'随机值'},{id:'d',label:'访问会崩溃'}]} answer={['a']} explanation="new 出来的每个 int 格子都拿默认值 0——二维只是「数组的数组」，每个格子遵循同一张默认值表：int 0、double 0.0、boolean false、引用 null。m[1][1] 合法（2 行 3 列），安静地躺着 0。" />
+
+<MultipleChoice id="td-access" question={'int[][] t = {{1, 2, 3}, {4, 5, 6}}; 表达式 t[1][0] 的值是？'} options={[{id:'a',label:'1'},{id:'b',label:'4'},{id:'c',label:'2'},{id:'d',label:'5'}]} answer={['b']} explanation="t[1] 是第二行 {4, 5, 6}，t[1][0] 是这行的第一个元素 4。读法从左往右：先选行、再选列。选 d 的同学把两个下标当成了行列颠倒。" />
+
+把 2D 求和程序排出来：
+
+<ParsonsProblem
+  id="td-parsons"
+  question="排出「求 2 行 3 列表格所有元素之和」的程序。"
+  lines={['public class GridSum {', '    public static void main(String[] args) {', '        int[][] t = {{1, 2, 3}, {4, 5, 6}};', '        int total = 0;', '        for (int row = 0; row < t.length; row++) {', '            for (int col = 0; col < t[row].length; col++) {', '                total += t[row][col];', '            }', '        }', '        System.out.println(total);', '    }', '}']}
+  explanation="2D 累加骨架：累加器在双循环外 → 外层行（t.length）→ 内层列（t[row].length）→ total += t[row][col] → 双循环外打印。答案是 21（1+2+3+4+5+6）。内外层的 length 用哪个、total 声明在哪，都是永考点。"
+/>
+
+## 动手：全表求和
+
+<CodeExercise
+  id="td-sum-code"
+  title="sumAll 全表求和"
+  prompt="补全方法 sumAll：接受一个 int 二维数组 grid，返回所有元素之和。写完在本地验证：{{1,2,3},{4,5,6}} 应为 21；{{10}} 应为 10；只有默认值 0 的 new int[2][2] 应为 0。"
+  starter={`public class GridTool {
+
+    // 返回 grid 所有元素之和
+    public static int sumAll(int[][] grid) {
+        int total = 0;
+        // 双重遍历累加
+
+        return total;
+    }
+}`}
+  rubric={['外层 for 遍历行：row < grid.length', '内层 for 遍历列：col < grid[row].length', '累加当前元素 grid[row][col]', '返回累加和（全 0 表自然返回 0）']}
+  hints={['骨架照 Parsons 默写：外层行、内层列', '核心一行：total += grid[row][col];', '两个 length 别混：外层 grid.length，内层 grid[row].length']}
+/>
+
+## 概念吃不准？问教练
+
+<LLMPractice id="td-concept" preset="concept-coach" instructions={'任务：按费曼四步学「两种 length 与先行后列」：1) 让教练讲一遍（会给类比和最小示例）；2) 你复述，必须讲清 grid.length 和 grid[0].length 分别数什么、t[1][0] 怎么读；3) 它挑毛病；4) 修正重讲。'} starterMessage="请给我讲讲二维数组的两种 length 和先行后列的访问方式，我是刚开始学 2D 数组的 AP CSA 学生。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 默写两种 length 各数什么，并画出 new int[3][5] 的行列示意；2) 口头读出 t[1][0] 的取值过程；3) 白纸手写双重遍历骨架（含两个 length 的分工）。下一课，2D 算法与 FRQ Q4 正面交锋。</Callout>

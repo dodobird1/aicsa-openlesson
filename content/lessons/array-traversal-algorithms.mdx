@@ -1,0 +1,144 @@
+---
+id: array-traversal-algorithms
+title: 数组遍历：五大模板升维
+description: 求和、最值、计数、查找、条件统计——从「1 到 n」搬进数组，只换一件事：操作对象从 i 变成 a[i]。
+order: 34
+group: Unit 4 · Data Collections
+minutes: 35
+---
+
+## 模板迁移：只换一个字
+
+Unit 2 你在「1 到 n 的整数」上练熟了五大模板。搬进数组，结构分毫不变，唯一的变化：**操作对象从循环变量 i 变成元素 a[i]**：
+
+```java
+// 计数模板 · 整数版              // 计数模板 · 数组版
+int count = 0;                    int count = 0;
+for (int n = 1; n <= 100; n++)    for (int i = 0; i < a.length; i++)
+    if (n % 7 == 0)                   if (a[i] % 7 == 0)
+        count++;                          count++;
+```
+
+对照着读一遍——**左眼看到的骨架和右眼一模一样**。这就是模板的价值：认出模板，循环头和骨架直接默写。
+
+## 求和与最值：初值的新学问
+
+```java
+// 求和
+int total = 0;
+for (int i = 0; i < a.length; i++) {
+    total += a[i];
+}
+
+// 最大值：数组时代，初值直接用第一个元素
+int max = a[0];
+for (int i = 1; i < a.length; i++) {    // 从 1 开始：第 0 个不用跟自己比
+    if (a[i] > max) {
+        max = a[i];
+    }
+}
+```
+
+最值初值**从 Integer.MIN_VALUE 升级为 a[0]**：用真实元素当擂主，永不踩「假冠军」虫（负数数组的救星），还省一次比较——注意循环从 `i = 1` 起步。
+
+## 查找：返回位置
+
+```java
+// 返回 target 的下标；不存在返回 -1
+public static int find(int[] a, int target) {
+    for (int i = 0; i < a.length; i++) {
+        if (a[i] == target) {
+            return i;      // 命中即返回位置
+        }
+    }
+    return -1;             // 哨兵：全数组无此值
+}
+```
+
+数组版查找的返回值升级成了**位置**——它比「有没有」信息更多（知道在哪），-1 惯例不变。
+
+## for-each：只读巡游
+
+遍历还有种简洁写法——**for-each 循环**（增强 for）：
+
+```java
+for (int value : a) {        // 读作：对 a 里的每个 value
+    System.out.println(value);
+}
+```
+
+没有索引、没有越界风险，读起来像英语。但它有两条硬限制：
+
+1. **只读不写**：循环里改 value 不影响数组（value 是副本）；
+2. **没有下标**：需要位置（比如查找、交换）时用不了。
+
+口诀：**要看不要改、不要位置，才用 for-each**。
+
+## 每日一虫 🐛：倒着走也别越界
+
+```java
+int[] a = {5, 4, 3, 2, 1};
+// 想倒序打印
+for (int i = a.length; i >= 0; i--) {
+    System.out.println(a[i]);
+}
+```
+
+<MultipleChoice id="trav-bug" question="这段倒序打印代码的运行表现是？" options={[{id:'a',label:'正常打印 1、2、3、4、5'},{id:'b',label:'第一轮就崩溃：i 从 a.length（= 5）出发，a[5] 不存在，合法下标最大是 4'},{id:'c',label:'什么都不打印'},{id:'d',label:'编译错误'}]} answer={['b']} explanation="倒序遍历的两个端点：起点 i = a.length - 1（最后一个合法下标），终点 i >= 0（下标 0 要含）。本虫起点多走了 1——第一轮 a[5] 直接越界。倒序骨架请整段默写：for (int i = a.length - 1; i >= 0; i--)。" />
+
+## 练习场
+
+<FillBlank
+  id="trav-fill"
+  question="补全 for-each 遍历。"
+  answers={['int', ':']}
+  explanation="for-each 骨架：for (元素类型 变量 : 数组)。第一空是元素类型 int（a 是 int 数组）；第二空是冒号——读作「对 a 中的每个 value」。"
+>
+
+```java
+int[] a = {10, 20, 30};
+for (??? value ??? a) {
+    System.out.println(value);
+}
+```
+
+</FillBlank>
+
+<MultipleChoice id="trav-foreach" question="以下哪个任务**不能**用 for-each 完成？" options={[{id:'a',label:'把数组每个元素打印出来'},{id:'b',label:'把数组每个元素乘 2 存回原位'},{id:'c',label:'统计数组里偶数的个数'},{id:'d',label:'把数组所有元素求和'}]} answer={['b']} explanation="for-each 的变量是元素的**副本**——改 value 只改了副本，数组纹丝不动。要写回必须用带下标的传统 for：a[i] = a[i] * 2。a、c、d 都是只读巡游，for-each 正合适。" />
+
+<MultipleChoice id="trav-max" question="找最大值时初值用 a[0] 且循环从 i = 1 开始，比起初值 Integer.MIN_VALUE 的写法，好处是什么？" options={[{id:'a',label:'代码更短，永远正确（真实元素当擂主，全负数组也不怕），还少一次多余比较'},{id:'b',label:'运行速度提高一百倍'},{id:'c',label:'不写 a[0] 会编译错误'},{id:'d',label:'a[0] 写法能用于空数组'}]} answer={['a']} explanation="两种写法对非空数组都对，但 a[0] 版更优雅：不依赖「理论最小值」这种外部常量。注意前提是数组非空——空数组时 a[0] 本身就越界（MIN_VALUE 版则返回理论最小值）。AP 默认数组非空，两种都接受。" />
+
+把数组求和程序排出来：
+
+<ParsonsProblem
+  id="trav-parsons"
+  question="排出「求 int 数组元素之和并打印」的完整程序。"
+  lines={['public class SumTool {', '    public static void main(String[] args) {', '        int[] a = {88, 92, 79};', '        int total = 0;', '        for (int i = 0; i < a.length; i++) {', '            total += a[i];', '        }', '        System.out.println(total);', '    }', '}']}
+  explanation="累加器模式数组版：声明数组 → 累加器清零（循环外）→ 遍历（条件 i < a.length）→ 累加 a[i] → 循环外打印。答案是 259。total 的声明位置和打印位置是永恒考点。"
+/>
+
+## 动手：阈值计数器
+
+<CodeExercise
+  id="trav-count-code"
+  title="countAbove 阈值计数"
+  prompt="补全方法 countAbove：接受 int 数组 scores 和 int 阈值 limit，返回数组中严格大于 limit 的元素个数。写完在本地验证：countAbove({88, 92, 79, 60}, 80) 应为 2（88 和 92），countAbove({5}, 10) 应为 0，countAbove(new int[0], 3) 应为 0。"
+  starter={`public class ScoreTool {
+
+    // 返回 scores 中严格大于 limit 的元素个数
+    public static int countAbove(int[] scores, int limit) {
+        int count = 0;
+        // 遍历数组，命中条件则计数
+
+        return count;
+    }
+}`}
+  rubric={['用 for 循环遍历数组，条件 i < scores.length', '判断条件是 scores[i] 大于 limit（严格大于，不含等于）', '命中则 count++', '返回计数值']}
+  hints={['计数器 count 已在循环外声明，你只补循环与判断', '命中判断：if (scores[i] > limit) { count++; }', '空数组自然返回 0，无需特判']}
+/>
+
+## 让出题官考考你
+
+<LLMPractice id="trav-quiz" preset="quiz-master" instructions={'任务：告诉出题官「我刚把五大模板搬进数组，重点想练最值初值和 for-each 的限制」，让它出 3 道题。规则：涉及循环的题先在纸上写循环头再读题；答错记进错题本；全对后让它出一道「混合模板」题（如同时求最大值并记其下标）。'} starterMessage="我刚学完数组遍历的五大模板，重点想练最值初值和 for-each 的限制。请出一道题考我。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 默写数组版五大模板中「最值」和「查找」的完整代码；2) 口头说出 for-each 的两条硬限制；3) 白纸手写倒序遍历的循环头（起点、终点各是什么）。下一课，数组的长了腿的表弟登场：ArrayList。</Callout>

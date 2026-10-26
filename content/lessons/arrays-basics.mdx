@@ -1,0 +1,136 @@
+---
+id: arrays-basics
+title: 一维数组：一个盒子装五十张卡
+description: P1 和 P3 里复制粘贴的痛，今天正式终结——数组、索引、length、默认值，和运行时才引爆的越界炸弹。
+order: 33
+group: Unit 4 · Data Collections
+minutes: 35
+---
+
+## 欢迎来到权重之王
+
+Unit 4 占考试 **30–40%**，是全卷最大的板块。打头阵的是**数组**（array）：一个变量名管理一整排同类型的值。
+
+还记得 P1 单词卡和 P3 校园卡的「复制三份」之痒吗？数组就是解药：
+
+```java
+// 没有数组：三张卡三个变量，三十张卡三十个变量
+double balance1 = 20.0;
+double balance2 = 50.0;
+double balance3 = 5.0;
+
+// 有数组：一张变量名管一排
+double[] balances = new double[3];
+balances[0] = 20.0;
+balances[1] = 50.0;
+balances[2] = 5.0;
+```
+
+## 创建数组的三种写法
+
+```java
+int[] scores = new int[5];                 // 写法一：new + 长度，元素先拿默认值
+String[] names = {"小明", "小红", "小刚"};   // 写法二：花括号直接列出初始值
+int[] copy = scores;                       // 写法三：赋值（注意——复制的是地址，别名！）
+```
+
+写法一造出的 5 个格子是**真实存在的**，只是还没放东西——默认值见下表。
+
+## 索引与 length：从 0 数起
+
+```text
+数组：    88   92   79   65   90
+索引：    [0]  [1]  [2]  [3]  [4]
+```
+
+- **索引从 0 开始**，最后一个元素的下标是 `length - 1`——和 String 一模一样；
+- **length 是字段不是方法**：数组写 `scores.length`（**没有括号**），字符串写 `s.length()`（**有括号**）。AP 每年都考这对双胞胎的区别。
+
+| | 数组 | String / ArrayList |
+| --- | --- | --- |
+| 长度 | arr.length（字段，无括号） | s.length() / list.size()（方法） |
+| 长度可变吗 | 定死，创建时确定 | String 不可变；ArrayList 会自己长 |
+
+## 默认值：空盒子里装着什么
+
+`new int[5]` 的五个格子不是空的，装着默认值：
+
+| 元素类型 | 默认值 |
+| --- | --- |
+| int | 0 |
+| double | 0.0 |
+| boolean | false |
+| 引用类型（String、对象） | null |
+
+## 越界：运行时才引爆的炸弹
+
+访问不存在的索引（负数或大于等于 length），编译器**不吭声**，运行时抛 ArrayIndexOutOfBoundsException——程序当场崩溃：
+
+```java
+int[] a = {2, 4, 6};        // 合法索引只有 0、1、2
+System.out.println(a[3]);   // 编译通过；运行时崩溃！
+```
+
+防御手段只有一个：**访问前默念「最大下标是 length − 1」**。
+
+## 每日一虫 🐛：多跑一轮的循环
+
+```java
+int[] scores = {2, 4, 6};
+for (int i = 0; i <= scores.length; i++) {
+    System.out.println(scores[i]);
+}
+```
+
+<MultipleChoice id="arr-bug" question="这段代码的运行表现是什么？" options={[{id:'a',label:'打印 2、4、6 后，第四轮访问 scores[3] 越界，抛 ArrayIndexOutOfBoundsException 崩溃'},{id:'b',label:'正常打印 2、4、6 后结束'},{id:'c',label:'编译错误'},{id:'d',label:'打印 2、4、6、0'}]} answer={['a']} explanation="条件 i 小于等于 scores.length 让 i 冲到 3，而 a[3] 不存在——前三轮安然打印（所以编译和前三行输出都正常），第四轮当场爆炸。这是 off-by-one 虫在数组的化身：遍历数组的标准条件是 i < arr.length，永不带等号。注意它编译期完全无感——数组越界是运行时错误。" />
+
+## 练习场
+
+<FillBlank
+  id="arr-fill"
+  question="补全创建数组与遍历骨架的两个关键部位。"
+  answers={['new', 'length']}
+  explanation="第一空：创建定长数组用 new int[5]（花括号初始化是另一种写法）。第二空：遍历条件 i < a.length——数组长度是字段 length，不带括号；条件永远不带等号。"
+>
+
+```java
+int[] a = ??? int[5];
+a[0] = 3;
+for (int i = 0; i < a.???; i++) {
+    System.out.println(a[i]);
+}
+```
+
+</FillBlank>
+
+<MultipleChoice id="arr-default" question="执行 int[] x = new int[4]; 后（没放过任何值），x[2] 的值是？" options={[{id:'a',label:'null'},{id:'b',label:'0'},{id:'c',label:'随机数'},{id:'d',label:'未定义，访问会崩溃'}]} answer={['b']} explanation="new 出来的数组格子自带默认值：int 是 0、double 是 0.0、boolean 是 false、引用类型是 null。x 是 int 数组，x[2] 安静地躺着 0——访问不崩溃（越界才会崩）。" />
+
+<MultipleChoice id="arr-length" question="以下哪个调用/写法是正确的？" options={[{id:'a',label:'int n = scores.length;'},{id:'b',label:'int n = scores.length();'},{id:'c',label:'int n = scores.size();'},{id:'d',label:'int n = length(scores);'}]} answer={['a']} explanation="数组长度是公共字段：length，不带括号。带括号的 length() 属于 String，size() 属于 ArrayList——三兄弟年年混考，记法：越原始越朴素（数组连方法都不配，直接给字段）。" />
+
+<MultipleChoice id="arr-alias" question={'以下代码输出什么？\n\nint[] a = {1, 2, 3};\nint[] b = a;\nb[0] = 99;\nSystem.out.println(a[0]);'} options={[{id:'a',label:'1，b 是另一个数组'},{id:'b',label:'99'},{id:'c',label:'编译错误'},{id:'d',label:'null'}]} answer={['b']} explanation="Dog 的 aliasing 在数组上重演：b = a 没有 new、没有复制格子，只是两块牌子挂同一排盒子。想真复制要逐格拷贝（循环里 b[i] = a[i]）或创建新数组。aliasing 考点横跨 Unit 3 和 Unit 4。" />
+
+## 动手：第一个数组程序
+
+<CodeExercise
+  id="arr-sum-code"
+  title="数组求和 sum"
+  prompt="补全方法 sum：接受一个 int 数组 scores，返回所有元素之和。空数组（length 为 0）应返回 0。写完在本地验证：sum({88, 92, 79}) 应为 259，sum({5}) 应为 5，sum(new int[0]) 应为 0。"
+  starter={`public class ScoreTool {
+
+    // 返回数组所有元素之和
+    public static int sum(int[] scores) {
+        int total = 0;
+        // 用 for 循环遍历数组累加
+
+        return total;
+    }
+}`}
+  rubric={['用 for 循环遍历数组，条件是 i < scores.length', '循环内累加当前元素 scores[i]', '返回累加和', '空数组（length 为 0）自然返回 0（循环不执行）']}
+  hints={['循环头：for (int i = 0; i < scores.length; i++)——小于，无等号', '累加一行：total += scores[i];', '不需要特殊处理空数组：length 为 0 时循环一轮都不跑，total 保持 0']}
+/>
+
+## 让出题官考考你
+
+<LLMPractice id="arr-quiz" preset="quiz-master" instructions={'任务：告诉出题官「我刚学完一维数组的创建、索引、length、默认值和越界，重点想练 length 双胞胎区别和越界判断」，让它出 3 道题。规则：涉及索引的题先在纸上标出每个元素的合法下标再作答；答错记进错题本；全对后让它出一道 aliasing 加难题。'} starterMessage="我刚学完一维数组基础，重点想练 length 与 length() 的区别和越界判断。请出一道题考我。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 默写三种创建数组的写法；2) 默写默认值四连（int/double/boolean/引用）；3) 说出数组 length 与 String length() 的区别，并写出遍历数组的循环头。下一课，五大模板正式搬进数组——求和、最值、计数全部升维。</Callout>

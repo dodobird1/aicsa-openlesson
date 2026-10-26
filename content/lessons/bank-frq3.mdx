@@ -1,0 +1,151 @@
+---
+id: bank-frq3
+title: 题库 · FRQ 第 3 题：ArrayList 数据分析
+description: 真实考试 Q3（Data Analysis with ArrayList，5 分）的改编题：LibraryShelf 类——过滤计数 + 遍历中安全删除。两部分独立得分。
+order: 97
+group: Exam Bank · 题库
+minutes: 18
+---
+
+## 题目说明（考试真实格式）
+
+**Question 3: Data Analysis with ArrayList**（建议限时 18 分钟）
+
+`BookInfo` 类存储书目信息，部分声明如下：
+
+```java
+public class BookInfo
+{
+    /** 返回书名 */
+    public String getName()
+    { /* implementation not shown */ }
+
+    /** 返回书价，大于 0.0 */
+    public double getPrice()
+    { /* implementation not shown */ }
+
+    /** 精装返回 true，平装返回 false */
+    public boolean isHardcover()
+    { /* implementation not shown */ }
+
+    /* There may be instance variables, constructors, and methods
+       that are not shown. */
+}
+```
+
+`LibraryShelf` 类维护一个 `ArrayList<BookInfo>`，部分声明如下：
+
+```java
+public class LibraryShelf
+{
+    /** 书架上的全部书 */
+    private ArrayList<BookInfo> shelf;
+
+    /** part (a) 要实现的方法 */
+
+    /** part (b) 要实现的方法 */
+
+    /* There may be instance variables, constructors, and methods
+       that are not shown. */
+}
+```
+
+## Part (a)：countCheapHardcovers
+
+返回书架上**精装且价格不超过 `maxPrice`（含等于）**的书本数量。
+
+示例：`shelf` 依次为——
+
+| 书名 | 价格 | 精装？ |
+| --- | --- | --- |
+| Dune | 12.0 | 是 |
+| Sea | 8.0 | 否 |
+| Map | 30.0 | 是 |
+| Wind | 5.0 | 否 |
+
+则 `countCheapHardcovers(25.0)` 返回 `1`（只有 Dune；Map 太贵、其余是平装）。
+
+<CodeExercise
+  id="bank-frq3a"
+  title="FRQ3 (a)：countCheapHardcovers"
+  prompt="实现 LibraryShelf 的 countCheapHardcovers(double maxPrice)：返回 shelf 中 isHardcover() 为 true 且 getPrice() <= maxPrice 的书本数量。示例：Dune(12.0 精装)、Sea(8.0 平装)、Map(30.0 精装)、Wind(5.0 平装) 时，countCheapHardcovers(25.0) 返回 1。"
+  starter={`public int countCheapHardcovers(double maxPrice)
+{
+    // part (a)
+
+}`}
+  rubric={['遍历 shelf（下标循环或 enhanced for 均可）', '同时判断 isHardcover() 与 getPrice() <= maxPrice（含等于）', '返回计数而不是打印']}
+  hints={['计数器在循环外清零：int count = 0;', '两个条件用 && 连接：b.isHardcover() && b.getPrice() <= maxPrice', '数完再 return——return 写进循环会在第一本书后就结束']}
+/>
+
+## Part (b)：removePaperbacks
+
+把书架上**所有平装书原地删除**，精装书保持原有相对顺序。删除必须通过修改 `shelf` 本身完成（不能只是不打印）。
+
+示例：接 part (a) 的书架（Dune、Sea、Map、Wind），调用 `removePaperbacks()` 后 `shelf` 应为 `[Dune, Map]`。
+
+<CodeExercise
+  id="bank-frq3b"
+  title="FRQ3 (b)：removePaperbacks"
+  prompt="实现 LibraryShelf 的 removePaperbacks()：把 shelf 中所有 isHardcover() 为 false 的书原地删除，精装书保持原有相对顺序。示例：Dune(精装)、Sea(平装)、Map(精装)、Wind(平装) 删除后 shelf 为 [Dune, Map]。"
+  starter={`public void removePaperbacks()
+{
+    // part (b)
+
+}`}
+  rubric={['正确遍历并删除所有平装书', '遍历中删除的处理正确（倒序遍历，或删除后调整下标）', '删除后精装书保持原有相对顺序，shelf 被原地修改']}
+  hints={['正向遍历中 remove 会让后面的元素左移、跳过下一本——这是本题的核心陷阱', '倒序遍历：for (int i = shelf.size() - 1; i >= 0; i--)，删除不影响还没检查的下标', '删除用 shelf.remove(i)——remove(int) 按下标删']}
+/>
+
+## 官方风格评分标准（Scoring Guidelines）
+
+**Question 3 — 共 5 分（part a 2 分 + part b 3 分）**
+
+### Canonical solution（标准答案，供对照）
+
+```java
+// part (a)
+public int countCheapHardcovers(double maxPrice)
+{
+    int count = 0;
+    for (BookInfo b : shelf)
+    {
+        if (b.isHardcover() && b.getPrice() <= maxPrice)
+        {
+            count++;
+        }
+    }
+    return count;
+}
+
+// part (b)
+public void removePaperbacks()
+{
+    for (int i = shelf.size() - 1; i >= 0; i--)
+    {
+        if (!shelf.get(i).isHardcover())
+        {
+            shelf.remove(i);
+        }
+    }
+}
+```
+
+### Part (a)：countCheapHardcovers — 2 分
+
+| # | Scoring Criteria | Decision Rules | 分 |
+| --- | --- | --- | --- |
+| 1 | 遍历 shelf，对每个元素访问 isHardcover 与 getPrice（所有方法调用语法有效） | 仍可得分：两个条件的书写顺序颠倒；用下标循环而非 enhanced for | 1 |
+| 2 | 返回同时满足双条件（精装 **且** 价格 ≤ maxPrice，含等于）的数量 **(algorithm)** | 不得分：修改了 shelf；返回票数/书名等另有其物；条件漏掉等于或漏掉其一 | 1 |
+| | **Part (a) 小计** | | **2** |
+
+### Part (b)：removePaperbacks — 3 分
+
+| # | Scoring Criteria | Decision Rules | 分 |
+| --- | --- | --- | --- |
+| 3 | 遍历 shelf 并对每个元素调用 isHardcover | 仍可得分：遍历方向与判断条件在第 4 点评估，这里只看「访问到了每个元素」 | 1 |
+| 4 | 正确识别平装（isHardcover 为 false）并调用 remove 移除 | 仍可得分：条件写成 !(isHardcover()) 的等价形式 | 1 |
+| 5 | 全部平装被移除、精装保持原有相对顺序、修改的是 shelf 本身 **(algorithm)** | 不得分：正向遍历直接 remove 导致跳过相邻平装（删除不完整）；新建了列表却没把结果放回 shelf；删除了精装。仍可得分：先把精装收集到新列表再 clear + 全部加回的等价策略 | 1 |
+| | **Part (b) 小计** | | **3** |
+
+**Scoring Notes**：倒序下标循环、正序遍历 + 手动 `i--`、或「收集后重建」均为有效解；「重建法」中新建的 ArrayList 必须最终赋回 shelf（`shelf = 重建列表` 需要字段可赋值——在类内合法）。两部分独立判分：(a) 的错误不影响 (b) 得分。

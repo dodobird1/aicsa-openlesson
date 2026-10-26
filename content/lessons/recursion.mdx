@@ -1,0 +1,122 @@
+---
+id: recursion
+title: 递归：读懂它，不用写它
+description: 方法调用自己并不可怕——三问法拆解每一层。考纲明确：只考追踪，不考编写。这是全课程最「省力」的一课。
+order: 40
+group: Unit 4 · Data Collections
+minutes: 30
+---
+
+## 先看考纲怎么说（罕见的好消息）
+
+CED 对递归的边界声明写得明明白白：**只考「确定递归方法调用的结果」（trace），编写递归代码不在考试范围内**。所以本课目标只有一个：给你一段递归代码，你能一步步算出结果。
+
+## 递归是什么：套娃的函数
+
+**递归**（recursion）= 方法定义里调用自己。看最经典的阶乘：
+
+```java
+public static int fact(int n) {
+    if (n == 1) {
+        return 1;              // base case：不再套娃的出口
+    }
+    return n * fact(n - 1);    // recursive case：问题缩小一层，交给下一个自己
+}
+```
+
+每个递归方法必有这两块：
+
+- **base case（基线）**：直接返回、不再递归的出口——没有它就是无限套娃；
+- **recursive case（递归步）**：把问题缩小一点（n − 1）再交给下一个自己。
+
+## 三问法：追踪任何递归
+
+拿到递归代码，依次问三个问题：
+
+1. **参数怎么变？**（每层 n − 1，朝基线走）
+2. **何时停？**（n == 1 触发 base case）
+3. **每层返回什么、怎么组合？**（本层 n 乘以下一层的结果）
+
+## 追踪 fact(4)：两层展开图
+
+```text
+fact(4)
+  └─ 4 * fact(3)
+        └─ 3 * fact(2)
+              └─ 2 * fact(1)
+                    └─ return 1        ← base case！开始回卷
+              = 2 * 1 = 2
+        = 3 * 2 = 6
+  = 4 * 6 = 24                          ← 最终答案
+```
+
+追踪分两段：**一路压到 base case（下坡），再一层层乘回来（上坡）**。在纸上画出这个展开图，是 MCQ 递归题的标准解法。
+
+两条考纲级认知，配上就能做题：
+
+- 每一层递归都有**自己的一份参数和局部变量**（所以 n 在每层互不干扰）；
+- **任何递归都能改写成循环**，反之亦然——考试两者都认。
+
+## 每日一虫 🐛：没有出口的套娃
+
+```java
+public static int broken(int n) {
+    return n * broken(n - 1);   // 虫：忘了写 base case
+}
+```
+
+<MultipleChoice id="rec-bug" question="调用 broken(3) 会发生什么？" options={[{id:'a',label:'返回 6，正常'},{id:'b',label:'无限递归下去，每层都压在内存的调用栈上，最终抛 StackOverflowError 崩溃'},{id:'c',label:'编译错误：方法不能调用自己'},{id:'d',label:'返回 0'}]} answer={['b']} explanation="递归每深一层，Java 就在调用栈上记一层账（参数、局部变量）。没有 base case，账越记越多直到栈被塞满——StackOverflowError。注意 c 是常见误解：方法调用自己完全合法，缺的只是出口。追踪递归先找 base case，找不到就别追了——它停不下来。" />
+
+## 练习场
+
+<FillBlank
+  id="rec-fill"
+  question="补全递归的出口与递归步。n 可能是 0 或 1，第一空要在这两种情况下都对。"
+  answers={['n', 'sum']}
+  explanation="第一空：n <= 1 时直接返回 n。n 为 1 时就是 1；n 为 0 时就是 0。这里不能写死 1，否则空和会算错。第二空：递归步调用 sum(n - 1)，再在前面加上 n。出口 + 缩小，两块拼图缺一不可。"
+>
+
+```java
+// 返回 1 + 2 + … + n；n 为 0 时返回 0
+public static int sum(int n) {
+    if (n <= 1) {
+        return ???;             // base case
+    }
+    return n + ???(n - 1);      // recursive case：缩小并调用自己
+}
+```
+
+</FillBlank>
+
+<MultipleChoice id="rec-trace" question={'按 fact 的定义（n == 1 时返回 1，否则返回 n * fact(n - 1)），fact(5) 的值是？'} options={[{id:'a',label:'24'},{id:'b',label:'120'},{id:'c',label:'15（5+4+3+2+1，把乘当加了）'},{id:'d',label:'无限递归'}]} answer={['b']} explanation="展开：fact(5) = 5 × fact(4) = 5 × 4 × fact(3) = … = 5 × 4 × 3 × 2 × fact(1)，fact(1) 触发基线返回 1——回卷得 120。有 base case（选项 d 排除）、每层是乘不是加（排除 c）。列展开图，两层答案自动浮现。" />
+
+<MultipleChoice id="rec-trace2" question={'以下方法的结果是？\n\npublic static int mystery(int n) {\n    if (n == 0) {\n        return 0;\n    }\n    return mystery(n - 1) + 2;\n}'} options={[{id:'a',label:'mystery(3) 返回 6'},{id:'b',label:'mystery(3) 返回 8（把 2×3 算成了 2 的三次方）'},{id:'c',label:'mystery(3) 返回 3'},{id:'d',label:'无限递归'}]} answer={['a']} explanation="下坡：mystery(3) → mystery(2) → mystery(1) → mystery(0) 返回 0。上坡逐层加 2：mystery(1)=0+2=2、mystery(2)=2+2=4、mystery(3)=4+2=6。规律：mystery(n) = 2n——但考场上别猜规律，老老实实展开三层。" />
+
+<MultipleChoice id="rec-rewrite" question="「任何递归都可以改写成迭代（循环）」这句话对吗？AP 考试的态度是？" options={[{id:'a',label:'对'},{id:'b',label:'错，有些递归无法用循环实现'},{id:'c',label:'对，但 AP 只认递归写法'},{id:'d',label:'对，但只对返回 int 的方法成立'}]} answer={['a']} explanation="答案 a 在 Java 世界成立（任何递归都能改成显式栈的循环），但这不是 CED 的明文考点。CED 只在个别算法上认可两种写法：二分查找可以写成循环或递归（Topic 4.15），归并排序考逐步追踪（Topic 4.17）。「写成循环」是本课的练法——下一题动手环节你就亲手把递归改成循环，验证结果一致。" />
+
+## 动手：亲手把递归改成循环
+
+考纲说你不用**写**递归，但把**给你的**递归改写成循环，是验证理解的好练习（再下一课的 P4 错题本项目会用到同样的循环累加；下一课先学从文件读数据）：
+
+<CodeExercise
+  id="rec-iter-code"
+  title="递归改迭代 sumLoop"
+  prompt="上面的 sum(n)（返回 1 + 2 + … + n 的递归版）你已追踪过。现在写它的循环版 sumLoop：同样接受 n、返回 1 到 n 之和，但用 while 或 for 循环实现。写完在本地验证：sumLoop(4) 应为 10、sumLoop(1) 应为 1——与递归版 sum(4)、sum(1) 的结果一致。"
+  starter={`public class SumTool {
+
+    // 循环版：返回 1 + 2 + … + n
+    public static int sumLoop(int n) {
+        // 用循环改写递归 sum
+
+        return 0;
+    }
+}`}
+  rubric={['使用 for 或 while 循环遍历 1 到 n（含两端）', '累加器在循环外初始化为 0', '返回累加和', '结果与递归版一致（sumLoop(4) 为 10）']}
+  hints={['这就是第 21 课的求和模板：for (int i = 1; i <= n; i++)', '核心一行：total += i;', '递归靠「层层下压再回卷」累加，循环靠「一层累加器」直接累积——殊途同归']}
+/>
+
+## 让导师引导你 trace
+
+<LLMPractice id="rec-socratic" preset="socratic-tutor" instructions={'任务：请导师给你一段两三行的小递归（含字符串或取模，别太长），你用三问法（参数怎么变/何时停/每层返回什么）在纸上展开追踪。它只提问检验你的每一层，不许直接给答案，直到你报出正确最终值。'} starterMessage="请给我一段短小的递归方法，我用三问法追踪它的结果，你用提问检验我的每一层。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 默写递归必备的两块拼图（base case / recursive case）和三问法；2) 口头追踪 fact(3)：写出完整展开图（答案是 6）；3) 说出缺 base case 的症状（StackOverflowError，不是编译错误）。下一课，考纲新增考点：从文件读数据。</Callout>

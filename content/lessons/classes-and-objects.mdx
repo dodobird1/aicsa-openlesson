@@ -1,0 +1,133 @@
+---
+id: classes-and-objects
+title: 类与对象：你来当造物主
+description: 用了两个月别人的类，现在第一次设计自己的——private 状态、public 行为，还有「两个名字一只狗」的 aliasing 陷阱。
+order: 26
+group: Unit 3 · Class Creation
+minutes: 35
+---
+
+## 欢迎来到 Unit 3
+
+前两个单元你一直在**用**别人写好的类（Math、String）。Unit 3（考试权重 10–18%，FRQ 第二题的主场）你要**设计自己的类**——考试里这叫 Class Design，现实生活中这叫「造物」。
+
+## 类是图纸，对象是房子
+
+**类**（class）是图纸：规定这一类东西有哪些**状态**（数据）和**行为**（方法）。**对象**（object）是按图纸盖出的房子：每个对象有自己的数据，但共享同一套行为。
+
+设计一只狗：
+
+```java
+public class Dog {
+    private String name;    // 状态：名字
+    private int age;        // 状态：年龄
+
+    public Dog(String givenName, int givenAge) {   // 构造器：出生即登记
+        name = givenName;
+        age = givenAge;
+    }
+
+    public void bark() {                            // 行为：叫
+        System.out.println(name + " 说：汪！");
+    }
+
+    public String getName() {                       // 行为：报上名字
+        return name;
+    }
+}
+```
+
+读类的三问（考试读陌生类也用这三问）：
+
+1. **状态有哪些**？——`private` 的实例变量（instance variable），每只狗一份；
+2. **怎么出生**？——构造器（constructor），`new` 的时候跑；
+3. **会做什么**？——方法，所有 Dog 共享同一套。
+
+## new 的那一刻
+
+```java
+Dog a = new Dog("旺财", 3);
+```
+
+这行做了三件事：造一只狗（对象出现在内存里）→ 跑构造器填好 name 和 age → 把这只狗的**地址**交给变量 a。注意：**a 里存的不是狗，是狗的地址（引用，reference）**——a 是狗牌，不是狗。
+
+## 使用你的类
+
+```java
+public class Kennel {
+    public static void main(String[] args) {
+        Dog a = new Dog("旺财", 3);
+        Dog b = new Dog("小黑", 1);
+        a.bark();                          // 旺财 说：汪！
+        System.out.println(b.getName());   // 小黑
+    }
+}
+```
+
+两只狗各自有各自的 name 和 age——同一张图纸，两栋不同的房子。
+
+## 每日一虫 🐛：两个名字，一只狗
+
+看这段代码（main 写在 Dog 类内部，所以能直接碰 private 字段）：
+
+```java
+Dog a = new Dog("旺财", 3);
+Dog b = a;        // 注意这行
+b.age = 5;
+System.out.println(a.age);
+```
+
+<MultipleChoice id="cls-bug" question="输出是什么？为什么？" options={[{id:'a',label:'3，b 是另一只狗'},{id:'b',label:'5：b = a 复制的是地址不是狗'},{id:'c',label:'编译错误，不能这样赋值'},{id:'d',label:'0'}]} answer={['b']} explanation="Dog b = a 没有 new、没有新狗——只是给同一只狗再挂一块牌子。两个引用（alias，别名）指向同一个对象，通过任何一个改状态，另一个都看得见。想要两只狗必须写 new：Dog b = new Dog(...)。aliasing 是 Unit 3 头号考点，FRQ Q2 常拿它设局。" />
+
+## 练习场
+
+<MultipleChoice id="cls-private" question="实例变量声明成 private 的核心理由是什么？" options={[{id:'a',label:'让程序跑得更快'},{id:'b',label:'保护对象状态：外部代码不能绕过方法直接乱改数据（比如把 age 改成 -50），所有修改都要走你设计的方法把关'},{id:'c',label:'private 是 Java 语法要求，不写编译不过'},{id:'d',label:'省内存'}]} answer={['b']} explanation="private 不是语法装饰，是防线：数据藏在对象内部，外界只能通过 public 方法交互——方法里可以加检查（下一课的 setAge 就会拒绝负数）。AP 考试的类设计题，实例变量一律 private。" />
+
+<FillBlank
+  id="cls-fill"
+  question="补全读类的三问对应的代码部位。"
+  answers={['private', 'new']}
+  explanation="状态用 private 实例变量存放（每只狗一份）；对象由 new 创建——new 跑构造器、返回地址交给引用变量。两个字合起来就是「类与对象」的全部秘密。"
+>
+
+```java
+public class Dog {
+    ??? String name;                      // 状态藏在这里
+
+    public Dog(String n) { name = n; }
+}
+
+// 别的类里：
+Dog d = ??? Dog("旺财");                  // 此刻才有一只狗
+```
+
+</FillBlank>
+
+<MultipleChoice id="cls-new" question={'表达式 new Dog("旺财", 3) 做了什么？'} options={[{id:'a',label:'只声明了一个变量'},{id:'b',label:'在内存里造出对象、执行构造器、返回新对象的引用'},{id:'c',label:'把图纸复制了一份'},{id:'d',label:'给类 Dog 改名'}]} answer={['b']} explanation="new 三步走：造对象 → 跑构造器（初始化状态）→ 返回地址。赋值号只是把这个地址交给左边的引用变量。没有 new 就没有新对象——aliasing 虫的病根正是忘了这一点。" />
+
+## 动手：完整地造一只狗
+
+<CodeExercise
+  id="cls-dog-code"
+  title="Dog 类完整版"
+  prompt="写出完整的 Dog 类：两个 private 实例变量 name（String）和 age（int）；一个构造器同时初始化两者；方法 bark 打印「某某 说：汪！」；方法 getName 返回名字；方法 birthday 使 age 加一并打印「某某 过生日，现在 X 岁」。最后写一个 main：new 两只不同的狗，各叫一声，给第一只过生日并打印它的名字。写完本地运行验证。"
+  starter={`public class Dog {
+    // TODO 1: 两个 private 实例变量
+
+    // TODO 2: 构造器
+
+    // TODO 3: bark / getName / birthday 三个方法
+
+    public static void main(String[] args) {
+        // TODO 4: new 两只狗，各叫一声，给第一只过生日
+    }
+}`}
+  rubric={['两个实例变量都是 private（name 为 String、age 为 int）', '构造器与类同名且初始化全部字段', 'bark 打印包含名字；getName 返回名字；birthday 使 age 加一并打印', 'main 中创建了两个不同的对象（两次 new）并完成指定调用']}
+  hints={['骨架：private String name; private int age; 放类体最上面', '构造器名必须与类同名、无返回类型：public Dog(String n, int a) { ... }', 'birthday 里 age = age + 1;（或 age++），再用 System.out.println 打印新年龄']}
+/>
+
+## 概念吃不准？问教练
+
+<LLMPractice id="cls-concept" preset="concept-coach" instructions={'任务：按费曼四步学「类与对象的区别 + 引用与别名」：1) 让教练讲一遍；2) 合上讲解，用自己的话复述，必须讲清「Dog b = a 之后改 b 为什么 a 也变」；3) 让它挑毛病；4) 修正后讲第二遍。术语表抄进笔记。'} starterMessage="请给我讲讲类和对象的区别，以及引用变量和别名（aliasing）是怎么回事，我是刚开始学 Unit 3 的 AP CSA 学生。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 口头说出读类三问；2) 解释 aliasing：为什么 Dog b = a 之后改 b.age，a.age 也变了？想复制一只狗该怎么做？3) 白纸手写完整的 Dog 类（字段、构造器、三个方法），再写 main 验证。下一课，把构造器和封装玩精——含 this 关键字和防呆 setter。</Callout>

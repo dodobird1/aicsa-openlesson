@@ -1,0 +1,154 @@
+---
+id: loop-algorithms
+title: 五大模板：循环的套路武学
+description: 求和、计数、最值、查找、条件统计——AP 循环题的 90% 是这五个模板的变装。认出模板，题就解了一半。
+order: 21
+group: Unit 2 · Selection and Iteration
+minutes: 35
+---
+
+## 模板思维：认脸而非认题
+
+AP 的循环题看起来千变万化，骨架只有五个。读题时先问：**这题在考哪个模板？**——认出模板，循环结构直接默写，只剩题目特有的条件要现想。
+
+| 模板 | 骨架（核心三行） | 识别信号 |
+| --- | --- | --- |
+| 求和 sum | `int total = 0;` + 循环中 `total += x;` | 「计算……的总和／一共」 |
+| 计数 count | `int count = 0;` + 命中时 `count++;` | 「有多少个……」 |
+| 最值 max/min | `int max = 首个值;` + 更大则替换 | 「最大的／最小的」 |
+| 查找 search | 循环中命中即处理（return 或记录） | 「第一个／是否存在」 |
+| 条件统计 | count 模板 + if 条件 | 「满足……的有几个」 |
+
+现在没有数组，我们用「1 到 n 的整数」和字符串当原料——模板学扎实了，Unit 4 换成数组只是换个容器。
+
+## 求和与计数：最稳的两兄弟
+
+```java
+// 求和：1 到 100
+int total = 0;
+for (int n = 1; n <= 100; n++) {
+    total += n;
+}
+
+// 计数：1 到 100 里有多少个 7 的倍数
+int count = 0;
+for (int n = 1; n <= 100; n++) {
+    if (n % 7 == 0) {
+        count++;
+    }
+}
+```
+
+两个模板共用一个铁律：**累加器必须在循环外声明并初始化**——放循环体内每轮都重新归零，累加永远只剩当前这一轮的数（而且循环结束后它根本不可见）。
+
+## 最值：初值的学问
+
+找最大值的模板有个著名陷阱——**初值**：
+
+```java
+int max = Integer.MIN_VALUE;   // 或直接用第一个元素（数组时代）
+for (int n = 1; n <= 100; n++) {
+    if (n > max) {
+        max = n;
+    }
+}
+```
+
+初值取 `Integer.MIN_VALUE`（int 的理论最小值）。比它大的数都会替换它；若序列里的最大值正好就是这个最小值，初值本身已经是答案。初值取 `0` 才是虫：全负序列里没有数比 0 大，答案永远是 0——本课的每日一虫就是它。
+
+## 查找：找到就收手
+
+「找到第一个满足条件的数」——命中即用 `return` 离场，不要恋战：
+
+```java
+// 返回 1 到 n 中第一个 7 的倍数；不存在返回 -1（哨兵值惯例）
+public static int firstMultipleOfSeven(int n) {
+    for (int k = 1; k <= n; k++) {
+        if (k % 7 == 0) {
+            return k;      // 命中即走
+        }
+    }
+    return -1;             // 全程未命中：哨兵值报告「没找到」
+}
+```
+
+`return -1` 表示「不存在」——和 `indexOf` 找不到返回 −1 是同一个惯例，AP 两边都爱考。
+
+## 每日一虫 🐛：永远打不过 0 的最大值
+
+看这段代码：
+
+```java
+// 想找 -8、-3、-5 中最大的那个
+int max = 0;
+int a = -8, b = -3, c = -5;
+if (a > max) { max = a; }
+if (b > max) { max = b; }
+if (c > max) { max = c; }
+System.out.println(max);
+```
+
+<MultipleChoice id="algo-bug" question="程序输出什么？病根是什么？" options={[{id:'a',label:'-3，代码正确'},{id:'b',label:'0：max 初值取了 0，三个负数都赢不过它，永远不被替换'},{id:'c',label:'-8'},{id:'d',label:'编译错误'}]} answer={['b']} explanation="max = 0 意味着比赛开始前已经站了个 0 号选手，而所有真实选手都是负数——没人打得过它。修法：初值取 Integer.MIN_VALUE（比它大的数都会替换它），或直接让第一个数当初值。这是「累加器/最值初值」虫型的代表：症状是答案永远是初值本身。" />
+
+## 练习场
+
+先补全计数模板：
+
+<FillBlank
+  id="algo-fill"
+  question="补全「统计 1 到 100（含两端）中 4 的倍数个数」的计数模板。"
+  answers={['<=', '0']}
+  explanation="范围含两端，条件是 i 小于等于 100——写小于会漏掉 100 本身（100 = 4 × 25，正是 4 的倍数，这是边界最爱设的局）。4 的倍数即余数为零：i % 4 == 0。"
+>
+
+```java
+int count = 0;
+for (int i = 1; i ??? 100; i++) {
+    if (i % 4 == ???) {
+        count++;
+    }
+}
+```
+
+</FillBlank>
+
+<MultipleChoice id="algo-template" question="题目问「1 到 1000 中有多少个数既能被 3 整除又能被 5 整除」，用哪个模板最直接？" options={[{id:'a',label:'求和模板'},{id:'b',label:'计数模板，条件写成 n % 3 == 0 && n % 5 == 0'},{id:'c',label:'最值模板'},{id:'d',label:'查找模板，命中即 return'}]} answer={['b']} explanation="「有多少个」是计数的识别信号；「既能……又能」是复合条件，用 && 连接。查找模板（return）只留第一个命中，数不全——模板选错，写得再对也白搭。" />
+
+<MultipleChoice id="algo-search" question="查找模板「返回第一个满足条件的数、不存在时返回 −1」的惯例，和下面哪个方法的约定一致？" options={[{id:'a',label:'String 的 indexOf'},{id:'b',label:'Math 的 abs'},{id:'c',label:'System.out 的 println'},{id:'d',label:'String 的 length'}]} answer={['a']} explanation="indexOf 找不到返回 −1——和查找模板的哨兵值惯例同源。考试里「用 −1 表示不存在」是高频考点：判断存在性必须和 −1 比，不能和 0 比（0 可能是合法位置）。" />
+
+把计数程序排出来：
+
+<ParsonsProblem
+  id="algo-parsons"
+  question="排出「统计 1 到 100 中 3 的倍数个数并打印」的程序。"
+  lines={['public class Counter {', '    public static void main(String[] args) {', '        int count = 0;', '        for (int n = 1; n <= 100; n++) {', '            if (n % 3 == 0) {', '                count++;', '            }', '        }', '        System.out.println(count);', '    }', '}']}
+  explanation="计数模板的固定骨架：计数器在循环外清零 → 遍历 → 条件命中则 count++ → 循环外打印总数。count 声明和打印都在循环外——放错任何一边，全盘皆输。答案是 33。"
+/>
+
+## 动手：泛化你的第一个模板
+
+第 13 课你写过 countVowels（数五个元音）。现在把它泛化成「数任意指定字母」——这就是模板思维的迁移：
+
+<CodeExercise
+  id="algo-count-code"
+  title="countLetter 字母计数器"
+  prompt={'补全方法 countLetter：接受字符串 word 和单个字符的字符串 letter，返回 letter 在 word 中出现的次数（区分大小写）。写完在本地验证：countLetter("banana", "a") 应为 3，countLetter("APCSA", "A") 应为 2，countLetter("java", "x") 应为 0。'}
+  starter={`public class MatchTool {
+
+    // 返回 letter（单字符字符串）在 word 中出现的次数
+    public static int countLetter(String word, String letter) {
+        int count = 0;
+        // 遍历 word，逐字符与 letter 比较，命中则计数
+
+        return count;
+    }
+}`}
+  rubric={['用 for 循环遍历，条件 i < word.length()', '用 substring(i, i + 1) 取当前字符并与 letter 用 equals 比较', '命中则 count++（计数器在循环外初始化）', '返回计数值']}
+  hints={['骨架已给计数器，你只补循环和判断', '当前字符：String ch = word.substring(i, i + 1);', '命中判断：if (ch.equals(letter)) { count++; }']}
+/>
+
+## 让出题官考考你
+
+<LLMPractice id="algo-quiz" preset="quiz-master" instructions={'任务：告诉出题官「我刚学完五大循环模板（求和/计数/最值/查找/条件统计），想练模板识别」——请它每出一道题，你都先说出「这是哪个模板」再作答。共 3 道；答错的题记进错题本并注明「当时认成了哪个模板」。'} starterMessage="我刚学完五大循环模板（求和/计数/最值/查找/条件统计），想练模板识别。请出一道题，我作答前会先说它是哪个模板。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 默写五大模板各自的识别信号和核心三行；2) 口头说出最值模板初值取 0 的虫及其修法；3) 白纸手写 countLetter 完整方法。下一课，给这些模板数一数「跑一次要多少步」——效率登场。</Callout>

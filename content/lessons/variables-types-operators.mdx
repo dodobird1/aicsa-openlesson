@@ -1,0 +1,139 @@
+---
+id: variables-types-operators
+title: 变量、类型与运算符
+description: 让程序记住东西并做计算：int、double、boolean 三大类型，算术运算符，和两个必踩的坑——整数除法与溢出。
+order: 10
+group: Unit 1 · Using Objects and Methods
+minutes: 35
+---
+
+## 程序从「记住」开始
+
+第 8 课的 Hello World 有个遗憾：它什么都不记得。上一课在给那段程序找虫。真正的程序需要**变量**（variable）——给一块内存起个名字，把值存进去、改掉、读出来：
+
+```java
+int score = 90;        // 声明一个 int 型变量 score，初始值 90
+score = score + 5;     // 读出旧值 90，加 5，存回去——现在是 95
+System.out.println(score);   // 输出 95
+```
+
+一行声明 = **类型 + 名字 + 初始值**。类型告诉 Java 这块内存存什么：
+
+| 类型 | 存什么 | 例子 |
+| --- | --- | --- |
+| `int` | 整数 | `0`、`42`、`-7` |
+| `double` | 小数 | `3.14`、`-0.5` |
+| `boolean` | 真假 | `true`、`false` |
+
+AP CSA 只用这三种基本类型（CED 边界声明：`long`、`short`、`byte`、`float`、`char` 都不考，见大纲附录 B）。
+
+命名用 **camelCase**（小驼峰）：第一个单词小写，后续单词首字母大写，如 `studentScore`、`maxCount`。想存不允许修改的常量，加 `final`：`final int MAX_SCORE = 100;`。
+
+## 算术运算符与第一个大坑
+
+`+`、`-`、`*` 大多数时候如你所料。坑在**除法**：
+
+```java
+System.out.println(7 / 2);     // 输出 3，不是 3.5！
+System.out.println(7 / 2.0);   // 输出 3.5
+System.out.println(7 % 2);     // 输出 1（% 是取余数）
+```
+
+**两个 int 相除，结果还是 int，小数部分直接砍掉**（不是四舍五入）。只要除数或被除数里有一个是 double，结果就是 double。这个坑 AP 每年都考，记住口诀：**「int 除 int，砍小数；见 double，变精确」**。
+
+`%`（modulus，取余）是第二个常用运算符，两个经典用途：
+
+```java
+int n = 123;
+System.out.println(n % 2);       // 1 → 判断奇偶（1 为奇数，0 为偶数）
+System.out.println(n % 10);      // 3 → 取个位数
+```
+
+## 溢出：整数的边界
+
+`int` 能存的范围是 −2147483648 到 2147483647（即 `Integer.MIN_VALUE` 到 `Integer.MAX_VALUE`）。超过上限会怎样？**绕回最小值**，像里程表归零：
+
+```java
+int max = Integer.MAX_VALUE;
+System.out.println(max + 1);     // 输出 -2147483648，没有报错！
+```
+
+这叫**溢出**（overflow）。AP CSA 不要求你背边界数字，但要求知道：`Integer.MAX_VALUE + 1` 的结果是 `Integer.MIN_VALUE`（CED Topic 1.5.B）。
+
+## 复合赋值与自增
+
+两个简写家族，考试读代码必备：
+
+```java
+int x = 10;
+x += 5;    // 等价于 x = x + 5 → 15
+x -= 3;    // 12
+x *= 2;    // 24
+x /= 5;    // 4（注意！24/5 整数除法砍小数）
+x %= 2;    // 0
+
+int count = 0;
+count++;   // 等价于 count = count + 1 → 1
+```
+
+`++` 只用**后置**形式单独成句（`count++`）。前置 `++x` 和把自增嵌进表达式（如 `arr[x++]`）CED 明确不考，见到认识即可，不写。
+
+<MultipleChoice id="vars-integer-division" question={'以下代码的输出是什么？\n\nint total = 17;\nint count = 5;\nSystem.out.println(total / count);'} options={[{id:'a',label:'3.4'},{id:'b',label:'3'},{id:'c',label:'4'},{id:'d',label:'编译错误'}]} answer={['b']} explanation="17 和 5 都是 int，17 / 5 是整数除法，小数部分直接砍掉，得 3（不是四舍五入的 4）。想要 3.4，至少要把一个数写成 double：17 / 5.0 或 (double) total / count。" />
+
+<MultipleChoice id="vars-modulus" question="表达式 2027 % 10 的值是多少？" options={[{id:'a',label:'202'},{id:'b',label:'7'},{id:'c',label:'0'},{id:'d',label:'202.7'}]} answer={['b']} explanation="% 取余数：2027 除以 10 商 202 余 7，所以 2027 % 10 = 7。这也是取一个整数个位数的标准写法；判断奇偶则用 n % 2（结果 1 为奇数）。" />
+
+<MultipleChoice id="vars-overflow" question="Integer.MAX_VALUE + 1 的结果是？" options={[{id:'a',label:'编译错误'},{id:'b',label:'程序运行报错'},{id:'c',label:'Integer.MIN_VALUE（绕回最小值）'},{id:'d',label:'2147483648'}]} answer={['c']} explanation="int 溢出不报错，而是像里程表归零一样绕回：Integer.MAX_VALUE + 1 = Integer.MIN_VALUE（约 -21.4 亿）。这是 CED Topic 1.5 明确列出的考点；想表示更大的数，在 AP 只考 int/double 的世界里只能改用 double（注意它对很大的整数也只是近似），现实中也要警惕这类错误，如千年虫。" />
+
+## 每日一虫 🐛：平均分为什么是 3.0
+
+看这段代码：
+
+```java
+int total = 17;      // 5 道题的总分
+int count = 5;       // 题数
+double avg = total / count;   // 想得到平均分 3.4
+System.out.println(avg);      // 实际输出 3.0
+```
+
+<MultipleChoice id="vars-daily-bug" question="明明把 avg 声明成了 double，为什么输出还是 3.0？" options={[{id:'a',label:'两个 int 相除先算出 int 结果 3，赋给 avg 时才变成 3.0'},{id:'b',label:'println 打印 double 时默认丢掉小数部分'},{id:'c',label:'avg 声明错了，应该写 int avg'},{id:'d',label:'5 道题应该除以 4'}]} answer={['a']} explanation="运算顺序是先除后存：total / count 两边都是 int，整数除法当场砍成 3；存进 double 变量时才补成 3.0，为时已晚。修法是让除法本身出现 double：total / 5.0 或 1.0 * total / count。L2：合上答案，用一句话说出病根（砍小数发生在哪一步），再说出两种修法。" />
+
+## 有一个概念吃不准？问概念教练
+
+整数除法和溢出是本课两大易混点。如果读上面的讲解还有模糊，按第 5 课学过的四步循环问概念教练。
+
+<LLMPractice id="vars-concept-coach" preset="concept-coach" instructions={'任务：按四步循环学「整数除法 vs 浮点除法」：1) 让概念教练讲一遍（它会给你类比、最小示例、中英术语表）；2) 合上讲解，用自己的话复述给它听；3) 让它挑你复述里的毛病；4) 修正后讲第二遍。术语表抄进笔记。'} starterMessage="请给我讲讲 Java 里整数除法和浮点除法的区别，我是刚开始学 AP CSA 的高中生。" />
+
+## 动手：第一个被 AI 批改的代码题
+
+下面是本课程的第一个**代码题**：在编辑器里写代码，提交后 AI 批改员会按评分标准逐条判定，并告诉你「最值得先修的一处」。规则沿用求助阶梯：**先用提示，别急着看答案**。
+
+<CodeExercise
+  id="vars-celsius-code"
+  title="温度换算器（Celsius to Fahrenheit）"
+  prompt="补全方法 celsiusToFahrenheit：接受一个 double 摄氏温度，返回对应的华氏温度。公式：F = C × 9/5 + 32。注意避开整数除法陷阱。写完后建议也在本地 IDE 里运行验证（main 方法里调用打印几个测试值，如 0°C、100°C、37°C）。"
+  starter={`public class Converter {
+
+    // 返回摄氏温度 celsius 对应的华氏温度
+    // 公式：F = C * 9/5 + 32
+    public static double celsiusToFahrenheit(double celsius) {
+        // 在这里写你的代码
+
+        return 0.0;
+    }
+}`}
+  rubric={['正确使用公式 F = C × 9/5 + 32 计算并返回结果', '避免了整数除法陷阱（9/5 会被当成 1；应写 9.0/5.0 或 1.8 等价写法）', '没有修改方法签名，返回的是计算值而不是固定值']}
+  hints={['公式里的 9/5 如果直接照抄成代码，两个 int 相除结果是 1，算出来全错', '把 9 写成 9.0，除法就变成 double 运算', '现在把两步合起来：以 return 开头，照数学公式的顺序写一行——先乘除（celsius 乘上去、再除），后加 32，保证 9 参与的是 double 运算']}
+/>
+
+<Callout title="放下 AI · 检索练习">
+
+关掉一切，在纸上手写预测以下代码的输出（不许运行）：
+
+- `System.out.println(9 / 2);`
+- `System.out.println(9 % 2);`
+- `System.out.println(9 / 2.0);`
+- `int x = 5; x *= 2; System.out.println(x % 3);`
+
+写完在 IDE 里验证。全对才算过关——然后点「Mark lesson complete」，进入下一课《for 循环：把重复写成一扇门》。
+
+</Callout>

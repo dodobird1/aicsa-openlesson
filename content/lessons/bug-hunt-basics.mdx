@@ -1,0 +1,117 @@
+---
+id: bug-hunt-basics
+title: 报错是你的朋友：第一次找虫
+description: 编译器的报错不是骂你，是地图。学会三步找虫法，认识四大报错地形——这门课的「每日一虫」从这里开始。
+order: 9
+group: Unit 1 · Using Objects and Methods
+minutes: 30
+---
+
+## 为什么「找虫」是这门课的主线练习
+
+选择题占全卷 55%，简答题占 45%。在选择题内部，权重最大的一项是**分析代码（Analyze Code）**：读别人的代码、预测它会做什么、找出错误。这一项约占选择题的 37–53%（官方 CED，2025 年秋季版，印刷页 146）。换到全卷大约是两成到三成。简答题要你自己写代码，那 45% 比分析代码在全卷里的份额更大。这一课练的找虫，是选择题里最大的一块；后面的项目和简答课负责写代码那 45%。
+
+所以从这节课起，每节常规课都有一道「每日一虫」（Daily Bug）：一小段藏了一只虫的代码，你来抓（项目课用「抽查自查单」代替）。抓虫分三级：
+
+- **L1 圈错行**：指出虫在哪一行、是什么类型（选择题，秒判）；
+- **L2 说病根**：合上答案，用自己的话说清「为什么错、运行时会发生什么」；
+- **L3 动手修**：修到编译通过、行为正确为止。
+
+本课就是这套体系的第一课。先认识地形。
+
+## 报错地形图：四大高频区
+
+Java 编译器报错时不留情面，但报错信息本身就是地图。四大高频地形（你在 Hello World 里已经见过一部分）：
+
+| 报错信息（第一行） | 病根 | 一句话口诀 |
+| --- | --- | --- |
+| `error: ';' expected` | 缺分号 | 句子要有句号 |
+| `error: reached end of file while parsing` | 花括号不配对 | 有 `{` 必有 `}` |
+| `error: cannot find symbol` | 变量/方法名拼错，或字符串没加引号 | 名字要对，文本要穿引号衣服 |
+| `error: class X is public, should be declared in a file named X.java` | 类名和文件名不一致 | 类名 = 文件名，区分大小写 |
+
+读报错的黄金习惯：**只看第一行和它指的行号**。后面的连锁报错往往是一个根因的回声——修好第一处，它们一起消失。
+
+## 三步找虫法
+
+拿到一段报错的代码，按这三步走，不要上来就乱改：
+
+1. **定位**：读报错第一行 + 行号，锁定出错的大致位置；
+2. **说病根**：先不动手，说出「这里是什么类型的错、为什么 Java 不接受」——能说清病根才算真找到，否则只是瞎蒙对了；
+3. **最小修复**：只改必须改的那一处，改完立刻重新编译验证。
+
+<Callout title="L2 为什么重要">直接跳到 L3「修好了」，你可能是蒙对的。说过一遍病根，下次同样的虫在 200 行代码里你才认得出它。这就是「每日一虫」坚持 L2 的原因。</Callout>
+
+## 热身：把骨架排回去
+
+下面这个程序被拆散了。拖动（或用箭头按钮）把五行排成能编译运行的完整程序——排的过程就是在心里重建「类 → 方法 → 语句」的嵌套结构。
+
+<ParsonsProblem
+  id="bug-hunt-parsons"
+  question="把这些行排成正确的 Hello World 程序。"
+  lines={['public class Greeter {', '    public static void main(String[] args) {', '        System.out.println("Hello, World!");', '    }', '}']}
+  explanation="结构由外到内：类在最外层，main 方法在类内，语句在方法内；花括号从最内层开始关闭，最后关掉类的。"
+/>
+
+## 把骨架补完整
+
+排对了结构，现在反向练：骨架上挖了三个空，把缺的关键字补上。
+
+<FillBlank
+  id="bug-hunt-fill"
+  question="补全 Hello World 骨架的三个关键字。"
+  answers={['public', 'void', 'println']}
+  explanation="public 让类和方法可被外部访问；void 表示 main 不返回任何值；println 是打印语句的方法名（print line 的缩写）。"
+>
+
+```java
+??? class Greeter {
+    public static ??? main(String[] args) {
+        System.out.???("Hello, World!");
+    }
+}
+```
+
+</FillBlank>
+
+## 每日一虫 L1：圈出病根
+
+看下面这段程序：
+
+```java
+public class Counter {
+    public static void main(String[] args) {
+        int count = 0
+        System.out.println(count);
+    }
+}
+```
+
+<MultipleChoice id="bug-hunt-l1" question="上面程序无法编译。虫在哪一行、是什么类型？" options={[{id:'a',label:'第 3 行，语句结尾缺分号'},{id:'b',label:'第 4 行，println 拼写错误'},{id:'c',label:'第 2 行，main 方法写法错误'},{id:'d',label:'第 3 行，int 类型用错'}]} answer={['a']} explanation="第 3 行 int count = 0 结尾少了分号——Java 的每条完整语句都以分号收尾，对应报错关键词 ';' expected。注意：报错可能指向第 3 行末尾或第 4 行开头，因为编译器读到下一个词才发现句子没收尾；这就是「报错行号附近都要看」的原因。" />
+
+<MultipleChoice id="bug-hunt-errmsg" question="报错第一行是 error: reached end of file while parsing，最可能的病根是？" options={[{id:'a',label:'字符串没加双引号'},{id:'b',label:'花括号不配对（少了或多了一个花括号）'},{id:'c',label:'变量名拼错'},{id:'d',label:'缺分号'}]} answer={['b']} explanation="「读到文件结尾还没解析完」= 编译器一直在等那只缺失的右括号 }，等到文件末尾也没等到。数一数左括号数量，逐层补齐即可——缺分号和字符串问题的报错关键词分别是 ';' expected 和 cannot find symbol。" />
+
+## 每日一虫 L3：三虫同体
+
+终极挑战：下面这段自我介绍程序同时藏着**三只虫**（都在今天的地形图里）。用三步找虫法：先逐个定位，说出每只的病根，再动手修。改完先在本地 IDE 运行验证，再提交批改。
+
+<CodeExercise
+  id="bug-hunt-fix-code"
+  title="Debug：三虫同体的自我介绍"
+  prompt="修复下面程序的全部三处错误，使其编译通过并输出：我叫小明，今年 15 岁。要求：先在纸上（或心里）说出三只虫各自的病根，再动手改。"
+  starter={`public class Intro {
+    public static void main(String[] args) {
+        System.out.println(我叫小明，今年 15 岁)
+    }
+`}
+  rubric={['字符串内容用双引号包裹', 'println 语句以分号结尾', '花括号成对：Intro 类正确闭合', '程序输出完整的一句话：我叫小明，今年 15 岁']}
+  hints={['没有引号的中文会被编译器当成代码来解析——cannot find symbol 就是这么来的', '完整的语句要有句号：分号 ;', '数一数程序里有几个 {，每个都要有对应的 } 收尾']}
+/>
+
+## 说病根：让导师检验你的 L2
+
+找虫过程中最没把握的一个报错是哪个？把它发给苏格拉底导师——注意，它只会用提问引导你说出病根，不会直接告诉你答案。你自己的病根表述，就是这一关的作业。
+
+<LLMPractice id="bug-hunt-socratic" preset="socratic-tutor" instructions={'任务：把你刚才最没把握的一个报错（原文）发给导师，让它引导你说出病根。要求：1) 先用自己的话说一遍你以为的病根；2) 让导师追问检验；3) 直到它确认你说对了为止。这一步做完，今天的虫才算真正抓完。'} starterMessage="我刚遇到一个报错，想练习「说病根」。我会把报错原文发给你，请用提问引导我自己说出病根，不要直接讲答案。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料，凭记忆完成：1) 默写三步找虫法；2) 默写四大报错地形（报错关键词 → 病根）；3) 口头给同学讲「为什么报错只看第一行」。讲不出的部分回去重读——明天开始，每课一虫。</Callout>

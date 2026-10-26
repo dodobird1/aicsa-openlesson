@@ -1,0 +1,96 @@
+---
+id: project-p3-canteen
+title: 项目 P3：食堂校园卡系统
+description: 第三个项目，第一次多类协作——Account 管钱、CanteenApp 指挥调度。寒假可选开放变体：自选主题，规格评审制。
+order: 30
+group: 项目 · Vibe Coding 实战
+minutes: 45
+---
+
+## P3 是什么
+
+学校食堂的校园卡系统：每张卡有卡号和余额，能充值、消费（余额不足拒绝）、查余额。规模感：**一个系统、两类角色、十几个同构方法**——重复度极高、难度受控，正是 Unit 3 类设计的最佳练兵场。
+
+和 P2 的关键区别：**多类协作**。P2 是一个大类包打天下；P3 里 `Account` 类管好自己的钱，`CanteenApp` 的 main 负责开卡、指挥交易——**每个类只操心自己的事**，这正是封装思想在项目层面的样子。
+
+## 模块分解与规格书
+
+```
+CanteenApp（指挥调度）
+├── main：开 3 张卡 → 模拟一天的消费 → 打印对账单
+│
+Account（一张卡的自我管理）
+├── 字段：id（卡号）、balance（余额）
+├── deposit(amount)：充值，无脑加
+├── spend(amount)：余额足够才扣款，返回成功与否
+└── getId / getBalance：只读通道
+```
+
+`Account.spend` 的规格书（照 P1 模板写）：
+
+- **输入**：`amount`（double，本次消费金额）；
+- **输出**：余额足够返回 `true` 并扣款，不足返回 `false` 且余额纹丝不动；
+- **边界**：amount 恰好等于余额时应该成功（大于等于）；负数金额不在本题范围。
+
+## 动手：核心账户 + 一天的流水
+
+左边编辑器是半成品：`Account` 类的壳和 main 的剧本都在，三个 TODO 完成后跑通「一天流水」。老规矩：**你打每一行，AI 只审查**。
+
+<VibeCoding
+  id="p3-vibe"
+  title="P3 · 校园卡：Account 核心"
+  task="完成 Account 类的三个方法（deposit 无条件加款；spend 余额足够才扣款返回 true、不足返回 false 不改余额；两个 getter 已给），再完成 main 里一天的流水：a1 消费 12（午餐）；a2 先充值 30 再消费 25；a3 消费 5 两次（第一次恰好花光——5.0 >= 5.0 按边界规则应成功；第二次应失败）。最后打印三张卡对账单。运行验证：a1 剩 8.0、a2 剩 55.0、a3 剩 0.0。"
+  starter={`public class CanteenApp {
+    public static void main(String[] args) {
+        Account a1 = new Account("A001", 20.0);
+        Account a2 = new Account("A002", 50.0);
+        Account a3 = new Account("A003", 5.0);
+
+        // TODO 1: a1 消费 12；a2 充值 30 后消费 25；a3 消费 5 两次
+
+        System.out.println(a1.getId() + " 余额 " + a1.getBalance());
+        System.out.println(a2.getId() + " 余额 " + a2.getBalance());
+        System.out.println(a3.getId() + " 余额 " + a3.getBalance());
+    }
+}
+
+class Account {
+    private String id;
+    private double balance;
+
+    public Account(String id, double startBalance) {
+        this.id = id;
+        this.balance = startBalance;
+    }
+
+    // TODO 2: deposit(double amount) —— 充值，只加不减
+
+    // TODO 3: spend(double amount) —— 余额足够（大于等于）才扣款返回 true；不足返回 false 且不改余额
+
+    public String getId() { return id; }
+    public double getBalance() { return balance; }
+}`}
+/>
+
+<Callout title="三个卡号三份重复——熟悉的痛感又来了">main 里三张卡的操作几乎是复制的。别急着解决，先记下这个痒点：当你学到数组（把卡装进一个集合）和循环（对每张卡统一处理）时，这里会被三行代码优雅地干掉。项目负责制造需求，课程负责兑现答案。</Callout>
+
+<MultipleChoice id="p3-quiz-design" question="spend 方法在余额不足时返回 false 并且不改余额——这个设计主要体现了什么？" options={[{id:'a',label:'封装与防呆：状态只能通过带安检的方法修改，非法操作被拒绝后对象状态依然有效'},{id:'b',label:'程序跑得更快'},{id:'c',label:'省内存'},{id:'d',label:'Java 语法强制要求这样写'}]} answer={['a']} explanation="这正是构造器与封装课那条防线的实战：balance 是 private 的，外界唯一的花钱通道就是 spend——安检设在通道里，对象状态就永远可信。返回 true/false 是把「成功与否」的知情权交还给调用方（main 可以决定提示「余额不足」）。" />
+
+<Disclosure title="寒假开放变体：自选主题 + 规格评审">
+
+P3 通关后（寒假可选）：把「校园卡」换成你自己的主题——宠物店会员卡、图书馆借书证、游戏背包货币，任选。流程升级为**规格评审制**：
+
+1. 先写一页规格：你的系统有哪些类、每个类哪些字段与方法、三条边界规则；
+2. 把规格发给 AI 教练评审一轮（让它只挑规格的漏洞，不动手写码）；
+3. 家长或老师签字（他们看不懂代码没关系，看得懂「要做什么」）；
+4. 按指挥五步实现，验收同 P3。
+
+</Disclosure>
+
+## 验收与抽查
+
+1. **跑通**：对账单三个数字与预期一致（8.0 / 55.0 / 0.0）；
+2. **边界抽查**：口头回答——a3 第一次消费为什么成功（5.0 >= 5.0，恰好等于按边界规则放行）？第二次为什么失败、失败后 balance 变了吗？spend 的判断为什么是大于等于而不是大于？
+3. **抽查讲解**：随机指 spend 或 deposit 的一行，讲清它读写的是谁的字段、为什么这个方法没有 static。
+
+<Callout title="放下 AI · 项目复盘">五行复盘记进错题本：1) Account 和 CanteenApp 各自的职责一句话；2) 多类协作比单类难在哪；3) 我在哪一步最想抄答案、靠什么忍住了；4) spend 的两个 return 出口分别对应什么场景；5) 开放变体我想做什么主题。Unit 3 只剩两课：FRQ Q2 首演和检测卷——课程过半，冲刺开始。</Callout>

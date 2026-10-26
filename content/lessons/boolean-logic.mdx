@@ -1,0 +1,138 @@
+---
+id: boolean-logic
+title: 布尔表达式：程序的岔路口
+description: 比较产生真假，逻辑运算符组合真假，短路规则救场——Unit 2 的地基，if 和循环都站在它上面。
+order: 16
+group: Unit 2 · Selection and Iteration
+minutes: 30
+---
+
+## 欢迎来到 Unit 2
+
+从这课起进入考试第二大板块（权重 25–35%）：**选择与迭代**。而这一切的地基是一种你早就见过、但还没正式认识的类型——boolean。
+
+## 布尔：只有两个值的世界
+
+`boolean` 类型只有两个值：`true` 和 `false`。它不是数字也不是字符串——不加引号、不大写（`True` 是错的，Python 才那么写）。
+
+关键认知：**每个比较表达式本身就是一个值**，类型是 boolean：
+
+```java
+int score = 85;
+boolean passed = score >= 60;      // passed 的值就是 true
+System.out.println(7 > 10);        // 直接打印 false
+```
+
+`score >= 60` 不是「一个问题」，它是一个**答案**——可以存进变量、可以打印、可以传给方法。这个认知是本课的门槛。
+
+## 六个关系运算符
+
+| 运算符 | 含义 | 例（x = 5） | 结果 |
+| --- | --- | --- | --- |
+| `==` | 相等 | `x == 5` | `true` |
+| `!=` | 不等 | `x != 5` | `false` |
+| `<` `>` | 小于 / 大于 | `x > 3` | `true` |
+| `<=` `>=` | 小于等于 / 大于等于 | `x <= 5` | `true` |
+
+<Callout title="== 的两个陷阱">一、`=` 是赋值，`==` 是比较——`if (x = 5)` 在 Java 里直接编译错误，这是好事。二、比较 String 内容用 equals 不用 ==（第 13 课的老朋友，Unit 2 还会反复遇到）。</Callout>
+
+## 逻辑三剑客：&&、||、!
+
+真实条件常常是复合的：「分数及格**且**出勤过半」。三个逻辑运算符负责组合布尔值：
+
+| 运算符 | 读作 | 结果为 true 的条件 |
+| --- | --- | --- |
+| `a && b` | 且（AND） | 两个都是 true |
+| `a \|\| b` | 或（OR） | 至少一个 true |
+| `!a` | 非（NOT） | a 是 false |
+
+经典应用——判断「score 在 0 到 100 之间」：
+
+```java
+boolean valid = score >= 0 && score <= 100;   // 数学课的 0 ≤ score ≤ 100 不能照抄！
+```
+
+数学的连写 `0 <= score <= 100` 在 Java 里是编译错误——必须拆成两个比较用 `&&` 连接。这是从数学迁移到编程的第一个坑。
+
+## 短路求值：聪明的 && 和 ||
+
+`&&` 和 `||` 从左到右算，**一旦结果已定就不再看右边**——这叫短路（short-circuit）：
+
+- `false && 任何` → 左边是 false，直接 false，右边不执行；
+- `true || 任何` → 左边是 true，直接 true，右边不执行。
+
+短路不是偷懒，是护身符：
+
+```java
+if (count != 0 && total / count > 10) { ... }
+// count 为 0 时：左边 false，右边的除法根本不会执行——避免了除以零
+```
+
+## De Morgan 律：NOT 的分发法则
+
+感叹号想进括号，要翻转里面的运算符——**且变或，或变且，比较符反向**：
+
+```java
+!(a && b)   等价于   !a || !b
+!(a || b)   等价于   !a && !b
+```
+
+AP 常考的翻译题：「不是（及格且出勤够）」= 「不及格**或**出勤不够」。记口诀：**非进括号，且或互换**。
+
+## 每日一虫 🐛：想「都」却写成了「或」
+
+看这段代码：
+
+```java
+// 想判断两个成绩 pass1、pass2 是否都及格（都 ≥ 60）
+if (pass1 >= 60 || pass2 >= 60) {
+    System.out.println("两人都及格");
+}
+```
+
+<MultipleChoice id="bool-bug" question="这段代码的虫是什么？" options={[{id:'a',label:'用了 ||（或）：只要一个人及格就打印「两人都及格」。想表达「都」应该用 &&'},{id:'b',label:'比较应该用 = 而不是 >= 60'},{id:'c',label:'应该把两个条件用 ! 连接'},{id:'d',label:'60 应该写成 60.0'}]} answer={['a']} explanation="「都及格」是 AND 语义：两个条件必须同时成立，用 &&。|| 是 OR 语义：一个成立就通过——题目会错放任何一个及格者。病根是「自然语言的『或』和逻辑运算符的『或』不对齐」：日常说「超过 60 或满分都算过」这类模糊表达，落到代码里必须先想清楚到底是且还是或。" />
+
+## 练习场
+
+先补全合法成绩的判断：
+
+<FillBlank
+  id="bool-fill"
+  question="补全「成绩在 0 到 100 之间（含两端）」的判断。"
+  answers={['>=', '&&']}
+  explanation="数学的连写 0 ≤ score ≤ 100 在 Java 里必须拆开：score ≥ 0 且 score ≤ 100。注意两个边界都含，所以都是等号版本；连接词是 &&（同时成立）。"
+>
+
+```java
+int score = 85;
+boolean valid = score ??? 0 ??? score <= 100;
+```
+
+</FillBlank>
+
+<MultipleChoice id="bool-short-circuit" question={'以下代码输出什么？\n\nint n = 0;\nboolean result = (n != 0) && (100 / n > 5);\nSystem.out.println(result);'} options={[{id:'a',label:'false，右边因为短路没有执行，不会除以零'},{id:'b',label:'false，除以零后程序崩溃'},{id:'c',label:'true'},{id:'d',label:'编译错误'}]} answer={['a']} explanation="n != 0 是 false，&& 短路——右边 100 / n 根本不执行，避免了除以零崩溃。这就是「短路是护身符」：把安全检查写在左边，危险操作写在右边。" />
+
+<MultipleChoice id="bool-demorgan" question={'!(age >= 18 && hasTicket) 与下面哪个表达式等价？'} options={[{id:'a',label:'age < 18 || !hasTicket'},{id:'b',label:'age < 18 && !hasTicket'},{id:'c',label:'age <= 18 || !hasTicket'},{id:'d',label:'!(age >= 18) && !hasTicket'}]} answer={['a']} explanation="De Morgan：NOT 进括号时，&& 换成 ||，每项取反。「大于等于 18」的反面是「小于 18」（不含等号！）。口诀：非进括号，且或互换，比较反向。" />
+
+## 动手：返回 boolean 的方法
+
+<CodeExercise
+  id="bool-iseven-code"
+  title="isEven 判偶器"
+  prompt="补全方法 isEven：接受一个 int，如果是偶数返回 true，否则返回 false。要求：不使用 if 语句——直接返回一个布尔表达式（本课的核心认知：比较表达式本身就是值）。写完在本地验证：isEven(4) 为 true，isEven(7) 为 false，isEven(0) 为 true，isEven(-3) 为 false。"
+  starter={`public class EvenTool {
+
+    // 判断 n 是否为偶数
+    public static boolean isEven(int n) {
+        // 不用 if：直接 return 一个布尔表达式
+
+        return false;
+    }
+}`}
+  rubric={['返回的是 n 与 2 取模的判断表达式（如 n % 2 == 0）', '没有使用 if 语句', '负数也正确（-3 % 2 是 -1，不等于 0，正确判为非偶数）', '没有修改方法签名']}
+  hints={['偶数的定义：除以 2 余数为 0', 'n % 2 == 0 本身就是一个 boolean 值', '现在只差一步：把这个表达式放进 return——一行就完成']}
+/>
+
+<LLMPractice id="bool-quiz" preset="quiz-master" instructions={'任务：告诉出题官「我刚学完布尔表达式和逻辑运算符，重点想练 && 与 || 的区别、短路、De Morgan」，让它出 3 道题。规则：每道题先在纸上写出左边和右边各自的值再判断整体；答错的题记进错题本；全对后让它出两道混合题（布尔 + 取模）。'} starterMessage="我刚学完布尔表达式和逻辑运算符，重点想练 && 与 || 的区别、短路、De Morgan。请出一道题考我。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 默写六个关系运算符和三个逻辑运算符的真值规则表；2) 口头解释「为什么 `0 <= score <= 100` 在 Java 里不合法、怎么改」；3) 默写 De Morgan 两条律；4) 白纸手写 isEven 方法（一行版本）。四样全对，Unit 2 第一课毕业——下一课，程序第一次真正学会「岔路」：if 与 else。</Callout>

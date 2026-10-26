@@ -1,0 +1,144 @@
+---
+id: strings-deep-dive
+title: String 深入：会说话的字符串
+description: substring 含头不含尾、indexOf 返回 −1、equals 不是 ==——String 方法是 FRQ 第一题的常客，也是陷阱高发区。
+order: 13
+group: Unit 1 · Using Objects and Methods
+minutes: 35
+---
+
+## 字符串是一座字符的公寓
+
+`String` 是一串字符（character）组成的对象。每个字符有自己的门牌号——**索引**（index），从 0 开始：
+
+```text
+字符串：  A  P  C  S  A
+索引：    0  1  2  3  4
+```
+
+「APCSA」长度 5，索引最大 4——**length 是 5，最后下标是 4**，这个差 1 会陪伴你整个 AP 生涯。
+
+## Quick Reference 上的 String 方法全表
+
+考场上 Quick Reference 提供的 String 方法就这些，全要熟：
+
+| 方法 | 作用 | 用 APCS A 举例 |
+| --- | --- | --- |
+| `s.length()` | 长度 | `"APCSA".length()` → `5` |
+| `s.substring(from, to)` | 取索引 from 到 to−1 的子串 | `"APCSA".substring(1, 3)` → `PC` |
+| `s.substring(from)` | 取从 from 到末尾 | `"APCSA".substring(3)` → `SA` |
+| `s.indexOf(str)` | 找 str 首次出现的索引，找不到返回 −1 | `"APCSA".indexOf("CS")` → `2` |
+| `s.equals(other)` | 内容是否相同 | `"AP".equals("AP")` → `true` |
+| `s.compareTo(other)` | 按字典序比较 | 见下文 |
+
+## 最重要的规则：substring 含头不含尾
+
+`substring(1, 3)` 取索引 1 和 2，**不取 3**——和 for 循环 `i = 1; i < 3` 的范围一模一样。两个知识点在这里会师：
+
+```java
+String s = "APCSA";
+System.out.println(s.substring(1, 3));   // PC（索引 1、2）
+System.out.println(s.substring(2));      // CSA（索引 2 到末尾）
+System.out.println(s.substring(2, 2));   // 空串 ""（合法！头尾相等就是空）
+```
+
+`compareTo` 记结论就够：**调用者排前面返回负数，相同返回 0，排后面返回正数**。考试只问「结果是负/零/正」，不问具体数值。
+
+## equals 不是 ==
+
+String 是对象，`==` 比较的是「是不是同一个对象」（住址），`equals` 比较的是「内容是否相同」（长相）。**比较字符串内容，永远用 equals**：
+
+```java
+String a = new String("AP");
+String b = new String("AP");
+System.out.println(a == b);        // false！两个不同对象
+System.out.println(a.equals(b));   // true —— 内容相同
+```
+
+这是 AP CSA 的经典考点：两个内容相同、分别 new 出来的 String，用 `==` 比较是 false。
+
+## 遍历字符串：substring(i, i+1) 取字符
+
+考场 Quick Reference 上**没有** charAt 方法——所以逐字符处理字符串的标准写法，是用 substring 每次取一个字符：
+
+```java
+String word = "APCSA";
+for (int i = 0; i < word.length(); i++) {
+    String letter = word.substring(i, i + 1);   // 取索引 i 的那一个字符
+    System.out.println(letter);
+}
+```
+
+条件 `i < word.length()` 保证 i+1 最多等于 length——正好卡在合法边界内。这个模式请练到盲打。
+
+## 每日一虫 🐛：越界的 substring
+
+看这段代码：
+
+```java
+String s = "APCSA";
+for (int i = 0; i <= s.length(); i++) {
+    System.out.println(s.substring(i, i + 1));
+}
+```
+
+<MultipleChoice id="str-bug" question="这段逐字符打印的代码，虫是什么？" options={[{id:'a',label:'循环条件用了小于等于，最后一轮 i = 5，substring(5, 6) 越界抛异常'},{id:'b',label:'substring 的第二个参数应该是 i 而不是 i + 1'},{id:'c',label:'length 应该写成 length()'},{id:'d',label:'打印应该用 print 而不是 println'}]} answer={['a']} explanation="s.length() 是 5，合法索引是 0 到 4。条件写成 i 小于等于 5（多了等号）让循环多跑一轮，substring(5, 6) 试图取不存在的索引——程序运行到最后一轮抛 StringIndexOutOfBoundsException。病根还是 off-by-one 家族：遍历字符串的标准条件是 i < s.length()，没有等号。" />
+
+## 练习场
+
+先把遍历骨架的两个空补上：
+
+<FillBlank
+  id="str-fill"
+  question="补全逐字符遍历字符串的骨架。"
+  answers={['0', 'length']}
+  explanation="从索引 0 开始（第一个字符）；终止条件是 i < word.length()——小于，不带等号，否则最后一轮越界。取单字符用 word.substring(i, i + 1)。"
+>
+
+```java
+String word = "banana";
+for (int i = ???; i < word.???(); i++) {
+    System.out.println(word.substring(i, i + 1));
+}
+```
+
+</FillBlank>
+
+再排一个「统计字符出现次数」的完整程序：
+
+<ParsonsProblem
+  id="str-parsons"
+  question="排出统计字母 A 在字符串中出现次数的程序。"
+  lines={['public class Counter {', '    public static void main(String[] args) {', '        String s = "BANANA";', '        int count = 0;', '        for (int i = 0; i < s.length(); i++) {', '            if (s.substring(i, i + 1).equals("A")) {', '                count++;', '            }', '        }', '        System.out.println(count);', '    }', '}']}
+  explanation="计数器模式的固定顺序：声明字符串 → 计数器清零 → 遍历（条件 i < s.length()）→ 用 equals 比较当前字符 → 命中则 count++ → 循环外打印。count 必须在循环外声明初始化，打印必须在循环结束后——只打最终总数。"
+/>
+
+<MultipleChoice id="str-substring" question={'表达式 "APCSA".substring(0, 2) 的值是什么？'} options={[{id:'a',label:'"APCS"'},{id:'b',label:'"AP"'},{id:'c',label:'"APC"'},{id:'d',label:'"PCS"'}]} answer={['b']} explanation="含头不含尾：取索引 0 和 1，到 2 之前停——A 和 P，结果是 AP。快速算法：结果长度 = to − from = 2 − 0 = 2 个字符。" />
+
+<MultipleChoice id="str-indexof" question={'表达式 "banana".indexOf("nan") 和 "banana".indexOf("x") 的值分别是多少？'} options={[{id:'a',label:'2 和 -1'},{id:'b',label:'2 和 0'},{id:'c',label:'3 和 -1'},{id:'d',label:'1 和 -1'}]} answer={['a']} explanation="indexOf 找首次出现的位置：「nan」从索引 2 开始（n-a-n 正是 2、3、4）。找不到时返回 −1 而不是 0——这是 AP 最爱考的细节之一，判断「不存在」必须和 indexOf(x) == -1 比，不能和 0 比。" />
+
+## 动手：统计元音
+
+<CodeExercise
+  id="str-vowels-code"
+  title="元音统计器"
+  prompt="补全方法 countVowels：接受一个 String，返回其中元音字母（a、e、i、o、u，不区分大小写）的个数。提示：遍历用 substring(i, i + 1) 取一个字符；大小写一起认，用字符串 aeiouAEIOU 的 indexOf 判断 letter 是否出现。这两个方法都在考场 Quick Reference 上。写完在本地验证：对字符串 AP Computer Science A 调用应返回 8。"
+  starter={`public class VowelTool {
+
+    // 返回 s 中元音字母（a e i o u，不区分大小写）的个数
+    public static int countVowels(String s) {
+        int count = 0;
+        // 用 for 循环遍历 s，逐个字符判断
+
+        return count;
+    }
+}`}
+  rubric={['用 for 循环遍历字符串，条件是 i < s.length()', '用 substring(i, i + 1) 取当前字符', '对五个元音（或用等价方式）做不区分大小写的判断并计数', '返回计数值']}
+  hints={['骨架已给出计数器 count，你只需要补循环和判断', '当前字符：String letter = s.substring(i, i + 1);', '判断元音用 Quick Reference 上的 indexOf："aeiouAEIOU".indexOf(letter) >= 0。找不到时 indexOf 返回 -1']}
+/>
+
+## 让出题官考考你
+
+<LLMPractice id="str-quiz" preset="quiz-master" instructions={'任务：告诉出题官「我刚学完 String 的六个方法和遍历，重点想练 substring 边界和 indexOf 的返回值」，让它出 3 道输出预测题。规则：先在纸上写下每个索引再作答；答错的题记进错题本；全对后让它出一道 compareTo 概念题。'} starterMessage="我刚学完 String 的六个方法和遍历，重点想练 substring 边界和 indexOf 的返回值。请出一道题考我。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 默写 String 六个方法的签名；2) 口头解释 substring(2, 5) 取哪些索引、长度是几；3) 白纸手写完整的「逐字符打印」程序（含循环条件和 substring 取字符那两行）；4) 说出 equals 和 == 的区别用一句话。四样全过，本课毕业——下一课我们正式解决 7 / 2 = 3 的历史遗留问题。</Callout>

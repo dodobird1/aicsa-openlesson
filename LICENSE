@@ -1,0 +1,23 @@
+Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+
+本仓库中由课程作者原创的课文、练习、说明和网站代码，采用知识共享 署名-非商业性使用-相同方式共享 4.0 国际许可协议授权。
+
+This original course text, exercises, documentation, and site code are licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+
+To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+中文说明：https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh
+
+转载或改编时请注明：
+
+「AI × AP Computer Science A」课程（OpenLesson），CC BY-NC-SA 4.0。
+并链接到 https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+你可以复制、改编和分享，但须署名、不得用于商业目的，并以相同许可发布改编作品。这是暂定许可。
+
+以下内容不在本许可之内，权利仍归原权利人：
+
+- College Board 的课程与考试说明、真题、评分标准、Java Quick Reference 和 Bluebook。本仓库不收录这些 PDF。
+- 课文里链接或嵌入的教材、练习站和视频，包括 CSAwesome、CodingBat、Python Tutor、廖雪峰 Java 教程、菜鸟教程、Oracle Java 教程，以及 YouTube 上的原片。
+- npm 依赖。它们各自的许可证见对应软件包。
+
+AP、Advanced Placement、College Board 和 Bluebook 是 College Board 的商标。本课程不是 College Board 的官方产品，也未获其认可或背书。

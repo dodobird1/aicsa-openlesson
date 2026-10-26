@@ -1,0 +1,138 @@
+## Text and code
+
+A page can be a little more than a page. Write in **Markdown**, add a code example, and bring in an interactive component wherever it makes sense. This is a framework preview—not part of your course.
+
+```python
+# A place for your code examples.
+def say_hello(name):
+    return f"Hello, {name}!"
+
+print(say_hello("curious mind"))
+```
+
+<Callout title="Your words. Your way.">
+  Use callouts for a helpful hint, an important idea, or a moment to pause. Code is displayed, not executed.
+</Callout>
+
+<Disclosure title="A little more detail, when you need it">
+  Put optional explanations, hints, and worked examples behind a disclosure. Students choose when to explore them.
+</Disclosure>
+
+## Formulas
+
+Use LaTeX-style notation right inside a lesson. Inline math such as $a^2 + b^2 = c^2$ fits into a sentence; display equations get a little room of their own.
+
+$$
+\frac{1}{n} \sum_{i=1}^{n} x_i = \bar{x}
+$$
+
+$$
+\begin{aligned}
+f(x) &= x^2 + 2x + 1 \\
+     &= (x + 1)^2
+\end{aligned}
+$$
+
+## Knowledge checks
+
+Give an idea a chance to stick. Questions can have one correct answer or several, with feedback and another try built in.
+
+<MultipleChoice
+  id="showcase-format"
+  question="Which file format does this framework use for lessons?"
+  options={[{id: 'mdx', label: 'MDX — Markdown with components'}, {id: 'slides', label: 'Only presentation slides'}, {id: 'pdf', label: 'Only PDF documents'}]}
+  answer={['mdx']}
+  explanation="MDX combines readable Markdown with reusable interactive components. This question demonstrates the component, not course content."
+/>
+
+<MultipleChoice
+  id="showcase-media"
+  question="Which components can an author add? Select all that apply."
+  multiple
+  options={[{id:'audio',label:'Audio with a transcript link'},{id:'quiz',label:'An interactive knowledge check'},{id:'account',label:'A required student account'}]}
+  answer={['audio','quiz']}
+  explanation="Audio and quizzes are included. This framework does not require accounts."
+/>
+
+## Guided practice
+
+Two more exercise types run entirely in the learner's browser—no AI provider, no API calls, and they keep working offline. Parsons problems scramble code lines for students to reorder; fill-in-the-blank turns any content, including code blocks, into inline inputs.
+
+<ParsonsProblem
+  id="showcase-parsons"
+  question="Arrange the lines so the program prints Hello! exactly twice."
+  lines={['for (int i = 0; i < 2; i++) {', '    System.out.println("Hello!");', '}']}
+  explanation="The loop header comes first, the print statement runs inside the loop, and the closing brace ends it."
+/>
+
+<FillBlank
+  id="showcase-fill"
+  question="Complete the declaration and the Scanner call."
+  answers={['int', 'nextInt']}
+  explanation="Declare the running total with a type, then read each number with nextInt()."
+>
+
+```java
+??? total = scanner.???();
+System.out.println(total);
+```
+
+</FillBlank>
+
+## AI practice
+
+Let students try, refine, and try again—without leaving the lesson. Developers choose the provider and model on the server.
+
+<LLMPractice id="showcase-chat" instructions="This is a practice space preview. Once a developer connects a provider, students can write prompts and continue a conversation here." starterMessage="Help me explore an idea by asking me one question at a time." preset="default" />
+
+## Code exercises
+
+Students write code right in the lesson, reveal hints one at a time, and submit for AI grading against a visible rubric. Grading behavior is controlled by a server-side preset (`code-grader` by default).
+
+<CodeExercise
+  id="showcase-code"
+  title="Fix the greeting"
+  prompt="This program should print a greeting, but it has two mistakes. Fix them so it compiles and prints Hello! The grader will check each rubric item."
+  starter={`public class Greeter {
+    public static void main(String[] args) {
+        System.out.println(Hello!)
+    }
+}`}
+  rubric={['The string Hello! is wrapped in double quotes', 'The println statement ends with a semicolon', 'The program prints Hello!']}
+  hints={['Without quotes, the compiler treats Hello! as code, not text', 'Every complete statement ends with a semicolon']}
+/>
+
+## Vibe coding
+
+An IDE-style pairing of a student-owned editor and an AI coach. The coach receives the current code as context with every question, points at lines and suggests fixes—but it never edits anything. There is no apply button: the code only changes when the student types the change.
+
+<VibeCoding
+  id="showcase-vibe"
+  title="调试这段程序"
+  task="这段程序应该打印 1 到 5 的和，但它无法编译。找出并修复所有错误——问 AI 教练问题可以，但改动要自己动手。"
+  starter={`public class Sum {
+    public static void main(String[] args) {
+        int total = 0
+        for (int i = 1; i <= 5; i++) {
+            total += i
+        }
+        System.out.println("Total: " + total)
+    }
+}`}
+/>
+
+## Rich media
+
+Add a diagram, a recording, or something worth watching. Local files live in `public/media`; external media uses HTTPS URLs.
+
+<Image src="/media/framework-diagram.svg" alt="A lesson connects written ideas, rich media, knowledge checks, and AI practice." caption="One lesson, many ways to explore. This local SVG is a sample media asset." />
+
+<Disclosure title="Available media components">
+  **Image** supports images and GIFs. **Video** supports native browser video, captions, and a transcript link. **Audio** supports native audio and a transcript link. **Embed** supports approved interactive providers. **PDF** offers a preview with an open-file fallback. **Download** links to worksheets or other attachments. See the authoring guide for syntax.
+</Disclosure>
+
+<Download src="/media/sample-transcript.txt" title="Sample transcript attachment" detail="TXT · author template" />
+
+## A framework, not a curriculum
+
+The learning path stays empty until your team adds lessons. This showcase is separate from course content, and its example questions are only here to demonstrate the building blocks.

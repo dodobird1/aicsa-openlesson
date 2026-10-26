@@ -1,0 +1,101 @@
+---
+id: files-and-datasets
+title: 文件与数据集：让程序记住数据
+description: 新增考点——File 配 Scanner 读文件、while + hasNext 模式、split 拆行，外加数据伦理。P4 项目的最后一块拼图。
+order: 41
+group: Unit 4 · Data Collections
+minutes: 30
+---
+
+## 考纲新大陆：程序之外的数据
+
+到目前为止，你的所有数据都活在程序里——程序一停，数据消失。**文件**（file）让数据在程序之外长久存在。2025 修订版考纲新增了 Topic 4.6：**用 File 和 Scanner 类读文本文件**——本课拿下它。
+
+## 读文件的标准骨架（背下来）
+
+```java
+import java.io.File;                    // File 和 IOException 在 java.io 包
+import java.io.IOException;
+import java.util.Scanner;               // Scanner 在 java.util 包
+
+public class Reader {
+    public static void main(String[] args) throws IOException {   // 处理「文件打不开」
+        File file = new File("scores.txt");        // 按路径名拿文件对象
+        Scanner in = new Scanner(file);            // 把 Scanner 接到文件上
+
+        while (in.hasNext()) {                     // 还有下一个数据吗？
+            int score = in.nextInt();              // 有就读一个
+            System.out.println(score);
+        }
+        in.close();                                // 用完关闭
+    }
+}
+```
+
+五个考点全部在这段骨架里：
+
+1. **import 两个包**：`java.io.File`、`java.io.IOException`（Scanner 是 `java.util.Scanner`）；
+2. **方法头加 `throws IOException`**：文件可能打不开，Java 强制你表态；
+3. **`while (in.hasNext())` 驱动循环**：还有数据就继续——和「次数未知的 while」天生一对；
+4. **`nextInt()` 读整数**，同理 `nextDouble()`、`next()`（读一个词）、`nextLine()`（读整行）；
+5. **`in.close()`** 收尾。
+
+<Callout title="考纲边界">键盘输入（System.in）明确不考——Scanner 只以「读文件」的身份出场。nextLine 与其他 next 方法混用、分隔符的正则特性也不考。Quick Reference 上 Scanner 全家福：Scanner(File)、nextInt、nextDouble、nextBoolean、nextLine、next、hasNext、close。</Callout>
+
+## 新增武器：split 拆行
+
+一行里挤着多个数据怎么办？`split` 按分隔符把字符串拆成**字符串数组**（Quick Reference 新成员）：
+
+```java
+String line = "88,92,79";
+String[] parts = line.split(",");     // ["88", "92", "79"]
+int first = Integer.parseInt(parts[0]);   // 需要数字？parseInt 交给你
+```
+
+读文件（一行一条记录）+ split（一行拆多段）+ parseInt（字符串转数字）——三件套是数据集处理的完整流水线。
+
+## 顺路的数据伦理（CED Topic 4.1）
+
+收集数据前问三个问题，AP 选择题也爱问：**这些数据的来源可靠吗？收集经过同意吗？分析结论公平吗？**个人数据（成绩、行踪）一旦泄露不可回收——写程序的人对数据负有责任。
+
+## 每日一虫 🐛：不看 hasNext 就伸手
+
+```java
+Scanner in = new Scanner(file);       // 文件里只有两个数：10 和 20
+int a = in.nextInt();
+int b = in.nextInt();
+int c = in.nextInt();                 // 虫在这
+```
+
+<MultipleChoice id="file-bug" question="第三行 nextInt 会发生什么？" options={[{id:'a',label:'返回 0'},{id:'b',label:'抛 NoSuchElementException 崩溃'},{id:'c',label:'返回 null'},{id:'d',label:'一直等新数据到来'}]} answer={['b']} explanation="nextInt 不会凭空造数：数据没了就抛异常。这就是 hasNext 存在的意义——伸手之前先问「还有吗」。修法就是标准骨架：while (in.hasNext()) 包住每一次读取。记住这组对比：数组越界抛 ArrayIndexOutOfBounds、列表越界抛 IndexOutOfBounds、文件读空抛 NoSuchElement——家族不同，病根相同：没先检查边界。" />
+
+## 练习场
+
+<FillBlank
+  id="file-fill"
+  question="补全读文件骨架的两个关键部位。"
+  answers={['Scanner', 'hasNext']}
+  explanation="第一空：把 Scanner 接到文件上——new Scanner(file)。第二空：循环条件 in.hasNext()——还有数据才继续读。「接到文件 + 问一句再拿」是读文件的完整礼仪。"
+>
+
+```java
+File file = new File("data.txt");
+Scanner in = new ???(file);
+while (in.???()) {
+    System.out.println(in.nextInt());
+}
+```
+
+</FillBlank>
+
+<MultipleChoice id="file-throws" question="读文件的 main 方法头为什么要写 throws IOException？" options={[{id:'a',label:'让程序跑得更快'},{id:'b',label:'Java 规定：文件操作可能失败（文件不存在、打不开），方法必须声明「我可能抛出这个异常」，否则编译不过'},{id:'c',label:'防止数组越界'},{id:'d',label:'装饰用的，可以省略'}]} answer={['b']} explanation="IOException 是「受检异常」：Java 编译器强制你处理或声明它。省略 throws 的读文件代码直接编译错误。AP 只要求会写这一行，不深究异常机制。" />
+
+<MultipleChoice id="file-split" question={'表达式 "a-b-c".split("-") 的结果是？'} options={[{id:'a',label:'字符串数组 ["a", "b", "c"]'},{id:'b',label:'把减号换成逗号后的字符串'},{id:'c',label:'数组长度 2'},{id:'d',label:'编译错误'}]} answer={['a']} explanation="split 返回 String 数组，本例三段、长度 3。想要数字还得 parseInt 逐段转换——split 只管拆、不管换类型。Quick Reference 上它紧挨着 String 一家。" />
+
+## 动手（本地）+ 让审查员把关
+
+读文件的完整流程在你的 IDE 里走一遍（页面代码框没法真的读你的本地文件）：新建 scores.txt 写三个整数，把本课骨架敲进去跑通。然后把你的代码发给审查员：
+
+<LLMPractice id="file-review" preset="code-reviewer" instructions={'任务：把你本地写的读文件程序（含 import、throws、循环、close）贴给审查员，请它按「编译 → 逻辑 → 超纲语法 → 可读性」检查，重点确认：import 是否齐全、hasNext 是否守护了每次读取、close 是否在场。它指出的问题你自己改。'} starterMessage="请审查我的读文件程序，按四类检查，指出问题但不要直接重写。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 默写读文件骨架的五个考点（两包 import、throws、while 条件、读法、close）；2) 口头说出 split 的返回类型和「拆完还想算数」的下一步；3) 说出数据伦理三问。下一课：全课程的点睛项目——用文件 + ArrayList 打造你自己的错题本系统。</Callout>

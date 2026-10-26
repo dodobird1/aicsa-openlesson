@@ -1,0 +1,66 @@
+---
+id: frq-1-methods
+title: FRQ 实战 I：Q1 与 Q2
+description: 方法与控制结构（7 分）+ 类设计（7 分）——两道最靠基本功的题。限时 22 分钟，白纸手写，评分官批改。
+order: 46
+group: 模块 C · 备考冲刺
+minutes: 40
+---
+
+## 冲刺模块的 FRQ 三连
+
+FRQ 共 4 题 90 分钟，建议每题 20 分钟、留 10 分钟机动。本课打前两题——它们合计 **14 分**，且全部建立在你已滚瓜烂熟的基本功上。
+
+## Q1：Methods and Control Structures（7 分）
+
+结构：Part A（4 分）考循环 + 条件 + 调用给定方法；Part B（3 分）考 String 方法。**真题风格示例**：
+
+> **Part A**：实现 `countLetter(String word, String letter)`——返回 letter（单字符字符串）在 word 中出现的次数（区分大小写）。例：countLetter("banana", "a") 返回 3。
+>
+> **Part B**：实现 `reverse(String word)`——返回 word 的反向字符串。例：reverse("cat") 返回 "tac"。
+
+**Part A 就是你写过的代码**（第 21 课 countLetter 原题）：
+
+```java
+public static int countLetter(String word, String letter) {
+    int count = 0;
+    for (int i = 0; i < word.length(); i++) {
+        if (word.substring(i, i + 1).equals(letter)) {
+            count++;
+        }
+    }
+    return count;
+}
+```
+
+**Part B 的倒序拼装**——从末尾往前，每格摘一个字符接到结果后面：
+
+```java
+public static String reverse(String word) {
+    String result = "";
+    for (int i = word.length() - 1; i >= 0; i--) {
+        result += word.substring(i, i + 1);
+    }
+    return result;
+}
+```
+
+两段代码涵盖 Q1 的全部套路：遍历骨架、substring 逐字符、条件命中、倒序循环、字符串累加（result +=）。**每一段都要能白纸默写**。
+
+## Q2：Class Design（7 分）
+
+第 31 课的答题五步法原样适用：圈名词→字段、圈动词→方法、全 private、构造器初始化全部、逐方法翻译。Q2 的分**最容易守**：字段与构造器约占 3 分，方法实现各占 1–2 分。
+
+## 限时实战（今天的主菜）
+
+1. **白纸 + 计时 22 分钟**：不看上文，手写 Q1 的 Part A 和 Part B；
+2. **敲入验证**：IDE 里加两行测试——countLetter("banana", "a") 应为 3、reverse("cat") 应为 "tac"；
+3. **交评分官**：
+
+<LLMPractice id="frq1-grader" preset="frq-grader" instructions={'任务：把 Q1 题面（Part A：countLetter；Part B：reverse，含示例）和你的手写答案发给评分官，请它按 rubric 逐点判定（标注 得分/未得分 + 原因，区分 algorithm 点与 non-algorithm 点），给出 7 分口径的预估分和最值得先修的一处。它评的是你写的版本。'} starterMessage="请批改我的 FRQ Q1 答案。我会先贴 Part A 和 Part B 的题面，再贴我的实现代码。" />
+
+<MultipleChoice id="frq1-quiz-a" question="Q1 Part B（reverse）的 rubric 里，「倒序循环头」最可能对应的判定点是？" options={[{id:'a',label:'循环从 word.length() 开始到 1'},{id:'b',label:'循环从 word.length() - 1 开始、到 0 结束（含 0）'},{id:'c',label:'用 while 才给分'},{id:'d',label:'必须用递归'}]} answer={['b']} explanation="倒序骨架的两个端点各占一个知识点：起点 length()-1（越界即挂）、终点含 0（漏掉首字母则反向不完整）。for 与 while 都给分——阅卷看逻辑不看风格。这也是 Errors to Ignore 的边界内：缺分号不扣，但端点错是实打实的 algorithm 级错误。" />
+
+<MultipleChoice id="frq1-quiz-b" question="考场上写 Q2 时，第一分钟应该做什么？" options={[{id:'a',label:'直接写构造器'},{id:'b',label:'圈出题面里的名词与动词，列出字段清单和方法清单'},{id:'c',label:'把 main 写好'},{id:'d',label:'先读 Q3 和 Q4'}]} answer={['b']} explanation="Q2 是翻译题：名词变 private 字段、动词变方法。动笔前 60 秒的翻译清单，能守住字段和构造器那 3 分——它们几乎不依赖后面的方法实现，是最稳的保底分。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 白纸默写 reverse（倒序循环头 + result += substring 两件套）；2) 口头复述 Q2 五步法；3) 说出 Q1/Q2 的分值结构和各自的时间预算。下一课：FRQ 后两题（Q3 + Q4）——数据的两连击。</Callout>

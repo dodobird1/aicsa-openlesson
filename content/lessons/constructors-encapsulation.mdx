@@ -1,0 +1,151 @@
+---
+id: constructors-encapsulation
+title: 构造器与封装：出生即完美
+description: 构造器重载、this 的本职工作、防呆的 setter——还有不写构造器时那些悄悄出现的默认值。
+order: 27
+group: Unit 3 · Class Creation
+minutes: 35
+---
+
+## 构造器：对象的出生证明
+
+构造器（constructor）三个识别特征：**与类同名、没有返回类型（连 void 都没有）、new 时自动执行**。它的唯一使命：让对象一出生就状态完整。
+
+```java
+public class Student {
+    private String name;
+    private int score;
+
+    public Student(String givenName, int givenScore) {
+        name = givenName;
+        score = givenScore;
+    }
+}
+```
+
+## 重载：一个类多张出生证明
+
+**方法重载**（overload）：同名方法、参数不同，编译器按你传入的参数自动挑版本。构造器也能重载——给无名学生一张默认出生证明：
+
+```java
+public Student(String givenName, int givenScore) { ... }   // 两参版
+
+public Student() {                                          // 无参版：重载
+    name = "未命名";
+    score = 0;
+}
+```
+
+`new Student("小明", 90)` 走两参版，`new Student()` 走无参版——选哪个只看参数。
+
+## this：当参数和字段撞名
+
+更地道的写法是让参数直接叫 `name`——但这样它和字段 `name` 撞名了。`this` 用来区分：**this.name 是字段，不带 this 的 name 是参数**：
+
+```java
+public Student(String name, int score) {
+    this.name = name;      // 把参数 name 装进这个对象的字段 name
+    this.score = score;
+}
+```
+
+这是 AP 真题里最常见的构造器写法，必须读得像读中文一样顺。原则：参数名和字段名相同时，赋值左侧必须带 this。
+
+## 封装：数据藏起来，门口设安检
+
+private 字段外界摸不到，那怎么读、怎么改？——开两扇**门**：
+
+```java
+public String getName() {          // getter：只读通道
+    return name;
+}
+
+public void setScore(int newScore) {   // setter：带安检的写入通道
+    if (newScore >= 0 && newScore <= 100) {
+        score = newScore;              // 合法才放行
+    } else {
+        System.out.println("分数必须在 0 到 100 之间，已拒绝修改");
+    }
+}
+```
+
+这就是**封装**（encapsulation）的完整形态：字段 private + 方法把关。`setScore(-50)` 会被当场拒绝——上一课说的「防线」，今天落地。
+
+## 不写构造器会怎样：默认值
+
+一个字段如果从未被赋值，Java 悄悄给默认值：**int 是 0、double 是 0.0、boolean 是 false、引用类型是 null**。写了构造器却漏给某个字段赋值，它也拿默认值出场——这就是今天的虫。
+
+## 每日一虫 🐛：漏初始化的字段
+
+```java
+public class Book {
+    private String title;
+    private int pages;
+
+    public Book(String t) {
+        title = t;          // 只初始化了 title
+    }
+
+    public void report() {
+        System.out.println(title + " 有 " + pages + " 页");
+    }
+}
+
+// 别处：new Book("Java 入门").report();
+```
+
+<MultipleChoice id="ctor-bug" question={'new Book("Java 入门") 后调用 report()，输出什么？'} options={[{id:'a',label:'Java 入门 有 0 页'},{id:'b',label:'Java 入门 有 null 页'},{id:'c',label:'编译错误：pages 没有初始化'},{id:'d',label:'运行时崩溃'}]} answer={['a']} explanation="局部变量不初始化编译会拦，实例字段不会——它拿类型的默认值：int 为 0、double 为 0.0、boolean 为 false、引用为 null。选 b 的同学注意：null 是引用类型的默认值（比如 String），pages 是 int，是 0。修法：构造器里把每个字段都赋值——出生即完美。" />
+
+## 练习场
+
+<FillBlank
+  id="ctor-fill"
+  question="补全 this 风格的构造器和无参版默认值。"
+  answers={['this', '0']}
+  explanation="第一空：参数与字段撞名时，赋值左侧必须带 this（this.name 是字段）。第二空：int 字段未赋值时的默认值是 0——但好习惯是无参构造器里显式写出 score = 0，让读代码的人不用背默认值规则。"
+>
+
+```java
+public Student(String name, int score) {
+    ???.name = name;
+    this.score = score;
+}
+
+public Student() {
+    name = "未命名";
+    score = ???;
+}
+```
+
+</FillBlank>
+
+<MultipleChoice id="ctor-overload" question="以下哪个说法是对的？" options={[{id:'a',label:'构造器有返回类型，写 void'},{id:'b',label:'new Student("小明") 和 new Student() 可以并存'},{id:'c',label:'一个类只能有一个构造器'},{id:'d',label:'构造器在对象被垃圾回收时执行'}]} answer={['b']} explanation="重载三要素：同名（构造器名=类名）、参数不同、共存不冲突。a 错：构造器没有返回类型，写 void 反而编译不过；c 错：重载可以有任意多个；d 错：构造器在 new 时执行，不在回收时。" />
+
+<MultipleChoice id="ctor-encap" question="为什么字段设 private、再开 setScore 这样的 setter，而不直接把 score 设成 public？" options={[{id:'a',label:'为了代码行数更多'},{id:'b',label:'为了在门口设安检：setter 里可以检查合法性（拒绝 -50 或 999），保住对象状态永远有效'},{id:'c',label:'public 字段无法编译'},{id:'d',label:'private 让程序更快'}]} answer={['b']} explanation="封装的意义是「状态永不被弄脏」：外界只能走方法进数据，方法负责把关。AP 的 Q2 评分点里，「实例变量 private」几乎是送分项——原因不是语法，而是这道防线本身。" />
+
+## 动手：带安检的学生类
+
+<CodeExercise
+  id="ctor-student-code"
+  title="Student 类（含防呆 setter）"
+  prompt="写出完整的 Student 类：private 字段 name（String）和 score（int）；this 风格的两参构造器；getName 与 getScore 两个 getter；setScore 接受新分数，仅在 0 到 100 之间（含两端）才修改，否则打印一条拒绝信息。main 里 new 一个学生，先 setScore(88) 再 setScore(150)，分别打印 getScore 验证。写完本地运行验证：第一次应变成 88，第二次应保持 88 并打印拒绝信息。"
+  starter={`public class Student {
+    // TODO 1: private 字段 name、score
+
+    // TODO 2: this 风格两参构造器
+
+    // TODO 3: getName / getScore / setScore（带 0 到 100 安检）
+
+    public static void main(String[] args) {
+        // TODO 4: new 学生，测两次 setScore，各打印 getScore
+    }
+}`}
+  rubric={['字段 private：name 为 String、score 为 int', '构造器用 this.name = name 风格初始化全部字段', 'setScore 内用条件检查 0 到 100（含两端），越界时打印提示且不修改', 'main 的两次测试行为正确：合法值生效、非法值被拒']}
+  hints={['字段：private String name; private int score; 放最上面', '构造器：public Student(String name, int score) { this.name = name; this.score = score; }', 'setScore 的安检是一个 if-else：条件写「newScore 在 0 到 100 之间（含两端）」才放行赋值，else 分支打印拒绝提示']}
+/>
+
+## 让导师引导你复盘
+
+<LLMPractice id="ctor-socratic" preset="socratic-tutor" instructions={'任务：不看笔记，向导师口头讲清三件事，让它用提问检验你是否真懂：1) 构造器的三个识别特征；2) 什么时候必须写 this；3) setter 的安检为什么不能靠使用者自觉。它只提问不讲解，直到你三件事都讲顺。'} starterMessage="我想口头复盘构造器和封装的三个要点，请用提问检验我，不要直接讲解。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 默写构造器的三个识别特征；2) 默写四类字段的默认值（int / double / boolean / 引用）；3) 白纸手写 this 风格两参构造器 + 带安检的 setScore。下一课开始，方法设计全面铺开——你写的类要开始互相配合了。</Callout>

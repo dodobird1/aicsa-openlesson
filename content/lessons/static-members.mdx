@@ -1,0 +1,114 @@
+---
+id: static-members
+title: static：全类共享的一份
+description: 实例变量每只狗一份，static 变量整个类只有一份——计数器为什么记得所有狗？Math 为什么不用 new？
+order: 29
+group: Unit 3 · Class Creation
+minutes: 30
+---
+
+## 一份 vs 每人一份
+
+上一课的虫揭示了 static 方法的边界。这课看 static 的**另一半**：static 变量。
+
+画内存图就懂了。`new Dog()` 三次之后：
+
+```text
+Dog 类（图纸区）          对象区
+┌──────────────┐        ┌────────────┐
+│ dogsBorn = 3 │   ←──  │ a: name/age│
+│  （仅此一份） │   ←──  | b: name/age|
+└──────────────┘   ←──  | c: name/age|
+                          └────────────┘
+```
+
+**实例变量**：每只狗一份（各自的 name、age）。**static 变量**：整个类只有一份，所有对象共享——它挂在图纸上，不挂在任何一只狗身上。
+
+## 经典应用：对象计数器
+
+```java
+public class Dog {
+    private String name;
+    private static int dogsBorn = 0;    // 全类一份：出生计数
+
+    public Dog(String n) {
+        name = n;
+        dogsBorn++;                     // 每造一只，共享计数 +1
+    }
+
+    public static int getDogsBorn() {
+        return dogsBorn;                // static 方法读 static 变量：没问题
+    }
+}
+```
+
+new 三只狗之后，`Dog.getDogsBorn()` 是 **3**——不管你通过哪只狗去问（其实按惯例用类名问：`Dog.getDogsBorn()`）。
+
+## static 方法：不需要对象的服务
+
+你已经用了一个月的 static 方法：`Math.sqrt(25)`、`Math.random()`——**从没 new 过 Math**。因为它们不依赖任何对象的状态，答案对谁都一样，挂在整个类上即可。
+
+这就解释了上一课的虫：static 方法运行时**没有「当前对象」**，所以摸不到实例变量——实例变量得先有对象才有归属。
+
+## 判断口诀
+
+> **要看对象状态（字段）的，用实例成员；跟具体对象无关的，用 static。**
+
+| 场景 | 用什么 | 例 |
+| --- | --- | --- |
+| 读写字段 | 实例方法 | `getAge`、`birthday` |
+| 全类统计、共享配置 | static 变量 | `dogsBorn` |
+| 纯计算、工具函数 | static 方法 | `Math.sqrt`、`isEven` |
+
+## 每日一虫 🐛：「我以为每只狗一份」
+
+```java
+public class Dog {
+    private String name;
+    private static int dogsBorn = 0;
+
+    public Dog(String n) {
+        name = n;
+        dogsBorn++;
+    }
+
+    public int myNumber() {
+        return dogsBorn;      // 想给每只狗发一个「出生编号」
+    }
+}
+```
+
+<MultipleChoice id="st-bug" question="new 三只狗后，第一只狗调用 myNumber() 返回几？为什么？" options={[{id:'a',label:'1，每只狗记自己的编号'},{id:'b',label:'3'},{id:'c',label:'0'},{id:'d',label:'编译错误'}]} answer={['b']} explanation="myNumber 想要的是「我的编号」（每只狗一份——实例变量才对），但 dogsBorn 是 static：所有狗读的是同一个格子。第三只出生时格子变成 3，谁都读到 3。修法：加一个实例变量 private int number，构造器里 number = dogsBorn（先记再 ++，或按顺序设计）。这是 static 误用的标准症状：本想每人一份，结果全队共享。" />
+
+## 练习场
+
+<FillBlank
+  id="st-fill"
+  question="补全对象计数器的两个关键部位。"
+  answers={['static', '+']}
+  explanation="第一空：出生计数要全类共享一份——static int。第二空：每 new 一只（构造器跑一次），计数加一，写成 created = created + 1。created++ 和 created += 1 是同一件事的简写，这空只留加号。注意 created 的声明和初始化（= 0）只发生一次，发生在类加载时，不是每次构造都清零。"
+>
+
+```java
+public class Plane {
+    private String model;
+    private ??? int created = 0;
+
+    public Plane(String m) {
+        model = m;
+        created = created ??? 1;
+    }
+}
+```
+
+</FillBlank>
+
+<MultipleChoice id="st-access" question="以下哪一行会编译错误？" options={[{id:'a',label:'在实例方法里读写 static 变量'},{id:'b',label:'在 static 方法里直接读实例变量'},{id:'c',label:'在 static 方法里调用另一个 static 方法'},{id:'d',label:'在实例方法里调用 static 方法'}]} answer={['b']} explanation="方向性规则：实例成员「看得到」static（对象知道自己的类），static「看不到」实例（类不知道现在有哪些对象）。所以 b 编译不过，其余三个都合法——上一课的虫正是 b。" />
+
+<MultipleChoice id="st-when" question="给 Tool 类加一个方法 isEven(int n) 判断偶数，声明成什么最合适？" options={[{id:'a',label:'public static boolean isEven(int n)'},{id:'b',label:'实例方法，必须先 new Tool'},{id:'c',label:'private 且必须每对象一份'},{id:'d',label:'void 方法'}]} answer={['a']} explanation="判断 n 是不是偶数，跟任何 Tool 对象都没关系——答案是纯计算。static 让调用直接写 Tool.isEven(4)，不必 new（Math.sqrt 同理）。注意返回 boolean 而不是 void：它在回答问题。" />
+
+## 让出题官考考你
+
+<LLMPractice id="st-quiz" preset="quiz-master" instructions={'任务：告诉出题官「我刚学完 static 变量与 static 方法，重点想练共享与访问规则」，让它出 3 道题。规则：涉及计数器的题先画内存图（类区一份 + 对象区各份）再作答；答错的题记进错题本；全对后让它出一道 static 与实例混用的加难题。'} starterMessage="我刚学完 static 变量与 static 方法，重点想练共享与访问规则。请出一道题考我。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 画内存图：三只 Dog 与 static dogsBorn 各在哪个区、各几份；2) 口头说出 static 方法摸不到实例变量的原因；3) 默写判断口诀并举一对实例。下一课是项目 P3：多类协作——Account 管钱、main 指挥；紧随其后的就是 Unit 3 高潮：FRQ Q2 首演。</Callout>

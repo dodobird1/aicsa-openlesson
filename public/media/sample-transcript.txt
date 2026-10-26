@@ -1,0 +1,9 @@
+Transcript template
+
+Title: [Media title]
+Speaker: [Name, if applicable]
+
+[00:00] Write the spoken words here.
+[00:10] Describe important visual or non-speech information when necessary.
+
+Replace this attachment with your own accessible transcript.

@@ -1,0 +1,120 @@
+---
+id: project-p4-errornotebook
+title: 项目 P4：个人错题本系统
+description: 全课程的点睛项目——用 File 读题库、ArrayList 存错题、按错因过滤、给你间隔复习建议。做出来的，就是你冲刺期天天用的复习工具。
+order: 42
+group: 项目 · Vibe Coding 实战
+minutes: 45
+---
+
+## 为什么要做它
+
+28 周以来你记了一本错题，靠手翻、靠记忆重做。这学期学的**文件读取（4.6 新考点）+ ArrayList + 类设计**，恰好能把它变成一个程序——**学以致用的最短闭环**：今天写的代码，明天复习你就在用。
+
+## 系统设计
+
+```
+ErrorNotebook（指挥调度）
+├── main：读入题库文件 → 展示今日应复习的题 → 模拟一轮复习
+│
+Question（一道错题的自我管理）
+├── 字段：title（题目）、topic（错因分类）、wrongCount（答错次数）
+├── 构造器 + getter
+└── needsReview(today)：wrongCount 越大越优先——本课简化为「全部待复习」
+```
+
+**题库文件**（bank.txt）每行一道题，格式：`题目,错因`——split 流水线的实战现场：
+
+```text
+substring 边界,概念混淆
+while 死循环,循环边界
+remove 位移,遍历修改
+```
+
+## readBank：本项目的灵魂方法
+
+把文件读成 `ArrayList<Question>`——**这段是考纲代码**（Quick Reference 上的 File + Scanner + split 全员出场）：
+
+```java
+public static ArrayList<Question> readBank(String fileName) throws IOException {
+    ArrayList<Question> bank = new ArrayList<Question>();
+    File file = new File(fileName);
+    Scanner in = new Scanner(file);
+    while (in.hasNext()) {
+        String line = in.nextLine();
+        String[] parts = line.split(",");
+        bank.add(new Question(parts[0], parts[1]));
+    }
+    in.close();
+    return bank;
+}
+```
+
+<Callout title="P4 特有铁律">这段代码可以让 AI 教练帮你审查、讲解，但**审查通过后必须手抄一遍进笔记**——它是考试范围内的代码（4.6 直考），不享受「项目代码可以 AI 辅助」的待遇。手写读文件骨架，本来就是你的必备技能。</Callout>
+
+## 动手：核心三件套
+
+左边的半成品包含 Question 类和 main 的剧本。任务：完成 TODO（split 拆行、装进列表、打印全部错题），然后**在本地**创建 bank.txt 跑通真实文件读取（页面编辑器读不到你的本地文件，核心逻辑先在这里写对，再搬回 IDE）。
+
+<VibeCoding
+  id="p4-vibe"
+  title="P4 · 错题本：题库装载"
+  task="补全 readBank：用 while + hasNext 逐行读文件，split 拆出题目与错因，new Question 装进 ArrayList，close 收尾返回。main 的 TODO：统计每种错因各有多少题（遍历 + equals 计数——第 21 课的模板直接迁移）。本地验证：三行题库应打印 3 道题和错因统计。"
+  starter={`import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
+
+public class ErrorNotebook {
+
+    public static ArrayList<Question> readBank(String fileName) throws IOException {
+        ArrayList<Question> bank = new ArrayList<Question>();
+        File file = new File(fileName);
+        Scanner in = new Scanner(file);
+        while (in.hasNext()) {
+            String line = in.nextLine();
+            // TODO 1: split 拆行 → new Question → bank.add
+
+        }
+        in.close();
+        return bank;
+    }
+
+    public static void main(String[] args) throws IOException {
+        ArrayList<Question> bank = readBank("bank.txt");
+        // TODO 2: 打印每道题；统计并打印每种错因的题数
+
+    }
+}
+
+class Question {
+    private String title;
+    private String topic;
+
+    public Question(String title, String topic) {
+        this.title = title;
+        this.topic = topic;
+    }
+
+    public String getTitle() { return title; }
+    public String getTopic() { return topic; }
+}`}
+/>
+
+<MultipleChoice id="p4-quiz" question="readBank 里 while 的循环条件为什么是 in.hasNext() 而不是固定的次数？" options={[{id:'a',label:'文件行数事先未知'},{id:'b',label:'hasNext 比 for 快'},{id:'c',label:'for 循环不能读文件'},{id:'d',label:'Scanner 只能配 while'}]} answer={['a']} explanation="「次数未知、直到读完为止」是 while 的识别信号（第 19 课）。hasNext 守卫每次读取，防的正是「文件读空还伸手」的 NoSuchElement 异常。模板识别：这不就是五大模板里「条件统计」的文件版吗。" />
+
+<Disclosure title="升级路线（学有余力）">
+
+- **v2 按错因过滤**：main 里加参数化统计——给定错因名，只打印该类题目（countLetter 的亲戚）；
+- **v3 优先级排序**：给 Question 加 wrongCount 字段，按答错次数从高到低打印（最值思想 + 简单选择排序）；
+- **v4 真实数据**：把你这 28 周的错题本真实录入 bank.txt——从今天起用它复习。
+
+</Disclosure>
+
+## 验收与抽查
+
+1. **跑通**：本地 bank.txt 三行题 → 打印三道题 + 错因统计；
+2. **考纲代码手写**：readBank 白纸默写（import、throws、while + hasNext、split、close 一个不能少）——这是验收的硬指标；
+3. **抽查讲解**：讲清 split(",") 之后 parts[0] 和 parts[1] 各是什么、为什么 Question 构造器里用 this。
+
+<Callout title="放下 AI · 项目复盘">五行复盘记进错题本：1) readBank 用到了哪四个考纲考点；2) 文件版遍历和数组版遍历的循环条件差在哪；3) 我把哪道真实错题录进了 bank.txt；4) 下次复习我打算什么时候打开这个程序；5) 四个项目走完，我对「指挥 AI」最大的心得是什么。剩最后两课：红队日②和 Unit 4 检测，然后——冲刺。</Callout>

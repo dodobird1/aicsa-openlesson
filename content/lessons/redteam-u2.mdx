@@ -1,0 +1,105 @@
+---
+id: redteam-u2
+title: 红队日①：向虫子宣战
+description: 每日一虫的集中特训：L1 双虫热身、L2 说病根、L3 三虫修复，最后反向埋雷——你给 AI 出题。建立你的个人虫库。
+order: 24
+group: 红队 · 纠错特训
+minutes: 40
+---
+
+## 什么是红队日
+
+每课一只虫是日常操练，**红队日是集中演习**：难度拉满到 L2（说病根）和 L4（反向埋雷）。规则不变——虫不过夜，病根必说清。
+
+今天的病根三句话模板，每只虫都要说满：
+
+1. **虫型**：这只虫属于哪个家族（off-by-one？返回值丢弃？分支顺序？）；
+2. **运行时表现**：程序会崩溃、死循环、还是安静地输出错结果？具体是什么表现；
+3. **修法**：改哪一行、改成什么，为什么这样修就够了。
+
+## L1 热身：两虫连发
+
+```java
+// 意图：90 以上 A，80 以上 B，其余 C。score = 95
+if (score >= 60) {
+    grade = "C";
+} else if (score >= 90) {
+    grade = "A";
+} else if (score >= 80) {
+    grade = "B";
+}
+```
+
+<MultipleChoice id="rt2-l1-order" question="score = 95 时 grade 是什么？虫型叫什么？" options={[{id:'a',label:'A，代码正确'},{id:'b',label:'C：宽条件 score >= 60 放在最前吞掉了后面全部分支'},{id:'c',label:'B，因为 95 大于 80'},{id:'d',label:'编译错误'}]} answer={['b']} explanation="else if 链命中即止：95 >= 60 直接进第一分支得 C，后面 >= 90 和 >= 80 永远不可达。三句话病根：虫型是「分支顺序/分支不可达」；表现是安静输出错等级（不崩溃不报错）；修法是把最严的 >= 90 放最前。你说满三句了吗？" />
+
+```java
+// 意图：倒计时打印 5、4、3、2、1
+int n = 5;
+while (n >= 1) {
+    System.out.println(n);
+    n = n + 1;
+}
+```
+
+<MultipleChoice id="rt2-l1-direction" question="这段倒计时的运行表现是什么？" options={[{id:'a',label:'打印 5、6、7、8……永不停止'},{id:'b',label:'打印 5、4、3、2、1 后正常结束'},{id:'c',label:'一次都不打印'},{id:'d',label:'编译错误'}]} answer={['a']} explanation="n 从 5 出发每轮加 1，越来越大，n >= 1 永远成立——死循环，屏幕被 5、6、7……刷爆。三句话：虫型是「推进方向与条件不匹配」；表现是死循环输出递增数字；修法是 n--（朝着条件变 false 的方向走）。对照：while 课那只「方向反了只打印一个 5」的虫——方向错可以错成死循环，也可以错成提前枯竭，两种都要认得。" />
+
+## L2 关卡：对 AI 说病根
+
+下面两只虫不许选选项——把病根三句话说给埋雷者听，让它判定你过没过。
+
+第一只：
+
+```java
+// 意图：满 18 岁且持有门票才能入场。age = 20，hasTicket = false
+boolean allowed = age >= 18 || hasTicket;
+if (allowed) {
+    System.out.println("欢迎入场");
+}
+```
+
+<LLMPractice id="rt2-l2-or" preset="bug-planter" instructions={'关卡规则：把上面的代码和意图原样发给埋雷者，然后口头说满病根三句话（虫型／运行时表现／修法），请它判定你是否通过。没过就追问提示，通过后看它的标准答案对照自己的表述缺了什么。'} starterMessage="【模式 A】我发给你一段代码和它的意图，我来说病根，请你按三档判定我是否找到，先不要给答案。" />
+
+第二只：
+
+```java
+// 意图：统计字符串 s 中字母 a 出现的次数
+int count = 0;
+for (int i = 0; i < s.length(); i++) {
+    if (s.substring(i, i + 2).equals("a")) {
+        count++;
+    }
+}
+```
+
+<LLMPractice id="rt2-l2-substring" preset="bug-planter" instructions={'同上一关规则：发代码与意图，说满病根三句话，请它判定。提示：想想 substring 的两个参数分别是什么含义，以及最后一轮会发生什么。'} starterMessage="【模式 A】第二只虫来了，我发代码和意图，说病根请你判定。" />
+
+## L3 关卡：三虫修复
+
+<CodeExercise
+  id="rt2-l3-gate-code"
+  title="Debug：公园闸机（三虫）"
+  prompt="下面的闸机程序意图：营业中接待 3 位游客后关门，最后输出「接待了 3」。它藏着三只虫（都在已学的虫型分类学里），全部修复使程序输出正确结果。修完在本地运行验证。"
+  starter={`public class Gate {
+    public static void main(String[] args) {
+        boolean open = true
+        int visitors = 0;
+        while (open = false) {
+            visitors++;
+            if (visitors == 3) {
+                open = false;
+            }
+        }
+        System.out.println(接待了 + visitors);
+    }
+}`}
+  rubric={['语句以分号结尾（boolean 声明那一行）', '循环条件使用 open（或等价写法）而不是单等号赋值 open = false', '输出里的中文「接待了」是加了双引号的字符串并与 visitors 拼接', '修复后程序能接待 3 位后退出并输出：接待了 3']}
+  hints={['第一只：语法类——boolean 声明那一行少了分号', '第二只：布尔条件里出现了单等号，赋值表达式的值是刚赋进去的值', '第三只：没穿引号衣服的中文会被当成代码——字符串要加双引号']}
+/>
+
+## L4 关卡：反向埋雷（首秀）
+
+最高阶的训练：**你出虫，AI 判定**。为什么出虫比找虫更难？因为要埋一个「看起来对、错得隐蔽」的虫，你必须同时知道正确版本长什么样、错误版本会怎么表现。
+
+<LLMPractice id="rt2-l4-plant" preset="bug-planter" instructions={'关卡规则：1) 从本课出现过的虫型里挑一个（或用你错题本里的），写一段 6-12 行带一只虫的代码；2) 附上代码意图和你的设计说明（这只虫为什么有迷惑性）；3) 发给埋雷者用模式 B 判定：太明显／合适／过于隐蔽；4) 按它的建议改一版再判，直到拿到「合适」。'} starterMessage="【模式 B】我写了一段自己埋虫的代码，附上意图和设计说明，请评定这只虫的可发现性并给一条改进建议。" />
+
+<Callout title="放下 AI · 建立你的个人虫库">红队日的产出不是分数，是虫库。在错题本里新开一页「个人虫库」，把今天五只虫（两只 L1、两只 L2、L3 三虫算一只复合虫）各记一条：虫型、一句话症状、修法。以后每只新虫都入库——到模块 C 你会带着一座军火库进考场。下一课：Unit 2 大检阅。</Callout>

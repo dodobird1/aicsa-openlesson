@@ -1,0 +1,81 @@
+---
+id: redteam-u4
+title: 红队日②：互埋大赛
+description: 最后一次集中特训——U4 虫型全家福：越界、位移、行列混淆、读空文件。终极关卡升级为互埋：你给同学出虫。
+order: 43
+group: 红队 · 纠错特训
+minutes: 40
+---
+
+## 红队日 2.0：从抓虫到埋虫
+
+红队日①你给 AI 埋过虫。今天的终局版是**同学互埋**：你写的虫要骗过另一个人，还要能在他的反击里活下来。规则：
+
+1. 每人埋一只 U4 虫型（越界 / 位移 / 行列混淆 / 读空文件 / off-by-one 任选）；
+2. 互换代码，5 分钟抓虫，说出病根三句话；
+3. 全对者胜；都没抓到——埋虫者胜，但要现场讲解为什么这只虫这么隐蔽。
+
+先热身。
+
+## L1 热身：两虫连发
+
+```java
+// 意图：把 0 到 4 追加进列表（预期 size 5 后结束）
+ArrayList<Integer> list = new ArrayList<Integer>();
+for (int i = 0; i < list.size(); i++) {
+    list.add(i);
+}
+```
+
+<MultipleChoice id="rt4-l1-grow" question="这段代码的运行表现是什么？列表最终是什么？" options={[{id:'a',label:'列表最终是 [0, 1, 2, 3, 4]'},{id:'b',label:'死循环，内存被慢慢吃满'},{id:'c',label:'编译错误'},{id:'d',label:'正常结束但列表是空的'}]} answer={['d']} explanation="循环条件每轮读的是**当前** size：开始时列表空、size 为 0，第一轮判断 0 < 0 直接为假——add 一行都没跑，程序安静结束，列表保持空。选 b 的同学脑内把条件当成了固定目标。确实存在这种死循环的亲戚，但条件恰好相反：**列表初始非空**时（比如先装了一个元素再进循环），i 永远比 size 小一步、边加边比永远追不上，那才是死循环；而本题的空列表一轮都不跑。虫型是「条件读了一个自己正在改变的值」：想追加 5 个，条件就写 i < 5 或用独立计数器——别让裁判（条件）同时当选手（size）。" />
+
+```java
+// 意图：打印 2 行 3 列表格的每个元素
+int[][] g = new int[2][3];
+for (int r = 0; r < g[0].length; r++) {
+    for (int c = 0; c < g[0].length; c++) {
+        System.out.print(g[r][c]);
+    }
+}
+```
+
+<MultipleChoice id="rt4-l1-2d" question="这段代码的运行表现是？" options={[{id:'a',label:'正常打印 6 个元素'},{id:'b',label:'崩溃'},{id:'c',label:'什么都不打印'},{id:'d',label:'打印 9 个元素'}]} answer={['b']} explanation="2 行 3 列：g.length 是 2（行）、g[0].length 是 3（列）。外层管行却用了列数 3，r 走到 2 时访问不存在的第 3 行，越界崩溃。" />
+
+## L2 关卡：对 AI 说病根
+
+```java
+// 意图：删除 grades 里所有 0 分
+for (int i = 0; i < grades.size(); i++) {
+    if (grades.get(i) == 0) {
+        grades.remove(i);
+    }
+}
+```
+
+<LLMPractice id="rt4-l2" preset="bug-planter" instructions={'关卡规则：把上面的代码和意图原样发给埋雷者，口头说满病根三句话（虫型／运行时表现／修法），请它判定。提示：想想 [0, 0, 5] 这样的数据会怎样——用纸追踪每轮。'} starterMessage="【模式 A】我发给你一段代码和意图，说病根请你判定，先不要给答案。" />
+
+## L3 关卡：三虫修复
+
+<CodeExercise
+  id="rt4-l3-code"
+  title="Debug：平均分计算器（三虫）"
+  prompt="下面的程序意图：计算 {80, 90, 70} 的平均分并打印（应为 80）。它藏着三只虫（都在 U4 虫型分类学里），全部修复使程序输出正确结果。修完在本地运行验证。"
+  starter={`public class Averager {
+    public static void main(String[] args) {
+        int[] scores = {80, 90, 70}
+        int total = 0;
+        for (int i = 0; i <= scores.length; i++) {
+            total += scores[i];
+        }
+        System.out.println("平均 " + total / scores.length());
+    }
+}`}
+  rubric={['数组声明行以分号结尾', '循环条件为 i < scores.length（不带等号，否则越界）', '数组长度写作 scores.length（无括号——带括号的 length() 是 String 与 ArrayList 的写法）', '修复后输出：平均 80']}
+  hints={['第一只：语法类——数组声明那一行少了分号', '第二只：off-by-one 家族——条件里的等号让 i 冲出最后一格', '第三只：三兄弟混用——数组的长度是字段不是方法']}
+/>
+
+## L4 终局：互埋大赛
+
+<LLMPractice id="rt4-l4" preset="bug-planter" instructions={'热身：先把你设计好的互埋虫（附意图和设计说明）发给埋雷者用模式 B 判定「太明显／合适／过于隐蔽」，拿到「合适」再交给同学。比赛后把同学的虫和你的虫都记进个人虫库，注明「谁埋的、为什么有迷惑性」。'} starterMessage="【模式 B】我写了一段自己埋虫的代码，附上意图和设计说明，请评定这只虫的可发现性并给一条改进建议。" />
+
+<Callout title="放下 AI · 虫库毕业检查">打开你的个人虫库，数一数：红队日①至今入库几只？按虫型家族（语法 / off-by-one / 边界与位移 / 引用与别名 / 类型混淆 / 文件与循环）分个类。**这份虫库就是你考前的错题精选**——冲刺期每天翻三只。下一课：Unit 4 大检阅，然后进入模块 C。</Callout>

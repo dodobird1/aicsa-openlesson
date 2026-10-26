@@ -1,0 +1,12 @@
+node_modules/
+.next/
+.env*
+!.env.example
+llm.config.json
+*.tsbuildinfo
+playwright-report/
+test-results/
+.DS_Store
+
+# Local copies of College Board documents. Do not publish them.
+docs/*.pdf

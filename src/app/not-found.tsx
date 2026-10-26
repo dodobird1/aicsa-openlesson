@@ -1,0 +1,2 @@
+import Link from 'next/link';
+export default function NotFound(){return <div className="page document-page"><span className="eyebrow">A SMALL DETOUR</span><h1>This page hasn’t<br/><span className="serif-accent">been written yet.</span></h1><p className="muted">The lesson may have moved, or the link might be out of date.</p><Link href="/" className="button button-primary">Back to your learning space</Link></div>;}

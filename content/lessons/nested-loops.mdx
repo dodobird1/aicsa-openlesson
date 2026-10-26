@@ -1,0 +1,139 @@
+---
+id: nested-loops
+title: 嵌套循环：外层走行，内层走列
+description: 循环里再套循环，程序的第一次「二维」。追踪表是你的纸上演算仪，执行次数是外层乘内层。
+order: 20
+group: Unit 2 · Selection and Iteration
+minutes: 35
+---
+
+## 循环套循环
+
+打印一行三个星你会（一个 for）。打印**三行**、每行三个星呢？——「每行」本身就是一个循环，套在外面：
+
+```java
+for (int i = 1; i <= 2; i++) {          // 外层：第几行
+    for (int j = 1; j <= 3; j++) {      // 内层：这一行第几个星
+        System.out.print("* ");
+    }
+    System.out.println();               // 一行结束，换行（注意在两个循环之间）
+}
+```
+
+输出：
+
+```text
+* * *
+* * *
+```
+
+读嵌套循环的口诀：**外层走行，内层走列**。外层每走一步，内层**完整地跑一整圈**。上面的程序执行顺序是：i=1 → j 跑完 1、2、3 → 换行 → i=2 → j 再跑完 1、2、3 → 换行。
+
+注意 `println()` 的位置——它夹在两个循环**之间**（属于外层），每行结束才换行；放进内层就变成每颗星换一行。
+
+## 追踪表：纸上的演算仪
+
+嵌套循环一多，脑内模拟必然出错。**追踪表**（trace table）是 MCQ 的标准装备：外层变量一列、内层变量一列、输出一列，一行一行填：
+
+| i | j | 输出（累计） |
+| --- | --- | --- |
+| 1 | 1、2、3 | `* * *` |
+| 2 | 1、2、3 | `* * *`（换行后第二行） |
+
+考试遇到嵌套循环输出题，**先画表再答题**——比盯着代码转脑子快而且准。
+
+## 执行次数：外层 × 内层
+
+外层跑 m 次、每次带动内层跑 n 次，循环体总共执行 **m × n** 次：
+
+- 上面例子：2 × 3 = 6 颗星；
+- 两个 10 次的循环嵌套：100 次。
+
+内层条件还可以**依赖外层变量**——三角形模式：
+
+```java
+for (int i = 1; i <= 3; i++) {
+    for (int j = 1; j <= i; j++) {      // 内层次数随 i 变：第 1 行 1 颗，第 2 行 2 颗……
+        System.out.print("*");
+    }
+    System.out.println();
+}
+```
+
+输出是三角形，总次数变成 **1 + 2 + 3 = 6**（不再是我们熟悉的 3 × 3 = 9）。「依赖型嵌套」的次数要逐行累加，不能直接相乘——这是后面「效率直觉」一课的铺垫。
+
+## 每日一虫 🐛：内层用错了变量
+
+看这段想打印三角形的代码：
+
+```java
+for (int i = 1; i <= 3; i++) {
+    for (int j = 1; j <= 3; j++) {
+        System.out.print("*");
+    }
+    System.out.println();
+}
+```
+
+<MultipleChoice id="nested-bug" question="这段代码输出的是三角形还是矩形？病根是什么？" options={[{id:'a',label:'三角形，代码正确'},{id:'b',label:'矩形（3×3）：内层条件写死了 j <= 3，没有依赖外层的 i'},{id:'c',label:'只打印一行'},{id:'d',label:'死循环'}]} answer={['b']} explanation="内层条件固定为 j <= 3，每行都打 3 颗星——输出 3×3 的矩形，不是逐行递增的三角形。病根：内层边界用错变量。嵌套循环的口诀升级版：外层决定几行，内层决定每行几个——「每行几个」若该随行号变化，内层条件就必须引用外层变量（j <= i）。" />
+
+## 练习场
+
+先补全打印三角形的内层头：
+
+<FillBlank
+  id="nested-fill"
+  question="补全打印 n 行三角形（第 i 行 i 颗星）的嵌套循环头。外层填变量 n，内层填变量 i，不要填数字。"
+  answers={['n', 'i']}
+  explanation="外层 i 从 1 到 n（走行）；内层 j 从 1 到 i——依赖外层变量，第 i 行恰好打 i 颗星。两个空的差别就是本课的核心：外层用 n 定行数，内层用 i 定列数。"
+>
+
+```java
+int n = 4;
+for (int i = 1; i <= ???; i++) {
+    for (int j = 1; j <= ???; j++) {
+        System.out.print("*");
+    }
+    System.out.println();
+}
+```
+
+</FillBlank>
+
+<MultipleChoice id="nested-count" question={'以下代码中 count++ 总共执行几次？\n\nint count = 0;\nfor (int i = 1; i <= 3; i++) {\n    for (int j = 1; j <= 2; j++) {\n        count++;\n    }\n}'} options={[{id:'a',label:'3 次'},{id:'b',label:'5 次'},{id:'c',label:'6 次'},{id:'d',label:'2 次'}]} answer={['c']} explanation="外层 3 轮，每轮内层完整跑 2 次：3 × 2 = 6。固定次数的嵌套直接相乘；画追踪表验证：i=1 时 j 跑 1、2，i=2 时再跑 1、2，i=3 时再跑 1、2。" />
+
+<MultipleChoice id="nested-triangle-count" question={'以下代码输出几颗星？\n\nfor (int i = 1; i <= 4; i++) {\n    for (int j = 1; j <= i; j++) {\n        System.out.print("*");\n    }\n    System.out.println();\n}'} options={[{id:'a',label:'16 颗'},{id:'b',label:'10 颗'},{id:'c',label:'4 颗'},{id:'d',label:'12 颗'}]} answer={['b']} explanation="依赖型嵌套要逐行累加：第 1 行 1 颗、第 2 行 2 颗、第 3 行 3 颗、第 4 行 4 颗——1+2+3+4=10。不能写成 4×4=16（那是内层固定 j <= 4 的矩形）。分不清时，老老实实画追踪表。" />
+
+把星号矩形程序排出来：
+
+<ParsonsProblem
+  id="nested-parsons"
+  question="排出打印 2 行、每行 3 颗星的程序。"
+  lines={['public class Stars {', '    public static void main(String[] args) {', '        for (int i = 1; i <= 2; i++) {', '            for (int j = 1; j <= 3; j++) {', '                System.out.print("* ");', '            }', '            System.out.println();', '        }', '    }', '}']}
+  explanation="顺序要点：外层头 → 内层头 → 内层体（打印星，不换行）→ 关内层 → 换行（属于外层！）→ 关外层。println 夹在两个循环之间是「每行结束才换行」的关键——放进内层就全乱了。"
+/>
+
+## 动手：打印三角形
+
+<CodeExercise
+  id="nested-triangle-code"
+  title="星号三角形 printTriangle"
+  prompt="补全方法 printTriangle：接受 int n，打印 n 行星号三角形——第 1 行 1 颗星、第 2 行 2 颗、……、第 n 行 n 颗。每行用 println 换行。写完在本地验证：printTriangle(4) 应打印 4 行，星数依次为 1、2、3、4。"
+  starter={`public class TrianglePrinter {
+
+    // 打印 n 行星号三角形：第 i 行 i 颗星
+    public static void printTriangle(int n) {
+        // 外层控制行（1 到 n），内层控制每行星数（1 到 i）
+
+    }
+}`}
+  rubric={['外层 for 从 1 到 n 控制行', '内层 for 从 1 到 i 控制每行星数（依赖外层变量）', '星号用 print 打印、每行结束后用 println 换行', '没有修改方法签名']}
+  hints={['外层骨架：for (int i = 1; i <= n; i++) { ... }', '内层：for (int j = 1; j <= i; j++) { System.out.print("*"); }', '内层循环结束后、外层循环体内：System.out.println(); 收尾换行']}
+/>
+
+## 让导师引导你追踪一次
+
+<LLMPractice id="nested-socratic" preset="socratic-tutor" instructions={'任务：请导师给你出一段 3~5 行的嵌套循环代码，然后引导你用追踪表手动追踪输出——它只提问（「i=2 时 j 会取哪些值？」），你负责填表，直到你完整预测出输出。不许它直接给答案。'} starterMessage="请给我一段短小的嵌套循环代码，然后用提问引导我用追踪表手动追踪它的输出，不要直接告诉我答案。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 口头说出「外层走行、内层走列」和内层依赖外层时的次数算法（逐行累加，不是相乘）；2) 说出 println 应该放在哪两层循环之间、为什么；3) 白纸手写 printTriangle 完整方法（两层循环 + 换行位置）。写完对照代码块验证——下一课，把循环的力量收编成五大模板。</Callout>
+

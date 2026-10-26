@@ -1,0 +1,143 @@
+---
+id: methods-in-classes
+title: 方法设计：让类学会干活
+description: 签名、返回值、方法调用方法——类里的方法比 static 工具方法多一个秘密武器：它们能摸到对象的私有状态。
+order: 28
+group: Unit 3 · Class Creation
+minutes: 35
+---
+
+## 方法是类的动词
+
+类 = 状态（字段）+ 行为（方法）。前两课造好了字段和构造器，这课把**方法**写精。
+
+读一个方法先看**签名**（signature）四件套：
+
+```java
+public void bark() { ... }                    // 名字 bark、参数无、返回 void
+public String getName() { ... }               // 返回 String
+public void setScore(int newScore) { ... }    // 一个 int 参数
+public boolean spend(double amount) { ... }   // 参数 double、返回 boolean
+```
+
+**访问修饰符 + 返回类型 + 方法名 + 参数列表**——签名是方法的身份证，AP 的题干经常只给签名让你补实现。
+
+## 实例方法的超能力：直接摸到字段
+
+Math.sqrt 这样的 static 方法是「公共工具」，谁调用都一样。而**实例方法**（不带 static）自带超能力：**能直接读写调用它的那个对象的字段**：
+
+```java
+public class Dog {
+    private String name;
+    private int age;
+
+    public void birthday() {
+        age = age + 1;                    // 直接摸到本对象的 age——不用参数传进来
+        System.out.println(name + " 过生日，现在 " + age + " 岁");
+    }
+}
+```
+
+`d.birthday()` 时，方法里的 `age` 指的就是 **d 那只狗的 age**。这就是实例方法和 static 函数的本质区别：**它服务于一个具体的对象**。
+
+## 方法调用方法
+
+类内部，方法可以直接喊另一个方法帮忙（都服务于同一个对象）：
+
+```java
+public void birthday() {
+    age = age + 1;
+    celebrate();          // 直接叫同类里的另一个方法
+}
+
+public void celebrate() {
+    System.out.println(name + " 开心得叫了一声！");
+}
+```
+
+真实项目里方法越写越短、互相配合——每个方法只干一件小事（P3 项目你会大量用到）。
+
+## void 与返回值的分工
+
+- **改状态、打印** → `void`（干完不交货）；
+- **算出一个答案** → 带返回类型，方法体里必有 `return`（干完必交货）。
+
+一句口诀：**改东西用 void，问东西必有 return**。setter 用 void、getter 必返回——写错方向，编译器立刻找你。
+
+<Callout title="考纲边界">每个类都是 Object 的子类。Object 自带 toString，Quick Reference 上列着它。把任意对象用 + 接到字符串后面时，Java 会调用这个 toString。考纲不要求你写 extends，也不要求重写 toString 或 equals。练习里写一个自己的汇报方法（如 report()）即可。</Callout>
+
+## 每日一虫 🐛：static 手伸进了实例口袋
+
+```java
+public class Dog {
+    private String name;
+
+    public static void shout() {
+        System.out.println(name + " 汪汪汪！");   // 虫在这
+    }
+}
+```
+
+<MultipleChoice id="mth-bug" question="shout 方法的问题是什么？" options={[{id:'a',label:'println 写法错误'},{id:'b',label:'static 方法不能直接访问实例变量 name'},{id:'c',label:'方法名应该大写'},{id:'d',label:'name 应该改成 public'}]} answer={['b']} explanation="实例变量 name 是「每只狗一份」的，而 static 方法是「整个类一份」的——它被调用时可能世界上还没有任何狗，name 无从谈起。编译错误信息是 non-static variable name cannot be referenced from a static context。修法二选一：去掉 static（变成实例方法 d.shout()），或把方法改成带参数的版本把名字传进来。这条边界下一课正式展开。" />
+
+## 练习场
+
+<FillBlank
+  id="mth-fill"
+  question="按注释补全方法签名的两个关键部位。"
+  answers={['void', 'boolean']}
+  explanation="第一空：deposit 只改余额不交货——返回类型 void。第二空：spend 要回答「扣款成功了吗」——返回 boolean（余额够 true、不够 false）。口诀：改东西用 void，问东西必有 return。"
+>
+
+```java
+public class Account {
+    private double balance;
+
+    // 存钱：只改余额，不返回
+    public ??? deposit(double amount) {
+        balance = balance + amount;
+    }
+
+    // 花钱：余额够则扣款并返回 true，不够返回 false
+    public ??? spend(double amount) {
+        if (amount <= balance) {
+            balance = balance - amount;
+            return true;
+        }
+        return false;
+    }
+}
+```
+
+</FillBlank>
+
+<MultipleChoice id="mth-signature" question="方法签名 public boolean spend(double amount) 告诉了你哪些信息？" options={[{id:'a',label:'返回类型是 boolean、方法名是 spend、需要一个 double 参数'},{id:'b',label:'只有方法名，其他不重要'},{id:'c',label:'balance 字段一定是 public 的'},{id:'d',label:'这个方法必须写在 Account 类外面'}]} answer={['a']} explanation="签名就是调用方需要的全部情报：返回什么、叫什么、要什么参数。调用处 card.spend(9.9) 返回 boolean 可以直接接住或当条件。字段是不是 public、方法写在哪个类里，签名管不着——但按惯例它是 Account 的实例方法。" />
+
+<MultipleChoice id="mth-call-method" question={'以下代码输出什么？\n\npublic class Dog {\n    private int age = 0;\n\n    public void birthday() {\n        age = age + 1;\n    }\n\n    public int getAge() {\n        return age;\n    }\n\n    public static void main(String[] args) {\n        Dog d = new Dog();\n        d.birthday();\n        d.birthday();\n        System.out.println(d.getAge());\n    }\n}'} options={[{id:'a',label:'0，因为 birthday 的效果出了方法就消失'},{id:'b',label:'2'},{id:'c',label:'1'},{id:'d',label:'编译错误'}]} answer={['b']} explanation="实例方法改的是**对象的状态**，不是方法的临时变量——改动在方法结束后依然留在 d 身上（对比：方法内的局部变量才随方法结束消失）。两次 birthday 各加 1，getAge 拿到 2。这个区别是下一道阅读题的常见考点。" />
+
+## 动手：银行账户
+
+<CodeExercise
+  id="mth-bank-code"
+  title="BankAccount 存取款"
+  prompt="写出完整的 BankAccount 类：private 字段 owner（String）与 balance（double，初始 0）；两参构造器直接初始化（本题为练习，不做范围检查）；deposit(double amount) 只加不减；withdraw(double amount) 余额足够（大于等于 amount）才扣款并返回 true，否则返回 false 不改余额；getBalance 返回余额。main 里：new 一个账户，存 100，取 30（成功），再取 1000（失败），打印最终余额。写完本地运行验证：最终余额应为 70.0。"
+  starter={`public class BankAccount {
+    // TODO 1: private 字段 owner、balance
+
+    // TODO 2: 构造器
+
+    // TODO 3: deposit / withdraw / getBalance
+
+    public static void main(String[] args) {
+        // TODO 4: 存 100，取 30，取 1000，打印最终余额
+    }
+}`}
+  rubric={['字段 private（owner 为 String、balance 为 double）', 'deposit 无条件加款；withdraw 在余额足够时扣款返回 true、不足时返回 false 且不改余额', 'getBalance 返回当前余额', 'main 的最终输出为 70.0（两次取款一成一败）']}
+  hints={['字段：private String owner; private double balance; 构造器里 balance 可直接设为传入值', 'withdraw 有两个出口：余额够（amount <= balance）时先扣款再 return true；不够时直接 return false——失败路径别忘了也要 return', 'main：deposit(100); withdraw(30); withdraw(1000); 最后 System.out.println(getBalance());']}
+/>
+
+## 让审查员看一眼
+
+<LLMPractice id="mth-review" preset="code-reviewer" instructions={'任务：把你 BankAccount 的完整代码贴给审查员，请它按「编译 → 逻辑 → 超纲语法 → 可读性」四类检查。重点确认：withdraw 的两个出口（成功/失败）是否都 return 了、失败时余额是否纹丝不动。它指出的问题你自己改，改完再贴一次直到它挑不出大问题。'} starterMessage="请审查我的 BankAccount 类代码，按四类检查，指出问题但不要直接重写。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 口头说出实例方法与 static 方法的本质区别；2) 默写口诀「改东西用 void，问东西必有 return」并举一对例子；3) 白纸手写 withdraw 方法的完整实现（含两个 return 出口）。下一课揭开 static 的另一半真相：全类共享的一份变量。</Callout>

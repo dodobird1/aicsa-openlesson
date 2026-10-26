@@ -1,0 +1,76 @@
+---
+id: unit-1-review
+title: Unit 1 大检阅：15 题定胜负
+description: 类型与运算、方法与 Math、String 与转换——三个方向各五题，全程无 AI。答对 11 题以上，Unit 1 毕业。
+order: 15
+group: Unit 1 · Using Objects and Methods
+minutes: 45
+---
+
+## 检测规则
+
+这是 Unit 1 的正式检测，规则从严：
+
+1. **全程无 AI、无笔记、无资料**——就你和题目；
+2. 15 题分三组：类型与运算、方法与 Math、String 与转换；
+3. **答对 11 题（70%）以上过关**；每题解析在判分后出现，先答完再看；
+4. 答错的题全部进错题本三栏（题目/错因/重做日期 +1/+3/+7 天）。
+
+准备好了就开始。**在纸上先写下你的答案再点选项**——模拟考场的提取练习。
+
+## 第一组：类型与运算（1–5 题）
+
+<MultipleChoice id="u1r-q1" question="表达式 19 / 4 的值是？" options={[{id:'a',label:'4.75'},{id:'b',label:'4'},{id:'c',label:'5'},{id:'d',label:'编译错误'}]} answer={['b']} explanation="两个 int 相除是整数除法，小数部分直接砍掉：19 / 4 = 4（不是四舍五入的 5）。想要 4.75 需要一方是 double。" />
+
+<MultipleChoice id="u1r-q2" question="表达式 19 % 4 的值是？" options={[{id:'a',label:'4'},{id:'b',label:'3'},{id:'c',label:'0.75'},{id:'d',label:'3.75'}]} answer={['b']} explanation="% 取余数：19 = 4 × 4 + 3，余 3。整数世界的除法和取余是一对：商 4 余 3。" />
+
+<MultipleChoice id="u1r-q3" question={'以下代码输出什么？\n\nint x = 5;\nx *= 3;\nx %= 7;\nSystem.out.println(x);'} options={[{id:'a',label:'15'},{id:'b',label:'1'},{id:'c',label:'2'},{id:'d',label:'8'}]} answer={['b']} explanation="x *= 3 后 x 是 15；15 %= 7 即 15 % 7 = 1（15 = 7×2+1）。复合赋值一步一步替换原值。" />
+
+<MultipleChoice id="u1r-q4" question="Integer.MAX_VALUE + 1 的结果是？" options={[{id:'a',label:'2147483648'},{id:'b',label:'编译错误'},{id:'c',label:'Integer.MIN_VALUE'},{id:'d',label:'0'}]} answer={['c']} explanation="int 溢出不报错，像里程表归零一样绕回最小值（约 −21.4 亿）。这是 CED 明确列出的考点。" />
+
+<MultipleChoice id="u1r-q5" question="以下哪个变量的声明是合法的？" options={[{id:'a',label:'int count = 3.5;'},{id:'b',label:'double rate = 6;'},{id:'c',label:'boolean flag = "true";'},{id:'d',label:'int 2ndPlace = 2;'}]} answer={['b']} explanation="a 把 double 塞给 int（需显式 cast）不合法；c 把字符串塞给 boolean；d 变量名不能以数字开头。b 中 int 6 自动拓宽成 6.0——合法且是本课讲过的自动转换。" />
+
+## 第二组：方法与 Math（6–10 题）
+
+<MultipleChoice id="u1r-q6" question="表达式 Math.abs(-3.5) 的值是？" options={[{id:'a',label:'3.5（double 版 abs）'},{id:'b',label:'3'},{id:'c',label:'-3.5'},{id:'d',label:'编译错误，abs 只接受 int'}]} answer={['a']} explanation="Math.abs 有两个版本：abs(int) 和 abs(double)。传 -3.5 匹配 double 版，返回 3.5。方法重载（overload）——同一个方法名按参数类型选版本。" />
+
+<MultipleChoice id="u1r-q7" question="表达式 Math.pow(2, 3) + 1 的值是？" options={[{id:'a',label:'9.0'},{id:'b',label:'9'},{id:'c',label:'7'},{id:'d',label:'8.0'}]} answer={['a']} explanation="pow 返回 double：Math.pow(2, 3) 是 8.0；8.0 + 1 发生自动拓宽得 9.0（不是 int 的 9）。pow 的返回类型是 MCQ 常设的陷阱。" />
+
+<MultipleChoice id="u1r-q8" question="以下哪一行会编译错误？" options={[{id:'a',label:'System.out.println(Math.sqrt(16));'},{id:'b',label:'double r = Math.random();'},{id:'c',label:'int n = Math.pow(2, 5);'},{id:'d',label:'double d = Math.abs(-8);'}]} answer={['c']} explanation="pow 返回 double，直接塞进 int 变量是缩窄转换，必须显式 cast——编译拒绝。d 选项方向相反（int 自动拓宽成 double），合法。" />
+
+<MultipleChoice id="u1r-q9" question="表达式 (int)(Math.random() * 10) 的可能取值范围是？" options={[{id:'a',label:'1 到 10'},{id:'b',label:'0 到 9'},{id:'c',label:'0 到 10'},{id:'d',label:'0 到 1 之间的小数'}]} answer={['b']} explanation="random ∈ [0,1)，乘 10 得 [0,10)，截断后是 0 到 9 的整数——取不到 10。口诀：乘几就有几种结果，从 0 开始；想从 1 开始就 +1。" />
+
+<MultipleChoice id="u1r-q10" question={'以下代码输出什么？\n\nint start = 7;\nMath.abs(start - 10);\nSystem.out.println(start);'} options={[{id:'a',label:'3'},{id:'b',label:'7'},{id:'c',label:'-3'},{id:'d',label:'10'}]} answer={['b']} explanation="Math.abs(start - 10) 算出 3 并返回——但没有人接住，返回值直接蒸发。start 本身从未被修改，仍是 7。「返回值被丢弃」虫型：不报错、不崩溃、就是不对。" />
+
+## 第三组：String 与转换（11–15 题）
+
+<MultipleChoice id="u1r-q11" question={'表达式 "COMPUTER".substring(2, 5) 的值是什么？'} options={[{id:'a',label:'"MPU"'},{id:'b',label:'"MPUT"'},{id:'c',label:'"PUT"'},{id:'d',label:'"OMPU"'}]} answer={['a']} explanation="含头不含尾：取索引 2、3、4 三个字符（C-0、O-1、M-2、P-3、U-4、T-5），即 MPU。速算：结果长度 = 5 − 2 = 3。" />
+
+<MultipleChoice id="u1r-q12" question={'表达式 "potato".indexOf("to") 的值是什么？'} options={[{id:'a',label:'3'},{id:'b',label:'2'},{id:'c',label:'-1'},{id:'d',label:'4'}]} answer={['d']} explanation="indexOf 找的是**连续**的子串：p-0、o-1、t-2、a-3、t-4、o-5。索引 2 的 t 后面跟的是 a（「ta」），不匹配；真正的「to」在索引 4（t-4、o-5）。选 2 的同学是找到了 t 却没检查下一个字符——indexOf 匹配的是整个子串，不是单个字符。找不到才返回 −1。" />
+
+<MultipleChoice id="u1r-q13" question={'以下代码输出什么？\n\nString a = new String("cat");\nString b = new String("cat");\nSystem.out.println(a == b);\nSystem.out.println(a.equals(b));'} options={[{id:'a',label:'false 然后 true'},{id:'b',label:'true 然后 true'},{id:'c',label:'false 然后 false'},{id:'d',label:'编译错误'}]} answer={['a']} explanation="两个 new 造出两个不同对象：== 比住址，false；equals 比内容，true。比较字符串内容永远用 equals——年年必考。" />
+
+<MultipleChoice id="u1r-q14" question="表达式 (int) 4.8 + (int) 1.9 的值是？" options={[{id:'a',label:'5'},{id:'b',label:'6'},{id:'c',label:'5.7'},{id:'d',label:'7'}]} answer={['a']} explanation="cast 分别截断：4.8 → 4，1.9 → 1，相加得 5。两个 cast 各管各的，互不影响；截断不是四舍五入。" />
+
+<MultipleChoice id="u1r-q15" question={'以下代码输出什么？\n\nString w = "APCSA";\nint n = 0;\nfor (int i = 0; i < w.length(); i++) {\n    if (w.substring(i, i + 1).equals("A")) {\n        n++;\n    }\n}\nSystem.out.println(n + w.length());'} options={[{id:'a',label:'7'},{id:'b',label:'25'},{id:'c',label:'2'},{id:'d',label:'5'}]} answer={['a']} explanation="逐字符数 A：索引 0 和 4 各一个，n = 2；w.length() = 5；n + w.length() 是 int 加 int，输出 7。三个知识点叠一道题：遍历、equals 计数、加法——这正是 MCQ set-based 题的常见配方。" />
+
+## 对答案、算总分
+
+三个条件都满足才算 Unit 1 毕业：
+
+1. 三组共 15 题，答对 **11 题以上**；
+2. 没有任何一题是「蒙对的」——蒙对不算会；
+3. 答错的题已记进错题本三栏，并设好 +1 天的重做提醒。
+
+## 无 AI 手写任务（检测的第二半）
+
+选择题之外，在**白纸**上完成两道手写题（这是 FRQ 的预演，考试就是这么写）：
+
+1. **圆面积计算器**：手写完整程序——声明 double 变量 r = 2.5，用 Math.pow 计算 r 的平方，乘以 3.14159 得到面积并打印。类名自取，骨架八行以内；
+2. **countVowels 的签名与骨架**：凭记忆默写方法签名、计数器声明、循环头三件套（条件必须是 i < s.length()）。循环体可以只写注释。
+
+写完在 IDE 里逐字敲进去验证——手写和敲码对得上，才算真正的 Bluebook 就绪。
+
+<LLMPractice id="u1r-concept" preset="concept-coach" instructions={'任务：数一数三组题各自的错题数，把错得最多的那一组的主题告诉概念教练（例如「我在 String 方法这组错得最多」），按费曼四步把它讲透：1) 让它讲一遍；2) 你复述；3) 它挑毛病；4) 修正重讲。注意：这是检测后的补救环节，允许用 AI——但下一轮检测仍然无 AI。'} starterMessage="我在 Unit 1 检测里错题最多的主题是：/ 填入主题 /。请帮我把这个主题讲透，我是准备 AP CSA 的高中生。" />
+
+<Callout title="放下 AI · 错题三栏现在就写">合上一切：1) 三栏错题本（题目/错因/重做日期）现在写，别等明天——明天的你会高估今天的记忆；2) 每个 +1 天的重做提醒现在设；3) 手写两题拍照存档，开学给老师或家长看。下一课，我们推开 Unit 2 的大门：布尔与逻辑。</Callout>

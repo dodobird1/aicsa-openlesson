@@ -1,0 +1,91 @@
+---
+id: class-design-lab
+title: FRQ Q2 首演：设计一个类，七分到手
+description: Class Design 是每年固定第二题——规格读法、五步答题法、rubric 逐点对照，第一次全真流程走一遍。
+order: 31
+group: Unit 3 · Class Creation
+minutes: 40
+---
+
+## Q2 长什么样
+
+AP 每年 FRQ 共四题，**第二题固定是 Class Design（类设计，7 分）**：题面给你一段生活场景的规格（一个班级、一种游戏、一台机器），你从零写出一个完整的类——声明、构造器、方法全是你的地盘。
+
+Q2 的本质：**把英文规格翻译成 Java 类**。考的不是奇技淫巧，是这三课学的一切：private 字段、构造器初始化、方法实现。
+
+## 示例题面（真题风格）
+
+> **VideoGame 类**模拟一局电子游戏的战绩记录。每个 VideoGame 对象保存游戏名 `title`、历史最高分 `highScore` 和总游玩次数 `timesPlayed`。
+>
+> 实现以下内容：
+>
+> - 构造器 `VideoGame(String t, int h)`：以给定标题和初始最高分创建对象，游玩次数从 0 开始；
+> - `getHighScore()`：返回当前最高分；
+> - `play(int score)`：游玩次数加一；若 `score` 大于当前最高分，更新最高分；
+> - `getTimesPlayed()`：返回总游玩次数。
+
+读完题别急着写——先做**翻译**。
+
+## 答题五步法
+
+1. **圈名词 → 字段**：标题、最高分、游玩次数——三个字段：`title`、`highScore`、`timesPlayed`；
+2. **圈动词 → 方法**：创建（构造器）、返回最高分、玩一局、返回次数——四个方法；
+3. **字段全部 private**：这一步几乎是送分点，漏了 private 白丢分；
+4. **构造器初始化全部字段**：`timesPlayed` 题面说了「从 0 开始」——构造器里写 0，别依赖默认值（阅卷要看你写没写）；
+5. **逐方法实现**：每个方法对照规格逐句翻译，方法之间不串门（play 只改 play 该改的）。
+
+五步之后的完整答案：
+
+```java
+public class VideoGame {
+    private String title;
+    private int highScore;
+    private int timesPlayed;
+
+    public VideoGame(String t, int h) {
+        title = t;
+        highScore = h;
+        timesPlayed = 0;
+    }
+
+    public int getHighScore() {
+        return highScore;
+    }
+
+    public void play(int score) {
+        timesPlayed++;
+        if (score > highScore) {
+            highScore = score;
+        }
+    }
+
+    public int getTimesPlayed() {
+        return timesPlayed;
+    }
+}
+```
+
+对照 rubric 的得分点：类声明与全部字段 private、构造器完整初始化、`getHighScore` 返回、`play` 的次数累加、`play` 的条件更新、`getTimesPlayed` 返回——**每个点独立判分**：就算 play 写错了，前面字段和构造器的分照拿。
+
+## 每年都有人栽的三个坑
+
+1. **写 main**——Q2 不需要 main，写了不扣分但浪费三分钟；
+2. **字段不 private**——白丢一个点；
+3. **构造器漏初始化**——依赖默认值，阅卷按「未初始化」扣点。
+
+<MultipleChoice id="q2-quiz-steps" question="拿到 Q2 题面后的第一步应该做什么？" options={[{id:'a',label:'马上开始写构造器，写完再想别的'},{id:'b',label:'圈出名词和动词，把名词翻译成 private 字段、动词翻译成方法清单'},{id:'c',label:'先把 main 方法写好'},{id:'d',label:'从后往前倒着读题'}]} answer={['b']} explanation="Q2 是翻译题：名词（title、score、次数）→ 字段；动词（创建、返回、玩、更新）→ 构造器与方法。先列清单，写代码只是誊写。直接动笔的人最常见的结局：方法写了一半发现漏字段，涂改浪费时间还容易漏 private。" />
+
+<MultipleChoice id="q2-quiz-rubric" question="以下哪一项**不是** Q2 的得分点？" options={[{id:'a',label:'实例变量全部声明为 private'},{id:'b',label:'构造器初始化全部实例变量'},{id:'c',label:'main 方法写得完整漂亮'},{id:'d',label:'按规格正确实现每个方法的行为'}]} answer={['c']} explanation="Q2 从不要求 main——它是类设计题，不是程序题。a、b、d 是每份评分标准里雷打不动的三类点。记住：每个点独立判分，方法错一半也先守住字段和构造器的分。" />
+
+## 限时实战：20 分钟，白纸手写
+
+考场上 Q2 建议用时约 20 分钟。现在就来一次全真流程：
+
+1. **白纸手写**：不看上面的示例答案，独立写出完整的 VideoGame 类（计时 20 分钟，手机倒计时）；
+2. **敲入验证**：在 IDE 里逐字敲进去，加两行测试：`play(95)` 后 `getHighScore()` 应为 95（假设初始 50），再 `play(30)` 后仍为 95、`getTimesPlayed()` 为 2；
+3. **对答案**：与自己脑中的五步清单逐项对照；
+4. **交 AI 评分官批改**：把题面和你的答案发给它，按官方 rubric 逐点判分。
+
+<LLMPractice id="q2-frq-grader" preset="frq-grader" instructions={'任务：把上面的 VideoGame 题面（规格四条）和你的完整答案代码一起发给评分官，请它按 rubric 逐点判定（每个点标注 得分/未得分 + 原因），给出预估分（满分 7 的口径），并指出最影响得分的一处修改。它评的是你写的版本——别贴示例答案糊弄自己。'} starterMessage="请批改我的 FRQ Q2 答案。我会先贴题面规格，再贴我的实现代码。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 默写答题五步法；2) 口头说出 Q2 的三类铁打得分点和三个高频坑；3) 白纸重写 VideoGame 的 play 方法（两件事：累加次数 + 条件更新最高分）。Unit 3 最后一课是检测卷——15 题见真章。</Callout>

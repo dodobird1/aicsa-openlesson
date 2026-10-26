@@ -1,0 +1,95 @@
+---
+id: extra-resources
+title: 课外资源：教材、练习站和短视频
+description: 正课卡住时再打开这一页。这里只收和 2025 考纲对齐的 Java 教材、练习站，以及可以嵌入的短视频。
+order: 200
+group: 参考 · 课外资源
+minutes: 15
+---
+
+## 这一页不是下一课
+
+正课仍从[欢迎](/lessons/welcome)按顺序走。这一页挂在侧栏最后，随时翻回来。页底的「上一课」会跳进题库附录，那不是学习顺序。
+
+一次只打开**一个**资源。看懂了就回到你正在学的那一课，自己做一道题。考试题干是英文，所以下面的英文站和英文视频值得看；看不懂某一句时，把那一句贴给课程里的教练，让它用中文解释，不要让它把整题做完。
+
+<Callout title="哪些内容不要学">2025 年秋季起的考纲，控制结构只有 if、while、for 和增强 for，没有 switch 和 do-while。图形界面、Stream、Lambda、线程和网络也不在范围内。继承只留一句：每个类都是 Object 的子类，字符串拼上对象时会调用 toString；不要去学 extends，也不要重写方法。视频标题里的单元号（例如 1.3、5.1、6.1）是 2019–2025 旧考纲的编号，和本课重合的可以看。看到设计继承、图形界面或 Stream，停。</Callout>
+
+## 和本考纲对齐的教材
+
+[CSAwesome2](https://runestone.academy/ns/books/published/csawesome2/csawesome2.html) 是免费的 AP CSA 互动教材，按 2025 年秋季起的四个单元来写，浏览器里就能运行 Java。注册 Runestone 账号才能保存你在那本书里的答题。请用 **CSAwesome2**，不要把旧版 CSAwesome v1 当成教材——旧版仍按十个单元编排，并把继承当成必考内容。考试说明在这本书的 [About the AP CSA Exam](https://runestone.academy/ns/books/published/csawesome2/aboutcsa.html)。
+
+官方入口：
+
+- [AP Computer Science A 学生页](https://apstudents.collegeboard.org/courses/ap-computer-science-a)：考试形式、日期和 Bluebook 说明。
+- [Java Quick Reference（PDF）](https://apcentral.collegeboard.org/media/pdf/ap-computer-science-a-java-quick-reference.pdf)：考试当天 MCQ 和 FRQ 都能用的方法表。String、Integer、Double、Math、ArrayList、File、Scanner、Object 都以这一页为准，不要去背整本 Java 手册。
+
+## 练习站
+
+[CodingBat Java](https://codingbat.com/java) 是短函数练习，做完立刻知道对错。按本课进度选，不要从难的开始：
+
+| 你正在学 | 做这些 |
+| --- | --- |
+| 条件、布尔 | [Warmup-1](https://codingbat.com/java/Warmup-1)、[Logic-1](https://codingbat.com/java/Logic-1)、[Logic-2](https://codingbat.com/java/Logic-2) |
+| String | [String-1](https://codingbat.com/java/String-1)（不用循环），再做 [String-2](https://codingbat.com/java/String-2)。出现 charAt 或 equalsIgnoreCase 就跳过，逐字符用 substring |
+| 数组 | [Array-1](https://codingbat.com/java/Array-1)，再做 [Array-2](https://codingbat.com/java/Array-2) |
+| 综合 | [AP-1](https://codingbat.com/java/AP-1)。个别题比本考纲更杂，用到 Quick Reference 以外的方法就跳过 |
+
+Map、Functional 两栏用了本考纲没有的 Map 和 Lambda，先不做。递归要会追踪给定的方法，考纲明确不要求你写出递归。CodingBat 的 Recursion 两栏是「把递归方法写出来」，和这条边界相反，先不做。
+
+华盛顿大学的 Practice-It 已在 2025 年底关闭，不要再找它。
+
+## 把执行过程看见
+
+循环次数、数组下标、对象是不是同一个，用 [Python Tutor 的 Java 可视化](https://pythontutor.com/java.html)。名字里有 Python，打开后选的是 Java。粘贴**一小段**本课代码，点 Visualize，再一步一步前进，看变量和对象。一次不要贴整个项目。
+
+暂时不能安装 JDK 时，用浏览器里的 [OnlineGDB Java 编译器](https://www.onlinegdb.com/online_java_compiler)。备考前回到本机的 IntelliJ 或 VS Code，因为考试在 Bluebook 里手打。安装步骤仍以[搭环境那一课](/lessons/java-setup-and-first-program)为准。
+
+## 中文讲解，只当词典
+
+这两份中文教程覆盖的是完整 Java，比考试范围大得多。只读和本课同名的章节：变量、if、while、for、String、类、数组、ArrayList。switch、do-while 以及后面的继承、泛型、线程、网络，停。
+
+- [廖雪峰的 Java 教程](https://www.liaoxuefeng.com/wiki/1252599548343744)
+- [菜鸟教程 Java](https://www.runoob.com/java/java-tutorial.html)
+
+语言规则以考试为准。官方的语言基础说明（英文）在 [Oracle：Language Basics](https://docs.oracle.com/javase/tutorial/java/nutsandbolts/index.html)。那里也会出现考纲以外的语法，读到就停。
+
+## 短视频
+
+下面三支可以直接在本页播放。它们来自 CSAwesome 的公开课，讲的是变量、循环和数组，这三块本课也讲。完整播放列表是 [CSAwesome APCSA Java](https://www.youtube.com/playlist?list=PLbAcHDFOOr19x6hrGanYt9O10ua6xeo60)（频道 danzafut）。列表后半有继承，看到就关。
+
+同一主题的单支视频，需要时再点开，不必一次看完：
+
+- 表达式和赋值：[1.4 Expressions & Assignment Statements](https://www.youtube.com/watch?v=f7nv8_-x-u0)
+- 强制类型转换：[1.6 Casting & Ranges Of Variables](https://www.youtube.com/watch?v=GPukTULaffA)
+- String：[2.6 Strings](https://www.youtube.com/watch?v=SZ_yLogolJM)
+- 类的结构：[5.1 Anatomy Of A Java Class (part 1)](https://www.youtube.com/watch?v=o1wGmNzppyQ)
+- 二维数组（另一位老师，TokyoEdtech）：[Intro to Java and AP CS A - 2D Arrays](https://www.youtube.com/watch?v=sjjK31x7Kv4)
+
+### 变量和类型
+
+<Embed src="https://www.youtube-nocookie.com/embed/XKO0P4HyPBo" title="CSAwesome：变量与数据类型" />
+
+### while 和 for 怎么对应
+
+<Embed src="https://www.youtube-nocookie.com/embed/SEDnzXeb2hU" title="CS Awesome：while 循环与 for 循环" />
+
+### 数组怎么创建、怎么按下标访问
+
+<Embed src="https://www.youtube-nocookie.com/embed/4E46-dLEYBU" title="CSAwesome：数组的创建与访问" />
+
+## 卡住时先选哪一个
+
+| 你的情况 | 打开 |
+| --- | --- |
+| 某段中文没读懂，想听第二遍 | 上面对应的那支短视频 |
+| 想自己多写几个小函数 | CodingBat 里和本课同名的那一栏 |
+| 循环或数组的中间值对不上 | Python Tutor，单步看 |
+| 想按四个单元再读一本完整教材 | CSAwesome2，不要读 v1 |
+| 想确认某个方法考不考 | Java Quick Reference |
+
+<MultipleChoice id="resources-which-book" question="你想再找一本和这次考试对齐的完整 Java 教材。应该打开哪一个？" options={[{id:'a',label:'CSAwesome v1，按旧的十个单元学，包括继承'},{id:'b',label:'CSAwesome2，按 2025 年起的四个单元学'},{id:'c',label:'从一套十小时以上的 Java 全集第一集开始，一路看到图形界面'},{id:'d',label:'廖雪峰教程里的线程和网络编程'}]} answer={['b']} explanation="CSAwesome2 按现行四个单元编写。v1 仍把设计并实现继承当必考内容；现行考纲不要求写 extends 或重写方法。全集教程和中文教程的后半本会讲本考试不考的内容，只适合当词典，不适合当第二门课。" />
+
+<MultipleChoice id="resources-which-tool" question="一段 while 循环的次数和你算的不一样。下一步最合适的是？" options={[{id:'a',label:'把代码贴进 Python Tutor 的 Java 模式，一步一步看变量'},{id:'b',label:'让 AI 写出完整正确答案，然后背下来'},{id:'c',label:'去看继承（inheritance）的视频，因为后面的单元会用到'},{id:'d',label:'打开 CodingBat 的 Map 和 Functional 两栏'}]} answer={['a']} explanation="对不上的是执行过程，可视化能把每一步的变量摊开。AI 直接给完整答案会跳过你自己的追踪。设计继承、Map 和 Lambda 都不在这次考试的作答范围内。" />
+
+<LLMPractice id="resources-ask-coach" preset="concept-coach" instructions="告诉教练你卡在哪一课（例如变量、for 循环、String、类或数组），以及你已经自己试过什么。请它从本页的资源里只推荐一个下一步，并说明为什么不是其余那些。不要让它把练习题的答案写出来。" starterMessage="我卡在 __（课名）。我已经试过 __。请只从这门课的课外资源里推荐一个下一步，并告诉我为什么先不要看继承、Stream 或一整套 Java 全集。" />

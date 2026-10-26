@@ -1,0 +1,126 @@
+---
+id: java-setup-and-first-program
+title: 搭好环境，写下第一个 Java 程序
+description: 安装 JDK 和编辑器，理解每一行 Hello World，学会读懂编译器的报错——为 Bluebook 打字考试打下地基。
+order: 8
+group: Unit 1 · Using Objects and Methods
+minutes: 45
+---
+
+## 为什么是 Java
+
+AP Computer Science A 的考试语言是 **Java**——一门严格、啰嗦但结构清晰的语言。它的「啰嗦」对初学者反而是好事：每个概念都必须明明白白写出来，藏着掖不了。这门课的代码全部使用 **AP Java 子集**（AP CSA 考纲限定的语法范围），比完整 Java 简单得多。
+
+从这节课起，你的电脑上要有一个能写、能跑 Java 的环境。考试那天你在 Bluebook 软件里**手打代码**，平时练习的打字手感、报错直觉，全靠现在开始积累。
+
+## 第一步：安装 JDK
+
+JDK（Java Development Kit）是编译和运行 Java 的工具包。安装 JDK 21（或 17）任一长期支持版均可：
+
+- **macOS**：推荐到 [Adoptium](https://adoptium.net) 下载 `.pkg` 安装包（一路「继续」即可装好）；会用 Homebrew 的话 `brew install openjdk@21` 也行，但装完要按终端里 Caveats 提示补一步软链接，`java --version` 才能找到它；
+- **Windows**：到 [Adoptium](https://adoptium.net) 下载 MSI 安装包，安装时勾选「将 JAVA_HOME 加入环境变量」。
+
+装好后打开终端（Terminal / PowerShell），输入：
+
+```bash
+java --version
+```
+
+看到版本号（如 `openjdk 21.0.x`）就说明成功了。
+
+## 第二步：选一个编辑器
+
+三种选择，按你的情况挑一个：
+
+| 工具 | 适合谁 | 说明 |
+| --- | --- | --- |
+| **IntelliJ IDEA Community** | 大多数同学（推荐） | 免费、专业、对初学者的红色报错提示最友好 |
+| **VS Code + Java 扩展** | 已在用 VS Code 的人 | 轻量，装「Extension Pack for Java」后即可 |
+| **在线 IDE** | 暂时装不了软件的同学 | 浏览器里用 [OnlineGDB](https://www.onlinegdb.com/online_java_compiler) 或 replit。备考前必须回到本地 |
+
+教材、练习站和短视频集中在[课外资源](/lessons/extra-resources)。先把本机环境跑通，需要另一种讲法时再去那一页。
+
+## 第一个程序：Hello, World!
+
+新建一个文件，文件名**必须**是 `HelloWorld.java`（Java 要求文件名和类名完全一致）：
+
+```java
+public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}
+```
+
+运行它（IDEA 里点绿色三角，或终端里执行下面的命令）：
+
+```bash
+javac HelloWorld.java   # 编译：把 .java 源码变成 .class 字节码
+java HelloWorld         # 运行：执行编译产物，输出 Hello, World!
+```
+
+屏幕上出现 `Hello, World!` 的那一刻，你就正式成为了一个会写 Java 的人。
+
+## 逐行拆解这段程序
+
+现在别管为什么这么写（AP 前几课只需要「记住骨架」），但每一**部分**是什么必须清楚：
+
+- `public class HelloWorld` —— 定义一个**类**（class），名字叫 HelloWorld。类是 Java 组织代码的容器，AP CSA 的 Unit 3 会专门教你自己写类；
+- `public static void main(String[] args)` —— **main 方法**：程序的入口。Java 从这里开始执行。`String[] args` 是命令行参数，考试中当作固定写法记住即可；
+- `System.out.println("...")` —— 打印一行文字并换行。这是你未来三个月用得最多的一行代码；
+- 每条语句结尾的 **分号** `;` —— Java 的「句号」。漏写分号是全人类 Java 初学者的第一大报错来源；
+- 花括号 `{ }` —— 划定类和方法的边界，必须成对出现。
+
+<Callout title="编译 vs 运行">`javac`（编译）负责检查你的代码是否符合 Java 语法，通过后生成 `.class` 文件；`java`（运行）才真正执行。**编译错误在先，逻辑错误在后**——这个区分在 Bluebook 考试里同样重要：打错一个字符，编译都过不了，更别说运行得分。</Callout>
+
+## 报错地形图：新手的四种高频报错
+
+写代码出错不是你不行的证据，是编译器在跟你说话。这四种报错你会遇到一百次：
+
+```java
+// 报错 1：缺少分号
+System.out.println("Hi")   // error: ';' expected
+
+// 报错 2：括号不配对（少了结尾的 }）
+public class Oops {
+    public static void main(String[] args) {
+        System.out.println("Hi");
+// error: reached end of file while parsing
+
+// 报错 3：文件名和类名不一致（文件叫 Test.java 类叫 Hello）
+// error: class Hello is public, should be declared in a file named Hello.java
+
+// 报错 4：字符串没加引号
+System.out.println(Hello);   // error: cannot find symbol
+```
+
+读报错的诀窍：**看第一行报错和它指的行号**，后面的连锁报错往往是一个根因引起的。找不到错在哪？这正是 AI 的用武之地——把报错原文和你的代码一起贴给教练。
+
+## 让 AI 教练带你读懂它
+
+下面的教练运行在**苏格拉底导师**模式：它只提问、给提示，不直接给答案。试着问它「`public static void main` 这一行每个词分别是什么意思」，或者把你刚才的报错贴给它——体验一下「被引导」和「要答案」的区别。
+
+<LLMPractice id="java-setup-socratic" preset="socratic-tutor" instructions={'练习 1：问教练「public static void main(String[] args) 里每个词是什么意思」。练习 2：如果你刚才的 Hello World 遇到了报错，把报错信息和代码一起贴给它，看它怎么引导你自己定位。注意：它不会直接告诉你答案——这正是它的设计。'} starterMessage="我刚写完第一个 Hello World 程序。请用提问的方式帮我把 main 方法那一行的每个词弄明白。" />
+
+<MultipleChoice id="java-setup-quiz-1" question="Java 源文件里写着 public class HelloWorld，这个文件保存时必须叫什么名字？" options={[{id:'a',label:'随便什么名字，比如 Main.java'},{id:'b',label:'HelloWorld.java'},{id:'c',label:'HelloWorld.class'},{id:'d',label:'helloworld.java'}]} answer={['b']} explanation="Java 规定 public 类的类名和文件名必须完全一致（区分大小写）：类叫 HelloWorld，文件就必须是 HelloWorld.java。.class 是编译产物，不是源文件名。" />
+
+<MultipleChoice id="java-setup-quiz-2" question="你写的程序能编译通过，但输出的结果和预期不一样。这属于什么错误？" options={[{id:'a',label:'编译错误（compile-time error）'},{id:'b',label:'语法错误（syntax error）'},{id:'c',label:'逻辑错误（logic error）'},{id:'d',label:'文件名错误'}]} answer={['c']} explanation="能编译通过说明语法没问题；结果不对说明程序的「想法」错了——这是逻辑错误，也是 AP CSA 考试最爱考的题型（给你一段能运行的代码，问输出是什么）。编译/语法错误在编译阶段暴露，逻辑错误只能靠人脑跟踪或运行验证。" />
+
+## 动手：修好这个坏程序
+
+第一次「读报错—改代码」的实战。下面的程序有 **3 处错误**，改到它能正确输出 Hello, World! 为止。提交后 AI 批改员会按评分标准逐条判定——但先试着自己找（提示按钮按需使用，别一口气全点开）。
+
+<CodeExercise
+  id="java-setup-fix-bug"
+  title="Debug：Hello World 的三处错误"
+  prompt="下面的程序有 3 处错误（都是本课「报错地形图」里的类型）。请修复它们，使程序编译通过并输出 Hello, World! 改完先在本地 IDE 运行验证，再提交批改。"
+  starter={`public class Main {
+    public static void main(String[] args) {
+        System.out.println(Hello, World!)
+    }
+`}
+  rubric={['字符串 Hello, World! 已用双引号包裹', 'println 语句以分号结尾', '花括号成对：类和 main 方法都正确闭合', '程序能输出 Hello, World!']}
+  hints={['编译器把没引号的 Hello 当成了变量名——字符串要加双引号', '每一句完整语句的结尾要有分号 ;', '数一数左花括号 { 的数量，每一个都要有对应的 } 收尾']}
+/>
+
+<Callout title="放下 AI · 检索练习（本课最重要的一步）">关掉所有资料和 AI，打开一个**空白文件**，凭记忆手打完整的 Hello World（一共只有 5 行，含类名、main 方法、println），然后运行验证。这是你在为 2027 年 5 月 12 日的 Bluebook 考试练手感——那天没有 AI、没有自动补全，只有你和编辑器。手打通过后，把「Mark lesson complete」点亮。</Callout>

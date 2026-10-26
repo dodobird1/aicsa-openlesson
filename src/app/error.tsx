@@ -1,0 +1,2 @@
+'use client';
+export default function ErrorPage({reset}:{reset:()=>void}) {return <div className="page document-page"><span className="eyebrow">LET’S TRY THAT AGAIN</span><h1>A little interruption.</h1><p className="muted">This page could not load. If you’re an author, check the server output for a lesson formatting or configuration error.</p><button onClick={reset} className="button button-primary">Try again</button></div>;}

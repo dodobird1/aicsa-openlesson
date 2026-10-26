@@ -1,0 +1,49 @@
+---
+id: mcq-strategy
+title: 选择题策略：42 题 90 分钟的打法
+description: 模块 C 冲刺开始——题型分类、时间预算、排除法，再加三道全英文样题摸底。考试的分，一半在这 55% 里。
+order: 45
+group: 模块 C · 备考冲刺
+minutes: 40
+---
+
+## 欢迎进入冲刺模块
+
+理论全部学完，冲刺模块只做一件事：**把会的东西变成分数**。选择题占 **55%**——42 题、90 分钟、4 选 1，每一题价值约 1.3 分。
+
+## 题型四分类
+
+MCQ 万变不离四类，各有各的打法：
+
+| 题型 | 识别 | 打法 |
+| --- | --- | --- |
+| 输出预测 | What is the output? | 纸上追踪变量表，别心算 |
+| 代码补全 | Which code segment? | 先排除语法错的，再代入验证逻辑 |
+| 错误定位 | Which line causes…? | 逐行当虫审，优先看边界与类型 |
+| 概念直问 | Which statement is true? | 用 Quick Reference 级记忆直答 |
+
+## 三条时间纪律
+
+1. **预算 2 分钟/题**：单题超过 2.5 分钟立刻标记跳过（Bluebook 可标记回看），42 题的战场里，三道难题耗掉的时间等于六道送分题；
+2. **先易后难**：第一遍扫过去把会的全收割，第二遍回头啃硬骨头；
+3. **交卷前不留空**：4 选 1 没有倒扣，蒙也要蒙满（先排除明显错的再蒙，正确率翻倍）。
+
+## 排除法实战心法
+
+- 两个选项在说同一件事的变体 → 大概率都不对；
+- 涉及边界的选项，拿最小案例代入（数组长度 1、n 为 0）立刻见分晓；
+- 「绝对化表述」（always、never、must）多为诱饵——Java 的世界充满例外。
+
+## 三道全英文样题（摸底）
+
+<MultipleChoice id="mcq-s1" question={'What is printed as a result of executing the following code segment?\n\nint sum = 0;\nfor (int k = 1; k <= 20; k++) {\n    if (k % 3 == 0) {\n        sum += k;\n    }\n}\nSystem.out.println(sum);'} options={[{id:'a',label:'63'},{id:'b',label:'60'},{id:'c',label:'210'},{id:'d',label:'54'}]} answer={['a']} explanation="求 1 到 20 中 3 的倍数之和：3+6+9+12+15+18 = 63。识别信号：这是五大模板里的「条件求和」（计数模板的孪生）。别心算——纸上列出六个数再相加。选 c 是忘了条件（1 加到 20 的总和）。" />
+
+<MultipleChoice id="mcq-s2" question={'Consider the following code segment.\n\nint[] arr = {4, 7, 2, 9};\nint x = arr[0];\nfor (int i = 1; i < arr.length; i++) {\n    if (arr[i] < x) {\n        x = arr[i];\n    }\n}\nSystem.out.println(x);'} options={[{id:'a',label:'9'},{id:'b',label:'4'},{id:'c',label:'2'},{id:'d',label:'7'}]} answer={['c']} explanation="识别信号：擂主变量 + 逐个比较 + 更小的替换 → 求最小值。擂主从 4 开始：7 不替换、2 替换、9 不替换——输出 2。模板认出来，代码一行都不用细读。" />
+
+<MultipleChoice id="mcq-s3" question={'Assume that list is an ArrayList of Integer values containing [3, 6, 9]. Which of the following removes the second element?'} options={[{id:'a',label:'list.remove(2);'},{id:'b',label:'list.remove(1);'},{id:'c',label:'list.set(1, 0);'},{id:'d',label:'list.remove(6);'}]} answer={['b']} explanation="「第二个元素」= 下标 1——这是出题人最爱放的序数陷阱（second 在人类语言里是 2，在 Java 世界里是 1）。选 a 删的是第三个；c 是替换不删；AP 只考按下标 remove，不考按值 remove 的歧义。" />
+
+## 弱项专项：让出题官打你的软肋
+
+<LLMPractice id="mcq-quiz" preset="quiz-master" instructions={'任务：翻你的错题本，挑出错得最多的两个主题，告诉出题官，让它就这两个主题各出一道全英文题（模拟真题风格）。规则：全程无纸面外的提示；答错的题当场说病根（哪个知识点虚了）；连续答对两题收工。'} starterMessage="我最容易错的两个主题是：/ 填主题 /。请各出一道全英文选择题考我，风格模拟 AP 真题。" />
+
+<Callout title="放下 AI · 摸底复盘">1) 三道样题对了几道？错了的题进错题本并注明题型分类；2) 把「题型四分类 + 三条时间纪律」抄到一张卡片上——模考那天放在手边；3) 统计你错题本里出现最多的题型，那就是冲刺期的主攻方向。下一课：FRQ 实战第一场（Q1 + Q2）。</Callout>

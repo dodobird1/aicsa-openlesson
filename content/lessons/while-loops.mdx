@@ -1,0 +1,130 @@
+---
+id: while-loops
+title: while 循环：不知道终点也能出发
+description: 你已经会 for——现在认识它的祖先。三要素换了位置，死循环的病根也藏在这里。
+order: 19
+group: Unit 2 · Selection and Iteration
+minutes: 30
+---
+
+## 从 for 回到 while
+
+第 11 课你学 for 时见过它的祖先。同一个「打印 1 到 5」，两种写法对照：
+
+```java
+// for 版：三要素集中在第一行
+for (int i = 1; i <= 5; i++) {
+    System.out.println(i);
+}
+
+// while 版：三要素分散在三个地方
+int i = 1;                  // 要素一：初始化——循环外
+while (i <= 5) {            // 要素二：条件——每次进循环体前判断
+    System.out.println(i);
+    i++;                    // 要素三：更新——循环体内最后一行
+}
+```
+
+功能完全等价。既然 for 更紧凑，为什么还要 while？因为它们各有一块主场：
+
+- **for 的主场**：起点、终点、步长在开工前就都知道（打印 1 到 100、遍历字符串）；
+- **while 的主场**：**不知道要循环几次**——循环到「某个条件第一次成立」为止。
+
+## while 的主场：次数未知的循环
+
+一个典型问题：从 1000 开始不断除以 2，要除几次才会小于 1？
+
+```java
+int value = 1000;
+int steps = 0;
+while (value >= 1) {
+    value = value / 2;
+    steps++;
+}
+System.out.println(steps);   // 10 次——事先真算不出来
+```
+
+这类「做到满足为止」的逻辑，写 for 反而别扭。另一个常用套路是**哨兵值**（sentinel）：用一个特殊值标记输入结束——AP 考纲不考键盘输入，但哨兵思想在题目里到处都是。
+
+## 死循环：三要素检查法
+
+while 的三要素分散在三个地方，任何一处缺失或写错，就是**死循环**（infinite loop）——条件永远为 true，程序永远转下去：
+
+```java
+int i = 0;
+while (i < 3) {
+    System.out.println(i);   // 忘了 i++：i 永远是 0，永远小于 3
+}
+```
+
+写完 while 立刻做**三要素检查**：初始化有没有？条件里的变量在循环体内有没有被推进？推进的方向是不是朝着条件变 false 走（条件是 `i < 10` 却写 `i--`，同样死循环）？
+
+<Callout title="考纲边界">do-while 循环不在 AP CSA 考纲内（CED 未收录），认识即可、不用练。AP 只考 for 和 while。</Callout>
+
+## 每日一虫 🐛：方向反了的推进
+
+看这段代码：
+
+```java
+// 想打印 5、4、3、2、1
+int i = 5;
+while (i <= 5) {
+    System.out.println(i);
+    i++;
+}
+```
+
+<MultipleChoice id="while-bug" question="这段代码的虫是什么？" options={[{id:'a',label:'循环方向用反了：想倒序打印 5 到 1，应该用 i-- 递减、条件 i >= 1；现在 i 递增，条件 i <= 5 只在第一轮成立，只会打印一个 5 就退出'},{id:'b',label:'编译错误：while 里不能用 i++'},{id:'c',label:'println 应该改成 print'},{id:'d',label:'i 应该初始化为 1'}]} answer={['a']} explanation="这不是死循环，而是「循环方向」虫：想倒序打印（5 到 1），正确写法是 i 从 5 开始、条件 i >= 1、每轮 i--。原代码只打印一个 5 就退出——条件与推进方向不匹配，循环提前枯竭。判断 while 是否正确，永远三连问：初始值是什么？推进方向朝哪？条件什么时候变 false？" />
+
+## 练习场
+
+先把倒计时的 while 骨架补全：
+
+<FillBlank
+  id="while-fill"
+  question="补全打印 3、2、1 的 while 循环。"
+  answers={['while', '-']}
+  explanation="第一空：循环关键字 while。第二空：倒序要递减，写成 i = i - 1。i-- 是同一件事的简写，这空只留减号。方向必须朝着条件变 false 走（i 减到 0 时，i >= 1 不成立，循环停止）。"
+>
+
+```java
+int i = 3;
+??? (i >= 1) {
+    System.out.println(i);
+    i = i ??? 1;
+}
+```
+
+</FillBlank>
+
+<MultipleChoice id="while-count" question={'以下循环体执行几次？\n\nint i = 10;\nwhile (i > 7) {\n    i--;\n}'} options={[{id:'a',label:'2 次'},{id:'b',label:'3 次'},{id:'c',label:'7 次'},{id:'d',label:'10 次'}]} answer={['b']} explanation="i 依次是 10、9、8 时条件成立，三轮后 i 变 7，条件 7 > 7 为 false 停止——共 3 次。数 while 次数的老办法：在纸上列出 i 的完整取值序列。" />
+
+<MultipleChoice id="while-infinite" question={'以下哪段代码是死循环？'} options={[{id:'a',label:'int k = 1; while (k < 100) { k = k * 2; }'},{id:'b',label:'int k = 100; while (k > 0) { k--; }'},{id:'c',label:'int k = 2; while (k != 10) { k = k + 3; }'},{id:'d',label:'int k = 5; while (k > 0) { k = k - 1; }'}]} answer={['c']} explanation="a 翻倍很快越过 100 停止；b、d 每轮减 1 最终归零。c 的序列是 2、5、8、11、14……每次加 3 会从 8 直接跳到 11，永远踩不到 10，条件 k != 10 永远成立——死循环。考点：**步长会跳过终点的 != 条件是隐蔽的死循环**，AP 爱用这种局；判断时老老实实列出前几个取值。" />
+
+## 动手：数位求和
+
+<CodeExercise
+  id="while-digits-code"
+  title="数位求和 digitSum"
+  prompt="补全方法 digitSum：接受一个非负整数 n，返回它各位数字之和。例如 digitSum(1234) 返回 10（1+2+3+4），digitSum(7) 返回 7，digitSum(0) 返回 0。提示：n % 10 取个位，n / 10 去掉个位——这题用 while，因为不知道 n 有几位。"
+  starter={`public class DigitTool {
+
+    // 返回非负整数 n 的各位数字之和
+    public static int digitSum(int n) {
+        int total = 0;
+        // 用 while 循环：n 为 0 时说明所有位都处理完了
+
+        return total;
+    }
+}`}
+  rubric={['使用 while 循环，条件在 n 变为 0 时结束（如 n > 0）', '循环内用 n % 10 取出个位并累加到 total', '用 n / 10 去掉个位推进循环（没有这一步就是死循环）', '返回累加和']}
+  hints={['循环条件：while (n > 0)——n 每轮缩小，最终归零退出', '取个位累加：total += n % 10;', '推进：n = n / 10;——三要素检查法最后一问：推进方向朝着条件变 false 吗？']}
+/>
+
+## 概念吃不准？问教练
+
+「for 和 while 怎么选、死循环怎么防」是本课两大易混点，按费曼四步循环锁死它：
+
+<LLMPractice id="while-concept" preset="concept-coach" instructions={'任务：按四步循环学「for 与 while 的选择 + 死循环三要素检查法」：1) 让教练讲一遍；2) 合上讲解，用自己的话复述（必须包含一个 for 更合适和一个 while 更合适的例子）；3) 让它挑毛病；4) 修正后讲第二遍。'} starterMessage="请给我讲讲 for 循环和 while 循环各自适合什么场景，以及怎么用三要素检查法防死循环，我是学 AP CSA 的高中生。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 口头说出 for 和 while 各自的主场，各举一例；2) 默写三要素检查法的三连问；3) 白纸手写 digitSum 完整方法（四行核心）。写完在脑内跑一遍 digitSum(406)：4+0+6=10，对得上才算毕业——下一课，循环套循环，嵌套登场。</Callout>

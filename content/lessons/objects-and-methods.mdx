@@ -1,0 +1,141 @@
+---
+id: objects-and-methods
+title: 对象与方法初识：站在巨人的肩膀上
+description: println 和 Math.sqrt 背后是同一个概念——方法。学会调用库方法、接住返回值，认识对象这个新朋友。
+order: 12
+group: Unit 1 · Using Objects and Methods
+minutes: 35
+---
+
+## 方法：让程序学会「做一件事」
+
+你其实从第一课起就在用**方法**（method）了——`System.out.println("Hello, World!")` 就是一次方法调用。方法是打包好的一段功能，你不需要知道它内部怎么写，只要知道**怎么叫它干活**。
+
+一个方法调用长这样：
+
+```java
+double root = Math.sqrt(25.0);   // 调用 Math 类的 sqrt 方法，传入 25.0，得到 5.0
+```
+
+拆开看：
+
+- **方法名**：`sqrt`——它擅长的事；
+- **参数**（argument）：括号里传给它的 `25.0`——干活的原料；
+- **返回值**（return value）：它算完交回给你的 `5.0`；
+- **点号**：`Math.sqrt` 表示「Math 类里的 sqrt」——类名.方法名 是调用类方法的固定格式。
+
+## Math 类：你的第一个工具箱
+
+考试会提供 Java Quick Reference，Math 类只有 4 个方法（其中 abs 分 int、double 两个版本，在表上占 5 行），全部要熟到盲打：
+
+| 方法 | 作用 | 例子 |
+| --- | --- | --- |
+| `Math.abs(x)` | 绝对值（int 和 double 各一版） | `Math.abs(-7)` → `7` |
+| `Math.pow(base, exp)` | 乘方，返回 double | `Math.pow(2, 10)` → `1024.0` |
+| `Math.sqrt(x)` | 平方根，返回 double | `Math.sqrt(2)` → `1.414…` |
+| `Math.random()` | 随机数，范围 ≥ 0.0 且小于 1.0 | 每次不同 |
+
+`Math.random()` 的取值范围是 AP 每年必考：**[0, 1)——含 0 不含 1**。要造指定范围的随机整数，用这套公式：
+
+```java
+int roll = (int)(Math.random() * 6) + 1;   // 掷骰子：1 到 6
+```
+
+原理：先乘 6 拉伸到 [0, 6)，取整得到 0 到 5，最后加 1 变 1–6——每个点数概率相等。公式先记住，第 14 课讲 cast 时你会真正看懂它。
+
+## void 与返回值：干了活要不要交货
+
+方法分两种，决定了你怎么调用它：
+
+- **void 方法**：只干活不交货。`System.out.println(...)` 打印完就结束，没有返回值——你不能写 `int x = System.out.println("hi");`（编译错误）；
+- **有返回值的方法**：干完活必须交货。`Math.sqrt(25)` 交回 `5.0`——**返回值必须被接住或立刻使用**：
+
+```java
+double d = Math.sqrt(25);              // ✓ 接住存进变量
+System.out.println(Math.sqrt(25));     // ✓ 直接交给 println
+if (Math.abs(x) < 0.001) { ... }       // ✓ 直接当条件用（第 16 课）
+```
+
+<Callout title="每日一虫预告">返回值被丢弃——调用了方法却不接它的返回值——是今天的虫。编译器**不报错**，程序照跑，但计算结果凭空消失。这种「安静的虫」比报错虫更值得警惕。</Callout>
+
+## 对象初识：类的实例
+
+`Math` 这样的类是**工具箱**（全是 static 方法，不用 new）。但 Java 世界里更多类是**蓝图**（blueprint）：类定义规格，**对象**（object）是按蓝图造出的实例。
+
+你已经天天在用对象了——每个字符串都是 String 类的对象：
+
+```java
+String word = "APCSA";
+System.out.println(word.length());   // 5 —— 对象.方法() 调用实例方法
+```
+
+「类 = 图纸，对象 = 按图纸盖的房子」——这个类比现在先立住，Unit 3 你会自己画图纸盖房。
+
+## 每日一虫 🐛：消失的绝对值
+
+看这段代码：
+
+```java
+int temperature = -3;
+Math.abs(temperature);                          // 虫在这
+System.out.println(temperature);                // 输出 -3，不是 3
+```
+
+<MultipleChoice id="objs-bug" question="上面的程序输出 -3。虫的病根是什么？" options={[{id:'a',label:'Math.abs 不能处理负数'},{id:'b',label:'Math.abs 的返回值被丢弃了，temperature 本身没有被修改'},{id:'c',label:'println 应该写在 Math.abs 之前'},{id:'d',label:'temperature 应该声明成 double'}]} answer={['b']} explanation="Math.abs(temperature) 计算出 3 并交回——但没人接住它，返回值直接蒸发。temperature 变量纹丝不动。修法：temperature = Math.abs(temperature);——让返回值有地方住。这是「返回值被丢弃」虫型的标准案例：编译不报错、运行不崩溃，结果就是不对。" />
+
+## 练习场
+
+先热身，把两个 Math 调用补全：
+
+<FillBlank
+  id="objs-fill"
+  question="补全两个 Math 方法名。"
+  answers={['pow', 'abs']}
+  explanation="pow(base, exp) 接受两个参数算乘方，返回 double；abs 取绝对值。注意 pow 的结果是 double 类型（1024.0 而不是 1024）。"
+>
+
+```java
+double side = 2.5;
+double area = Math.???(side, 2);   // 6.25
+int gap = Math.???(3 - 10);        // 7
+```
+
+</FillBlank>
+
+把一个完整的勾股定理程序排出来——顺便验证 3、4、5 三角形：
+
+<ParsonsProblem
+  id="objs-parsons"
+  question="排出计算直角三角形斜边的程序。"
+  lines={['public class Geometry {', '    public static void main(String[] args) {', '        double a = 3.0;', '        double b = 4.0;', '        double c = Math.sqrt(a * a + b * b);', '        System.out.println(c);', '    }', '}']}
+  explanation="结构由外到内：类 → main → 两个直角边变量 → 用 Math.sqrt 算斜边（a*a + b*b 是参数）→ 打印 → 关括号。Math 调用本身就是一条语句，顺序上必须先有 a 和 b 才能算 c。"
+/>
+
+<MultipleChoice id="objs-random" question="表达式 (int)(Math.random() * 4) 可能产生的整数是哪些？" options={[{id:'a',label:'0、1、2、3'},{id:'b',label:'1、2、3、4'},{id:'c',label:'0、1、2、3、4'},{id:'d',label:'0 到 4 之间的任意小数'}]} answer={['a']} explanation="Math.random() ∈ [0, 1)，乘 4 得 [0, 4)，取整砍掉小数得 0、1、2、3——最大取不到 4。想要 1 到 4，加 1：(int)(Math.random() * 4) + 1。口诀：乘几就有几种结果，加几就从几开始。" />
+
+<MultipleChoice id="objs-void" question="下面哪一行代码会编译错误？" options={[{id:'a',label:'System.out.println(Math.abs(-9));'},{id:'b',label:'double x = Math.pow(2, 8);'},{id:'c',label:'int y = System.out.println("hi");'},{id:'d',label:'double z = Math.sqrt(144);'}]} answer={['c']} explanation="println 是 void 方法——没有返回值可交。把「无返回值」赋给 int 变量，编译器立刻拒绝。a、b、d 都正确地使用了返回值：a 直接把 Math.abs(-9) 交给 println，b、d 把返回值存进变量。" />
+
+## 动手：写一个真正的方法调用者
+
+<CodeExercise
+  id="objs-distance-code"
+  title="两点距离计算器"
+  prompt="补全方法 distance：接受两个点的坐标 (x1, y1) 和 (x2, y2)（都是 double），返回两点间的距离。公式：距离 = sqrt((x2-x1)² + (y2-y1)²)。写完在本地验证：distance(0, 0, 3, 4) 应为 5.0。"
+  starter={`public class GeometryTool {
+
+    // 返回点 (x1, y1) 与 (x2, y2) 之间的距离
+    public static double distance(double x1, double y1, double x2, double y2) {
+        // 用 Math.sqrt 和 Math.pow（或直接相乘）完成
+
+        return 0.0;
+    }
+}`}
+  rubric={['用 Math.sqrt 计算平方根', '横纵坐标差分别平方后相加（x 差的平方 + y 差的平方）', '返回计算结果而不是固定值', '没有修改方法签名']}
+  hints={['先算差：double dx = x2 - x1; double dy = y2 - y1;', 'Math.pow(dx, 2) 得到平方，也可以直接 dx * dx', '最后一里：把「dx 的平方 + dy 的平方」交给 Math.sqrt，写在 return 后面交回去']}
+/>
+
+## 让出题官考考你
+
+<LLMPractice id="objs-quiz" preset="quiz-master" instructions={'任务：告诉出题官「我刚学完 Math 类和方法调用，重点想练 Math.random 的取值范围和返回值的使用」，让它出 2 道题。规则：先在纸上算再作答；答错的题记进错题本三栏；全对后让它出一道 Math.random 造指定范围随机数的加难题。'} starterMessage="我刚学完 Math 类和方法调用，重点想练 Math.random 的取值范围和返回值的使用。请出一道题考我。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 默写 Math 类的方法签名（abs 的 int、double 两个版本 + pow、sqrt、random——正好是考场 Quick Reference 上 Math 的全部 5 行）；2) 口头说出 void 方法和有返回值方法的调用区别；3) 手写掷骰子公式并解释为什么 +1。这三样都会考，都是必须盲打的级别。</Callout>

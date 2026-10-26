@@ -1,0 +1,62 @@
+---
+id: unit-4-review
+title: Unit 4 大检阅：数据集合 15 题
+description: 数组与 2D、ArrayList、查找排序递归文件——最重单元的毕业考试。答对 11 题以上，最后的理论关通过。
+order: 44
+group: Unit 4 · Data Collections
+minutes: 45
+---
+
+## 检测规则
+
+老规矩：**无 AI、无笔记**；15 题三组；**答对 11 题（70%）以上过关**；先纸上作答再点选项；错题进三栏错题本。这是最后一个单元检测——通过它，冲刺模块见。
+
+## 第一组：数组与二维（1–5 题）
+
+<MultipleChoice id="u4r-q1" question="以下哪个表达式正确取得数组 int[] a 的长度？" options={[{id:'a',label:'a.length（字段，无括号）'},{id:'b',label:'a.length()'},{id:'c',label:'a.size()'},{id:'d',label:'length(a)'}]} answer={['a']} explanation="三兄弟各归其位：数组 a.length（无括号）、字符串 s.length()（有括号）、ArrayList list.size()。这组对照年年必考。" />
+
+<MultipleChoice id="u4r-q2" question="执行 String[] names = new String[3]; 后（未存过值），names[0] 的值是？" options={[{id:'a',label:'空字符串'},{id:'b',label:'null'},{id:'c',label:'编译错误'},{id:'d',label:'0'}]} answer={['b']} explanation="默认值表在数组上照常生效：int 是 0、double 是 0.0、boolean 是 false、**引用类型（String、对象）是 null**。null 意味着「格子存在但没指向任何对象」——对它调方法会抛 NullPointerException。" />
+
+<MultipleChoice id="u4r-q3" question={'以下代码的运行表现是？\n\nint[] a = {3, 6, 9};\nfor (int i = 0; i <= a.length; i++) {\n    System.out.println(a[i]);\n}'} options={[{id:'a',label:'打印 3、6、9 后，i = 3 时访问 a[3] 越界抛异常崩溃'},{id:'b',label:'打印 3、6、9 后正常结束'},{id:'c',label:'编译错误'},{id:'d',label:'打印 3、6、9、0'}]} answer={['a']} explanation="length 是 3，合法下标 0 到 2——条件带等号让 i 冲到 3，前三轮正常打印、第四轮当场越界。数组越界是运行时错误：编译无感、前三行输出正常，崩溃在最后一步——「看起来快跑完了才炸」是它的标志。" />
+
+<MultipleChoice id="u4r-q4" question="int[][] g = new int[5][8]; 之后，g.length 和 g[0].length 分别是？" options={[{id:'a',label:'8 和 5'},{id:'b',label:'5 和 8'},{id:'c',label:'都是 5'},{id:'d',label:'都是 8'}]} answer={['b']} explanation="两种 length 各数一维：外层管行、取出一行后内层管列。双重遍历的循环条件就靠它们分工：外层 row < g.length、内层 col < g[row].length。" />
+
+<MultipleChoice id="u4r-q5" question={'int[][] t = {{1, 2, 3}, {4, 5, 6}}; 表达式 t[1][2] 的值是？'} options={[{id:'a',label:'3'},{id:'b',label:'6'},{id:'c',label:'5'},{id:'d',label:'2'}]} answer={['b']} explanation="先行后列：t[1] 是 {4,5,6}，t[1][2] 是 6。从左往右读下标，每读一个就收窄一层。" />
+
+## 第二组：ArrayList（6–10 题）
+
+<MultipleChoice id="u4r-q6" question="ArrayList 的长度（元素个数）怎么取？" options={[{id:'a',label:'list.length'},{id:'b',label:'list.length()'},{id:'c',label:'list.size()'},{id:'d',label:'list.count'}]} answer={['c']} explanation="三兄弟速记：数组 length（字段）→ String length()（方法）→ ArrayList size()（方法）。AP 就爱在三个之间换着问。" />
+
+<MultipleChoice id="u4r-q7" question={'list 为 [a, c]。执行 list.add(1, b) 后 list 是？'} options={[{id:'a',label:'[a, b, c]'},{id:'b',label:'[b, a, c]'},{id:'c',label:'[a, b]'},{id:'d',label:'[a, c, b]'}]} answer={['a']} explanation="带下标的 add 是插入不是替换（替换是 set）：后面元素集体右移、size 加一。选 c 混淆了 add 与 set；选 d 把插入当成了追加。" />
+
+<MultipleChoice id="u4r-q8" question={'list 为 [10, 20, 30]。执行 list.remove(1) 后，list.get(1) 返回什么？'} options={[{id:'a',label:'20'},{id:'b',label:'30'},{id:'c',label:'null'},{id:'d',label:'抛异常'}]} answer={['b']} explanation="删除不留洞：后面的元素集体左移补位。remove(1) 删掉 20 后，30 滑到下标 1——get(1) 拿到 30。这个「左移」是边遍历边删除跳元素的病根。" />
+
+<MultipleChoice id="u4r-q9" question="边遍历边删除 ArrayList 元素时，倒序遍历（从 size()-1 到 0）为什么安全？" options={[{id:'a',label:'因为倒序跑得快'},{id:'b',label:'因为删除只让被删元素右侧的元素左移'},{id:'c',label:'因为 remove 只在倒序时合法'},{id:'d',label:'因为倒序不会越界'}]} answer={['b']} explanation="正序的病根：删除后当前下标被下一个目标滑入、i++ 又跳过它。倒序把「受左移影响的区域」和「未处理区域」隔开了——这是结构性的安全，不是巧合。倒序删除七行骨架请保持可默写状态。" />
+
+<MultipleChoice id="u4r-q10" question="声明存放 int 分数的 ArrayList，正确的写法是？" options={[{id:'a',label:'ArrayList<int>'},{id:'b',label:'ArrayList<Integer>'},{id:'c',label:'ArrayList<double>'},{id:'d',label:'intArrayList'}]} answer={['b']} explanation="基本类型进不了尖括号：int → Integer、double → Double。日常使用无感：add(88) 和 int x = get(0) 都是自动的。" />
+
+## 第三组：查找、排序、递归、文件（11–15 题）
+
+<MultipleChoice id="u4r-q11" question="二分查找能正确工作的前提是？" options={[{id:'a',label:'数组至少有 10 个元素'},{id:'b',label:'数组已按升序（或与查找逻辑一致的顺序）排好'},{id:'c',label:'数组是二维的'},{id:'d',label:'没有前提，永远正确'}]} answer={['b']} explanation="二分每一步都在用「有序」做推断：中间值偏大 → 目标必在左侧。无序时推断变瞎猜，目标可能被区间收缩悄悄甩掉——不崩溃、结果错。先有序，再折半。" />
+
+<MultipleChoice id="u4r-q12" question="对 [4, 2, 9, 1] 执行选择排序的第一轮（找最小与下标 0 交换）后，数组是？" options={[{id:'a',label:'[1, 2, 9, 4]'},{id:'b',label:'[1, 2, 4, 9]'},{id:'c',label:'[2, 4, 9, 1]'},{id:'d',label:'[1, 4, 2, 9]'}]} answer={['a']} explanation="选择排序一轮 = 一次交换不是一串移位：只有 1 和 4 换位，2 和 9 原地不动——[1, 2, 9, 4]。选 b 是把一轮当全部轮次。模拟排序没有捷径，动手写交换。" />
+
+<MultipleChoice id="u4r-q13" question={'按定义 fact(n)：n == 1 返回 1，否则返回 n * fact(n - 1)。fact(4) 的值是？'} options={[{id:'a',label:'24'},{id:'b',label:'10（4+3+2+1）'},{id:'c',label:'4'},{id:'d',label:'无限递归'}]} answer={['a']} explanation="展开：4 × 3 × 2 × fact(1) = 4 × 3 × 2 × 1 = 24。有 base case 不死循环；每层是乘不是加。递归题永远画展开图：下坡找基线，上坡算答案。" />
+
+<MultipleChoice id="u4r-q14" question="读文件的循环条件为什么写 while (in.hasNext())？" options={[{id:'a',label:'让程序跑得快'},{id:'b',label:'每次读取前先确认还有数据'},{id:'c',label:'因为 for 循环读不了文件'},{id:'d',label:'为了关闭文件'}]} answer={['b']} explanation="hasNext 是读取的守卫：问一句「还有吗」再伸手。文件行数未知 + 读完即停 = 次数未知的循环 = while 的识别信号。全套礼仪：接到文件、hasNext 守卫、读完 close。" />
+
+<MultipleChoice id="u4r-q15" question="以下哪个任务用 for-each（增强 for）**无法**正确完成？" options={[{id:'a',label:'打印 ArrayList 每个元素'},{id:'b',label:'把 int 数组每个元素乘 2 存回原位'},{id:'c',label:'统计列表中负数个数'},{id:'d',label:'求 2D 数组每行元素之和'}]} answer={['b']} explanation="for-each 铁律「只读不写」：循环变量是元素的副本，修改有去无回。要写回必须用带下标的传统 for（a[i] = a[i] * 2）。另外 for-each 遍历时增删元素通常会抛 ConcurrentModificationException；偶尔碰巧删到末尾元素会安静结束但结果仍错——只读巡游，别越界使用。" />
+
+## 对答案、算总分
+
+15 题对 **11 题以上**过关。错题全部进三栏错题本，设 +1 天提醒——并**录入 P4 的 bank.txt**：你的复习系统第一次真实运转，就从今天这场检测开始。
+
+## 无 AI 手写任务（白纸三道）
+
+1. **倒序删除**：dropFailing 完整方法（七行骨架，含循环头与条件）；
+2. **2D 行最值**：某行最大值所在列的完整骨架（记位置版）；
+3. **读文件**：readBank 骨架（两包 import、throws、while + hasNext、split、close）。
+
+<LLMPractice id="u4r-concept" preset="concept-coach" instructions={'任务：数一数三组错题数，把错得最多的一组主题告诉概念教练，费曼四步讲透。这是最后一个单元的补救环节——之后进入冲刺，AI 的角色将转向评分官和模考复盘。'} starterMessage="我在 Unit 4 检测里错题最多的主题是：/ 填入主题 /。请帮我把这个主题讲透，我是准备 AP CSA 的高中生。" />
+
+<Callout title="放下 AI · 理论部分全部毕业">四个单元的理论课到此全部结束——四个项目（P1–P4）、两场红队日、四次检测都已经做过。整门课大约 28 周，剩下的模块 C（约第 24–28 周）只做一件事：**把已经会的东西，变成考场上的分数**。下一课：选择题策略。</Callout>

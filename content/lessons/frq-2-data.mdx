@@ -1,0 +1,90 @@
+---
+id: frq-2-data
+title: FRQ 实战 II：Q3 与 Q4
+description: ArrayList（5 分）+ 2D Array（6 分）——数据的两连击，倒序删除与行最值主场作战。部分分的艺术也在这课。
+order: 47
+group: 模块 C · 备考冲刺
+minutes: 40
+---
+
+## 后两题：数据的战场
+
+Q3（Data Analysis with ArrayList，5 分）和 Q4（2D Array，6 分）合占 11 分。好消息：**这两题的套路你已分别在两节专课里练透**——本课把它们串成考场流程。
+
+## Q3 真题风格示例
+
+> 给定类 Gradebook，含 `private ArrayList<Integer> scores` 字段（已初始化）。实现：
+>
+> - `public int countAbove(int limit)`：返回大于 limit 的成绩个数；
+> - `public void dropBelow(int limit)`：从列表中删除所有严格小于 limit 的成绩。
+
+**countAbove**（遍历统计——第 21 课模板）：
+
+```java
+public int countAbove(int limit) {
+    int count = 0;
+    for (int i = 0; i < scores.size(); i++) {
+        if (scores.get(i) > limit) {
+            count++;
+        }
+    }
+    return count;
+}
+```
+
+**dropBelow**（倒序删除——第 36 课七行骨架）：
+
+```java
+public void dropBelow(int limit) {
+    for (int i = scores.size() - 1; i >= 0; i--) {
+        if (scores.get(i) < limit) {
+            scores.remove(i);
+        }
+    }
+}
+```
+
+注意 Q3 的固定姿势：**方法操作的是字段 scores**——不 new 新列表、不改签名。
+
+## Q4 真题风格示例
+
+> 给定类 Grid，含 `private int[][] cells` 字段（已初始化）。实现：
+>
+> `public int maxInRow(int row)`：返回第 row 行的最大元素。
+
+```java
+public int maxInRow(int row) {
+    int max = cells[row][0];                 // 擂主 = 该行第一个（真实元素，负数不怕）
+    for (int col = 1; col < cells[row].length; col++) {
+        if (cells[row][col] > max) {
+            max = cells[row][col];
+        }
+    }
+    return max;
+}
+```
+
+行内最值 = 行最值模板 + `cells[row]` 这一行的一维化——上一课的 `grid[row].length` 思想直接复用。
+
+## 部分分的艺术
+
+FRQ 按点给分，**每一分都能单独挣**：
+
+1. **写不出完整逻辑，先写遍历骨架**：循环头（条件用对 length/size）本身就可能踩中一个 non-algorithm 点；
+2. **签名照抄题面**：方法头一个字符都不改（官方规则：改写了给定方法头的参数个数或类型，这道方法的 algorithm 点不给——一题里最大的分就没了。就算改了头，其他不靠这段算法的点仍按各点单独判分，方法别空着）；
+3. **变量名表意**：row、col、count 这种自解释命名，阅卷人看得懂，心情也好；
+4. **不确定就写两版**？不要——写一版最稳的（倒序删除、擂主初值 a[0]），别在考场发明新算法。
+
+<Callout title="评分规则彩蛋">阅卷的 Errors to Ignore 清单相当宽容：可推断的拼写、局部变量忘声明、缺分号、= 与 == 笔误（阅卷按意图理解）都不扣分。**真正扣分的是逻辑错**：边界错、忘更新、条件反了。所以考场策略：把逻辑写清楚，别为一个分号慌张。</Callout>
+
+## 限时实战
+
+1. **白纸 + 计时 22 分钟**：不看上文，手写 countAbove 与 maxInRow；
+2. **敲入验证**：scores 为 [88, 55, 92, 40]，countAbove(60) 应为 2；cells 为 `{{3, 7}, {9, 1}}`，maxInRow(1) 应为 9；
+3. **交评分官**：
+
+<LLMPractice id="frq2-grader" preset="frq-grader" instructions={'任务：把 Q3（countAbove 与 dropBelow 的题面）和你的 countAbove 手写答案、Q4（maxInRow 题面）和你的答案，分两次发给评分官逐点批改（7 分口径按各自实际分值折算说明即可）。重点让它检查：循环条件、擂主初值、以及你是否守住了字段与签名。'} starterMessage="请批改我的 FRQ Q3 和 Q4 答案，我会分别贴题面和实现代码。" />
+
+<MultipleChoice id="frq2-quiz" question="Q3 的 dropBelow 你只剩 3 分钟、想不出倒序写法了。下列哪种做法最划算？" options={[{id:'a',label:'空着不写，时间留给检查'},{id:'b',label:'把倒序循环头写出来（size()-1 到 0），哪怕 if 和 remove 不确定也按直觉写'},{id:'c',label:'发明一种新算法碰运气'},{id:'d',label:'把方法签名改简单一点'}]} answer={['b']} explanation="部分分艺术的核心：每一分单独判。正确的倒序循环头是 dropBelow 的关键构件，写出它就可能踩中得分点；空着是确定的零分。d 千万别做——改参数个数或类型会让 algorithm 点全灭。考场上的格言：会多少写多少，写了才有分。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 白纸默写 dropBelow 七行骨架与 maxInRow（擂主初值 cells[row][0]）；2) 口头说出「部分分的艺术」四条；3) 复述 Errors to Ignore 会原谅什么、不会原谅什么。下一课：Bluebook 适应——工具的最后一关。</Callout>

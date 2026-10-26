@@ -1,0 +1,112 @@
+---
+id: bank-frq6
+title: 题库 · FRQ 第 6 题：类设计（第二轮）
+description: 真实考试 Q2 的多方法形态：StudyTimer 类——构造器 + 记录方法（带分类计数）+ 两个查询方法。状态更新与查询分离。
+order: 100
+group: Exam Bank · 题库
+minutes: 22
+---
+
+## 题目说明（考试真实格式）
+
+**Question 2: Class Design**（建议限时 22 分钟）
+
+你要写出完整的 `StudyTimer` 类——记录一个学生的学习时间。
+
+- 构造器接收一个参数 `String studentName`（学生姓名）；初始状态：累计 0 分钟、0 次学习记录、0 次「专注记录」；
+- `addSession(int minutes)`：记录一次学习（`minutes` 假定 > 0）。每次调用：`minutes` 计入总分钟数、学习次数加 1；若 `minutes >= 25`，这次算「专注学习」，专注次数加 1；
+- `focusedSessions()`：返回专注学习次数；
+- `averageSession()`：返回平均每次学习的分钟数（`总分钟数 ÷ 学习次数`，double）。**Precondition：调用前至少已记录一次学习。**
+
+以下示例的调用序列发生在另一个类中：
+
+| 语句 | 返回值 | 说明 |
+| --- | --- | --- |
+| `StudyTimer t = new StudyTimer("Amy");` | （无） | Amy 的计时器，初始全 0 |
+| `t.addSession(40);` | （无） | 总 40 分、1 次记录、专注 1 次 |
+| `t.addSession(10);` | （无） | 总 50 分、2 次记录、专注仍 1 次 |
+| `t.addSession(25);` | （无） | 总 75 分、3 次记录、专注 2 次（25 算专注） |
+| `t.focusedSessions();` | `2` | |
+| `t.averageSession();` | `25.0` | 75 ÷ 3 |
+
+写出完整的类，实现必须符合全部规格并与示例一致（注意 25 分钟恰好算专注——条件是 `>= 25`）。
+
+<CodeExercise
+  id="bank-frq6"
+  title="FRQ6：StudyTimer 完整类"
+  prompt={'写出完整的 StudyTimer 类：私有实例变量（姓名、总分钟数、学习次数、专注次数）；构造器初始化；addSession(int minutes) 累计并把 >= 25 的记录为专注；focusedSessions() 返回专注次数；averageSession() 返回 double 的平均分钟数（precondition 至少一次记录）。示例：40、10、25 三次记录后 focusedSessions() 为 2、averageSession() 为 25.0。'}
+  starter={`public class StudyTimer
+{
+    // 实例变量
+
+    // 构造器
+
+    // addSession 方法
+
+    // focusedSessions 方法
+
+    // averageSession 方法
+
+}`}
+  rubric={['实例变量 private，构造器把全部状态初始化为 0（姓名存入）', 'addSession 正确累计总分钟数与学习次数', '专注判断用 minutes >= 25（含等于）', 'focusedSessions 与 averageSession 正确返回（平均值是 double 除法，75 ÷ 3 = 25.0）']}
+  hints={['四个实例变量：studentName、totalMinutes、sessionCount、focusedCount——全部 private', 'addSession 里先累加，再 if (minutes >= 25) focusedCount++——注意是 >= 不是 >', 'averageSession 的除法必须出现 double：return (double) totalMinutes / sessionCount;——两个 int 相除会砍掉小数']}
+/>
+
+## 官方风格评分标准（Scoring Guidelines）
+
+**Question 6 — 共 7 分（单 part，多方法类设计）**
+
+### Canonical solution（标准答案，供对照）
+
+```java
+public class StudyTimer
+{
+    private String studentName;
+    private int totalMinutes;
+    private int sessionCount;
+    private int focusedCount;
+
+    public StudyTimer(String name)
+    {
+        studentName = name;
+        totalMinutes = 0;
+        sessionCount = 0;
+        focusedCount = 0;
+    }
+
+    public void addSession(int minutes)
+    {
+        totalMinutes += minutes;
+        sessionCount++;
+        if (minutes >= 25)
+        {
+            focusedCount++;
+        }
+    }
+
+    public int focusedSessions()
+    {
+        return focusedCount;
+    }
+
+    public double averageSession()
+    {
+        return (double) totalMinutes / sessionCount;
+    }
+}
+```
+
+### Scoring Criteria 与 Decision Rules
+
+| # | Scoring Criteria | Decision Rules | 分 |
+| --- | --- | --- | --- |
+| 1 | 声明类头 `class StudyTimer` | 不得分：类声明为 private；类外出现无关代码 | 1 |
+| 2 | 声明 **private** 实例变量，类型恰当（姓名 String、总分钟 int、次数 int、专注次数 int） | 不得分：任何实例变量 static；变量声明在类外 | 1 |
+| 3 | 声明构造器头并为全部实例变量赋初值（三个计数器为 0，姓名存入） | 仍可得分：用 `this.studentName = studentName` 处理同名参数。不得分：计数器未初始化（int 默认 0 虽然运行正确，但官方惯例要求显式初始化——若恰好漏写且其余正确，按「仍可得分」处理并在评语中注明） | 1 |
+| 4 | addSession 头正确（public void、一个 int 参数）且累计总分钟数与学习次数 | 不得分：参数被当作返回值处理；漏掉两个累计中的任一个 | 1 |
+| 5 | addSession 完整正确：分类判断用 `minutes >= 25`（含等于）并正确递增专注计数 **(algorithm)** | 不得分：条件写成 > 25（边界错）；专注计数在循环外/错误条件下递增；方法缺少 void 语义却返回了值 | 1 |
+| 6 | focusedSessions 与 averageSession 方法头正确且 focusedSessions 返回专注次数 | 仍可得分：查询方法头访问级别写对但缺 public（Errors to Ignore） | 1 |
+| 7 | averageSession 返回 double 的平均（总分钟 ÷ 次数，除法中至少一方是 double）** (algorithm)** | 不得分：两个 int 直接相除——整数除法会砍掉小数（用总分钟 35、次数 2 验证：int 除法得 17，double 除法才是 17.5）。不必特判除零：precondition 已保证至少一次记录 | 1 |
+| | **Total** | | **7** |
+
+**Scoring Notes**：验证 averageSession 时不要只看 75 ÷ 3 = 25.0——这是整除的巧合，50 ÷ 2 也恰好整除；要暴露整数除法必须用非整除数据（如 35 ÷ 2）。专注条件 `>= 25` 的边界（25 分钟恰好算专注）是本题最常见丢分点。

@@ -1,0 +1,104 @@
+---
+id: bank-frq8
+title: 题库 · FRQ 第 8 题：2D 数组（第二轮）
+description: 真实考试 Q4 的列求和形态：WeatherStation.wettestColumn()——按列累加降雨量并返回最大列下标。行列方向 + 最值比较。
+order: 102
+group: Exam Bank · 题库
+minutes: 18
+---
+
+## 题目说明（考试真实格式）
+
+**Question 4: 2D Array**（建议限时 18 分钟）
+
+`WeatherStation` 类维护一个二维数组，记录一周内各观测点的降雨量，部分声明如下：
+
+```java
+public class WeatherStation
+{
+    /** rain[r][c] 是第 r 天在观测点 c 测得的降雨量（毫米，非负） */
+    private int[][] rain;
+
+    /**
+     * 返回总降雨量最大的观测点（列）下标。
+     * Precondition: rain 不为 null 且不含 null 行；
+     *               rain 至少有 1 行 1 列。
+     * Postcondition: rain 不被修改。
+     */
+    public int wettestColumn()
+    { /* to be implemented */ }
+
+    /* There may be instance variables, constructors, and methods
+       that are not shown. */
+}
+```
+
+访问 `rain` 元素时，第一个下标是天（行）、第二个下标是观测点（列）。
+
+总降雨量 = 该列所有行的读数之和。若多列并列最大，返回其中**任意一个**下标即可。
+
+示例：`rain` 内容如下——
+
+| | 观测点 0 | 观测点 1 | 观测点 2 |
+| --- | --- | --- | --- |
+| **第 0 天** | 3 | 5 | 1 |
+| **第 1 天** | 0 | 4 | 2 |
+| **第 2 天** | 6 | 2 | 0 |
+
+列总和分别是 9、11、3——`wettestColumn()` 返回 `1`。
+
+<CodeExercise
+  id="bank-frq8"
+  title="FRQ8：wettestColumn"
+  prompt="实现 WeatherStation 的 wettestColumn()：对每一列（观测点）把所有行（天）的读数求和，返回总和最大的列下标；并列返回任意其一。示例：列总和 9、11、3，返回 1。rain 不得被修改。"
+  starter={`public int wettestColumn()
+{
+    // 对每个列下标 c：内层遍历所有行累加 rain[r][c]
+    // 记录最大列总和与对应下标
+
+}`}
+  rubric={['外层按列遍历（c 从 0 到 rain[0].length - 1）', '内层按行累加 rain[r][c]（第一个下标是变化的行）', '正确比较并记录最大列总和对应的下标', '并列时返回任意一个（用严格大于更新即可）']}
+  hints={['这题是「按列走」：外层循环变量是列 c，内层把行 r 从 0 数到 rain.length - 1', '列的个数是 rain[0].length（不是 rain.length）——行列个数写反是最常见丢分', '骨架：for c { sum = 0; for r { sum += rain[r][c]; } 与当前最大比较 }——sum 要在每列开始前清零']}
+/>
+
+## 官方风格评分标准（Scoring Guidelines）
+
+**Question 8 — 共 6 分（单 part）**
+
+### Canonical solution（标准答案，供对照）
+
+```java
+public int wettestColumn()
+{
+    int bestCol = 0;
+    int bestSum = -1;
+    for (int c = 0; c < rain[0].length; c++)
+    {
+        int sum = 0;
+        for (int r = 0; r < rain.length; r++)
+        {
+            sum += rain[r][c];
+        }
+        if (sum > bestSum)
+        {
+            bestSum = sum;
+            bestCol = c;
+        }
+    }
+    return bestCol;
+}
+```
+
+### Scoring Criteria 与 Decision Rules
+
+| # | Scoring Criteria | Decision Rules | 分 |
+| --- | --- | --- | --- |
+| 1 | 声明方法头 `int wettestColumn()`（无参、返回 int） | 不得分：方法名不符；带上了多余参数 | 1 |
+| 2 | 外层按**列**遍历（循环上界用 rain[0].length 或等价的列数） | 仍可得分：先按行收集再转置统计的等价结构。不得分：列数写成 rain.length（行列个数写反，方阵输入时侥幸正确、非方阵必错） | 1 |
+| 3 | 内层按**行**遍历，访问该列的全部元素 | 仍可得分：enhanced for（`for (int[] day : rain)` 后取 `day[c]`）的等价形式。不得分：内层下标写反成 rain[c][r]（访问越界或取错元素） | 1 |
+| 4 | 每列总和计算正确，且累加器在**每列开始前**清零 **(algorithm)** | 不得分：sum 未在每列开始前清零（跨列累加）；漏加行；求和过程中修改了 rain | 1 |
+| 5 | 跨列比较总和处理正确并记录最大列下标 | 仍可得分：初值取第 0 列实际总和而非 -1；把各列总和先存入一维数组再找最大。不得分：比较方向写反（取到了最干的列） | 1 |
+| 6 | 返回总和最大列的下标（并列返回任意其一） | 仍可得分：用严格 > 更新、自然保留先（或后）遇到的并列列。不得分：返回的是总和分析值而非下标；返回语句在循环内提前触发 | 1 |
+| | **Total** | | **6** |
+
+**Scoring Notes**：非方阵输入是行列写反的照妖镜——验证时务必用一个行数 ≠ 列数的例子（如 3 天 × 4 观测点）。按列统计后比较、或先算出每列总和存进 int[] 再统一找最大，均为有效解；降雨量非负，`bestSum` 初值取 -1 配合严格 `>` 安全。

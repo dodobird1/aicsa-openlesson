@@ -1,0 +1,62 @@
+---
+id: bank-u1-mcx
+title: 题库 · Unit 1 选择题（21 题）
+description: 对齐真实考试 Unit 1（15–25% 权重）的题型分布：输出预测、代码补全、概念判断。全部由官方样题与真题规律改编，非原题。
+order: 91
+group: Exam Bank · 题库
+minutes: 20
+---
+
+## 使用说明
+
+- 每题 4 选 1（与真实考试一致），**先在纸上写答案再点选项**；
+- 解析在判分后出现——答错先读解析，再按错题本三栏法记录；
+- 本题库由官方 CED 样题与历年真题的**题型规律改编**而来：场景、数字、代码全部重写，考点与陷阱设计对齐真题。
+
+## 第一组：输出预测
+
+<MultipleChoice id="bank-u1-q1" question={'以下代码段的输出是什么？\n\ndouble p = 9.0;\nint q = 4;\ndouble a = (int) (p / q);\ndouble b = p / q;\nSystem.out.println(a + " " + b);'} options={[{id:'a',label:'2.0 2.25'},{id:'b',label:'2.25 2.0'},{id:'c',label:'2.0 2.0'},{id:'d',label:'2.25 2.25'}]} answer={['a']} explanation="p / q 是 double 除 int → double 除法，得 2.25。a 的 cast 把 2.25 截断成 int 的 2，存进 double 变量后是 2.0；b 没有 cast，保留 2.25。cast 只影响紧跟它的那一个表达式。" />
+
+<MultipleChoice id="bank-u1-q2" question={'以下代码段可能打印出哪一组值？\n\nint m = (int)(Math.random() * 8) + 3;\nint n = (int)(Math.random() * 3) + 8;\nSystem.out.println(m + " " + n);'} options={[{id:'a',label:'5 9'},{id:'b',label:'11 9'},{id:'c',label:'3 11'},{id:'d',label:'2 8'}]} answer={['a']} explanation="m 的范围：random ∈ [0,1)，乘 8 得 [0,8)，截断为 0–7，加 3 得 3–10；n 乘 3 截断为 0–2，加 8 得 8–10。b 的 11 超出 m 范围，c 的 11 超出 n 范围，d 的 2 低于 m 的下界——只有 5 和 9 都在各自范围内。" />
+
+<MultipleChoice id="bank-u1-q4" question={'执行以下代码段后，s2 的值是什么？\n\nString s1 = "GARDEN";\nString s2 = s1.substring(2);\ns2 += s1.substring(0, 2);'} options={[{id:'a',label:'"RDENGA"'},{id:'b',label:'"GARDEN"'},{id:'c',label:'"RDENG"'},{id:'d',label:'"DENGA"'}]} answer={['a']} explanation="substring(2) 从索引 2 取到末尾 → RDEN；substring(0, 2) 含头不含尾，取索引 0 和 1 → GA；拼接得 RDENGA。" />
+
+<MultipleChoice id="bank-u1-q5" question={'以下语句的输出是什么？\n\nSystem.out.println(Math.pow(3, 2) + 1);'} options={[{id:'a',label:'10.0'},{id:'b',label:'10'},{id:'c',label:'9.0'},{id:'d',label:'编译错误'}]} answer={['a']} explanation="Math.pow 返回 double：3 的 2 次方是 9.0，加 1 时 int 自动拓宽为 double，得 10.0。pow 的返回类型是高频陷阱——它是 double 不是 int。" />
+
+<MultipleChoice id="bank-u1-q7" question={'以下语句的输出是什么？\n\nSystem.out.println(Math.abs(-3.5) + Math.abs(-2));'} options={[{id:'a',label:'5.5'},{id:'b',label:'5'},{id:'c',label:'6.0'},{id:'d',label:'编译错误，abs 只接受 int'}]} answer={['a']} explanation="Math.abs 有 int 和 double 两个重载版本：-3.5 匹配 double 版得 3.5，-2 匹配 int 版得 2；3.5 + 2 发生自动拓宽，得 double 的 5.5。" />
+
+<MultipleChoice id="bank-u1-q13" question={'以下代码段的输出是什么？\n\nint a = new String("code") == new String("code") ? 1 : 0;\nString x = "code";\nString y = "code";\nint b = x.equals(y) ? 1 : 0;\nSystem.out.println(a + " " + b);'} options={[{id:'a',label:'0 1'},{id:'b',label:'1 1'},{id:'c',label:'0 0'},{id:'d',label:'1 0'}]} answer={['a']} explanation="两个分别 new 出来的 String 是不同对象，== 比较的是对象身份（住址），得 false → 0；equals 比较内容，内容相同的两个字符串得 true → 1。比较字符串内容永远用 equals。" />
+
+## 第二组：代码补全与判断
+
+<MultipleChoice id="bank-u1-q3" question={'考虑以下 Book 类。\n\npublic class Book\n{\nprivate String title;\nprivate double price;\npublic Book(String t, double p)\n{ /* implementation not shown */ }\n/* Class contains no other constructors. */\n}\n\n哪个代码段（写在另一个类里）能正确创建 Book 对象？'} options={[{id:'a',label:'Book b = new Book("Java", "29.99");'},{id:'b',label:'Book b = new Book(29.99, "Java");'},{id:'c',label:'Book b = new Book("Java", 29.99);'},{id:'d',label:'Book b = new Book();'}]} answer={['c']} explanation="实参必须按构造器签名匹配：第一个参数是 String（书名），第二个是 double（价格）。a 的第二个参数是字符串，b 参数顺序颠倒，d 调用了不存在的无参构造器。" />
+
+<MultipleChoice id="bank-u1-q8" question={'以下代码段的输出是什么？\n\nint x = 20;\nx /= 3;\nx %= 4;\nSystem.out.println(x);'} options={[{id:'a',label:'2'},{id:'b',label:'3'},{id:'c',label:'6'},{id:'d',label:'0'}]} answer={['a']} explanation="x /= 3 是整数除法：20 / 3 = 6（截断）；x %= 4 取余：6 % 4 = 2。复合赋值每一步都按 int 规则算。" />
+
+<MultipleChoice id="bank-u1-q9" question={'以下哪一行会编译错误？'} options={[{id:'a',label:'System.out.println(Math.sqrt(25));'},{id:'b',label:'double d = Math.random() * 10;'},{id:'c',label:'int y = System.out.println("hi");'},{id:'d',label:'int z = Math.abs(-8);'}]} answer={['c']} explanation="println 是 void 方法，没有返回值可接——把 void 赋给 int 变量，编译器直接拒绝。a 把返回值直接交给 println、b 和 d 正确接住返回值，都合法。" />
+
+<MultipleChoice id="bank-u1-q10" question={'以下语句的输出是什么？\n\nSystem.out.println(Integer.MAX_VALUE + 1);'} options={[{id:'a',label:'编译错误'},{id:'b',label:'程序运行时抛出异常'},{id:'c',label:'-2147483648'},{id:'d',label:'2147483648'}]} answer={['c']} explanation="int 溢出不报错，像里程表一样从最大值绕回最小值：MAX_VALUE + 1 = MIN_VALUE。这是 CED 明确列出的考点（Topic 1.5）。" />
+
+<MultipleChoice id="bank-u1-q11" question={'以下代码段执行后 n 的值是什么？\n\nint n = Integer.parseInt("45");\nn += 5;'} options={[{id:'a',label:'50'},{id:'b',label:'"455"'},{id:'c',label:'编译错误'},{id:'d',label:'45'}]} answer={['a']} explanation="Integer.parseInt 把数字字符串转成 int：45 → 45；加 5 得 50。parseInt 在考场的 Java Quick Reference 上，必须熟到盲打。" />
+
+<MultipleChoice id="bank-u1-q12" question={'关于 Java 注释，以下哪个说法是正确的？'} options={[{id:'a',label:'注释会参与编译并影响程序输出'},{id:'b',label:'/* */ 风格的注释不能跨越多行'},{id:'c',label:'注释会被编译器忽略，用于向人说明代码'},{id:'d',label:'// 风格的注释只能出现在行首'}]} answer={['c']} explanation="注释是写给人看的文档，编译器直接忽略。/* */ 可以跨行；// 可以出现在行中任意位置（从 // 起到行尾都算注释）。文档注释是 Topic 1.8 的考纲内容。" />
+
+<MultipleChoice id="bank-u1-q6" question={'以下哪个表达式可以判断「字符串 s 的长度至少为 3 且以 a 开头」（a 是单个字母）？'} options={[{id:'a',label:'s.length() >= 3 && s.substring(0, 1).equals("a")'},{id:'b',label:'s.length() > 3 || s.substring(0, 1).equals("a")'},{id:'c',label:'s.length() >= 3 && s.substring(1, 2).equals("a")'},{id:'d',label:'s.substring(0, 1) == "a" && s.length() >= 3'}]} answer={['a']} explanation="「至少 3」是 >= 3 不是 > 3；「以 a 开头」取索引 0 的字符即 substring(0, 1)（substring(1,2) 取的是第二个字符）；两个条件要同时成立用 &&（b 的 || 是「或」）；比较内容用 equals 不用 ==（d）。" />
+
+## 第三组：String 与对象
+
+<MultipleChoice id="bank-u1-q14" question={'以下语句的输出是什么？\n\nSystem.out.println(1 + 2 + "3" + 4 + 5);'} options={[{id:'a',label:'3345'},{id:'b',label:'12345'},{id:'c',label:'339'},{id:'d',label:'6'}]} answer={['a']} explanation="加法从左到右：1 + 2 是数字加法得 3；3 再加字符串 3 时，之后全是拼接——33、334、3345。一旦碰上 String，剩下的加号全变连接符。" />
+
+<MultipleChoice id="bank-u1-q15" question={'以下语句的输出是什么？\n\nString s = "banana";\nSystem.out.println(s.indexOf("an"));'} options={[{id:'a',label:'1'},{id:'b',label:'2'},{id:'c',label:'3'},{id:'d',label:'-1'}]} answer={['a']} explanation="indexOf 返回子串**首次出现**的起始索引：索引 1 处是 a-n（banana 的第 2、3 个字符）→ 1。索引 2 处是 n-a，不匹配。找不到才返回 -1。" />
+
+<MultipleChoice id="bank-u1-q16" question={'以下语句的输出是什么？\n\nString a = "apple";\nString b = "banana";\nSystem.out.println(a.compareTo(b));'} options={[{id:'a',label:'一个负数'},{id:'b',label:'一个正数'},{id:'c',label:'0'},{id:'d',label:'编译错误'}]} answer={['a']} explanation="compareTo 按字典序：调用者排在前面返回负数——apple 在 banana 之前。考试只要求判断结果是负、零还是正，不要求具体数值。" />
+
+<MultipleChoice id="bank-u1-q17" question={'Tool 类已声明 public static double half(double x)。以下哪一行（写在另一个类中）会编译错误？'} options={[{id:'a',label:'double d = Tool.half(8.0);'},{id:'b',label:'int r = Tool.half(3);'},{id:'c',label:'System.out.println(Tool.half(10));'},{id:'d',label:'double d = Tool.half(1 + 1);'}]} answer={['b']} explanation="half 返回 double，把 double 塞进 int 变量是缩窄转换，必须显式 cast——编译器拒绝。其余三行都正确接住或使用了返回值（c 会打印 5.0）。" />
+
+<MultipleChoice id="bank-u1-q18" question={'关于类（class）与对象（object），哪个说法正确？'} options={[{id:'a',label:'类是蓝图，对象是按蓝图创建出来的实例'},{id:'b',label:'一个类只能创建一个对象'},{id:'c',label:'对象就是变量名本身'},{id:'d',label:'new 关键字用来声明一个新类'}]} answer={['a']} explanation="类定义规格（有什么字段、什么方法），new 按规格造出实例。一个类可以造任意多个对象；变量名只是贴在对象上的标签；new 造对象、class 声明类。" />
+
+<MultipleChoice id="bank-u1-q19" question={'以下语句的输出是什么？\n\nSystem.out.println(Math.sqrt(16));'} options={[{id:'a',label:'4.0'},{id:'b',label:'4'},{id:'c',label:'16.0'},{id:'d',label:'编译错误，sqrt 只接受 double'}]} answer={['a']} explanation="16 是 int，但会自动拓宽为 16.0 传给 sqrt——参数位置永远自动拓宽；sqrt 返回 double 的 4.0。int 参数传给 double 形参不需要 cast。" />
+
+<MultipleChoice id="bank-u1-q20" question={'以下两行代码的结果是？\n\nfinal double TAX = 0.08;\nTAX = 0.1;'} options={[{id:'a',label:'编译错误'},{id:'b',label:'正常运行，TAX 变为 0.1'},{id:'c',label:'运行时抛出异常'},{id:'d',label:'TAX 保持 0.08，且没有任何报错'}]} answer={['a']} explanation="final 表示「只能赋值一次」：声明时的初始值之后再赋值就是编译错误。这正是常量的意义——程序里不许任何人（包括自己）偷偷改掉它。" />
+
+<MultipleChoice id="bank-u1-q21" question={'以下哪个表达式的值最大？'} options={[{id:'a',label:'Integer.MAX_VALUE'},{id:'b',label:'Integer.MIN_VALUE'},{id:'c',label:'-Integer.MAX_VALUE'},{id:'d',label:'Integer.MAX_VALUE + 1'}]} answer={['a']} explanation="MAX_VALUE = 2147483647 是 int 的天花板，最大。MIN_VALUE 和 MAX_VALUE + 1 都是 -2147483648（溢出绕回）；-MAX_VALUE 是 -2147483647，只比最小值大 1。" />

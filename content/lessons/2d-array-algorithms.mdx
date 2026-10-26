@@ -1,0 +1,125 @@
+---
+id: 2d-array-algorithms
+title: 2D 算法：表格上的花式操作
+description: 行最值、列求和、按条件找所在行——FRQ 第四题（6 分）的全部零件，在这课集齐。
+order: 39
+group: Unit 4 · Data Collections
+minutes: 35
+---
+
+## 三种必会操作
+
+上一课的全表遍历是地基，Q4 在地基上盖三种楼：
+
+### 操作一：行内最值（外层行、内层找擂主）
+
+```java
+// 找每一行的最大值所在列（Q4 高频变体）
+for (int row = 0; row < grid.length; row++) {
+    int maxCol = 0;
+    for (int col = 1; col < grid[row].length; col++) {
+        if (grid[row][maxCol] < grid[row][col]) {
+            maxCol = col;               // 记的是位置不是值！
+        }
+    }
+    System.out.println("第 " + row + " 行最大值在下标 " + maxCol);
+}
+```
+
+### 操作二：列求和（内外层身份互换）
+
+列求和的经典写法——**内层遍历行、外层固定列**（也可以外层行内层列累加进一个一维数组，两种都常见）：
+
+```java
+for (int col = 0; col < grid[0].length; col++) {
+    int colTotal = 0;
+    for (int row = 0; row < grid.length; row++) {
+        colTotal += grid[row][col];     // 行变列定，竖着扫一列
+    }
+    System.out.println("第 " + col + " 列的和是 " + colTotal);
+}
+```
+
+### 操作三：按条件找所在行（返回行下标）
+
+```java
+// 返回 target 所在的行下标；不存在返回 -1
+public static int findRow(int[][] grid, int target) {
+    for (int row = 0; row < grid.length; row++) {
+        for (int col = 0; col < grid[row].length; col++) {
+            if (grid[row][col] == target) {
+                return row;             // 命中即返回这一行的下标
+            }
+        }
+    }
+    return -1;
+}
+```
+
+## Q4 题型解剖（6 分）
+
+FRQ 第四题固定是 **2D Array**：给一个类带二维字段，写方法处理表格。骨架与 Q3 同款——**方法操作字段、遍历骨架直接上**，只是循环变成两层。
+
+## 每日一虫 🐛：行列下标交换
+
+```java
+int[][] grid = new int[3][4];      // 3 行 4 列
+for (int i = 0; i < grid.length; i++) {
+    for (int j = 0; j < grid[0].length; j++) {
+        System.out.print(grid[j][i]);   // 虫：行列写反了
+    }
+}
+```
+
+<MultipleChoice id="td2-bug" question="这段代码的运行表现是？" options={[{id:'a',label:'正常打印，行列互换而已'},{id:'b',label:'崩溃：i 走到 0、j 走到 3 时访问 grid[3][0]'},{id:'c',label:'什么都不打印'},{id:'d',label:'编译错误'}]} answer={['b']} explanation="grid[j][i] 把列下标 j 当行号用：j 的合法范围是 0 到 3（列数 4），但合法行号只到 2——第一行的内层循环走到 j = 3 就撞墙崩溃。行数与列数相等的方阵里这个虫会隐身（恰好不越界但访问错位），行列不等才现形——又一个「不报错时更危险」的典范。修法：老老实实 grid[i][j]，行列各归其位。" />
+
+## 练习场
+
+<FillBlank
+  id="td2-fill"
+  question="补全「找某行最大值所在列」的骨架。"
+  answers={['0', 'col']}
+  explanation="擂主下标从 0（该行第一个元素）起步——用真实元素当擂主，负数也不怕。更新条件命中时记录的是位置：maxCol = col。找「值」和找「位置」是两种输出，看清题目要哪个。"
+>
+
+```java
+int maxCol = ???;                        // 擂主从该行第一个开始
+for (int col = 1; col < grid[row].length; col++) {
+    if (grid[row][col] > grid[row][maxCol]) {
+        maxCol = ???;                    // 记位置
+    }
+}
+```
+
+</FillBlank>
+
+<MultipleChoice id="td2-col" question={'int[][] g = {{1, 2}, {3, 4}, {5, 6}};（3 行 2 列）第 0 列的元素之和是？'} options={[{id:'a',label:'3（1+2，第一行）'},{id:'b',label:'9（1+3+5）'},{id:'c',label:'6（2+4）'},{id:'d',label:'15（全部相加）'}]} answer={['b']} explanation="第 0 列 = 每一行的 0 号元素：g[0][0]=1、g[1][0]=3、g[2][0]=5，和为 9。选 a 是把「列」当成了「行」；全表和是 21。列操作的核心口诀：行变列定（固定 col，遍历 row）。" />
+
+<MultipleChoice id="td2-find" question={'grid 为 {{5, 8}, {2, 9}}。findRow(grid, 9) 返回什么？（方法：双重遍历命中返回行下标，否则 -1）'} options={[{id:'a',label:'1'},{id:'b',label:'3（值本身）'},{id:'c',label:'-1'},{id:'d',label:'0'}]} answer={['a']} explanation="追踪：第 0 行扫 5、8 未命中；第 1 行扫到 9 → return row，此刻 row = 1。注意返回的是**位置**不是值——这是「查找」和「取值」的区别，Q4 常拿它做文章。" />
+
+<MultipleChoice id="td2-which-loop" question="要统计整张表中大于 0 的格子个数，正确的循环结构是？" options={[{id:'a',label:'单层循环扫行数那么多次'},{id:'b',label:'外层遍历行（grid.length）、内层遍历列（grid[row].length）、命中 count++'},{id:'c',label:'两层循环都用 grid.length'},{id:'d',label:'for-each 嵌套 for-each 且能修改元素'}]} answer={['b']} explanation="五大模板在 2D 上原样适用，只是遍历变成两层：外层行、内层列、命中计数。c 是「拿行数当列数」虫；d 的 for-each 依旧只读（且嵌套 for-each 语法上要写对类型）。模板认出来，循环头默写——这就是全部。" />
+
+## 动手：Q4 风格实战
+
+<CodeExercise
+  id="td2-max-code"
+  title="largestInGrid 全表最大值"
+  prompt="补全方法 largestInGrid：接受 int 二维数组 grid，返回全表最大元素（假设表格非空）。写完在本地验证：{{3, 7}, {9, 1}} 应为 9；{{-5, -2}, {-8, -1}} 应为 -1（全负也要对——想想初值）；{{42}} 应为 42。"
+  starter={`public class GridTool {
+
+    // 返回 grid 中的最大元素（grid 非空）
+    public static int largestInGrid(int[][] grid) {
+        // 擂主初值用第一个元素 grid[0][0]，双重遍历逐格挑战
+
+        return 0;
+    }
+}`}
+  rubric={['擂主初值为 grid[0][0]（真实元素，全负数组也正确）', '双重遍历每个格子（行与列的 length 各司其职）', '命中更大值则更新擂主', '返回最大值']}
+  hints={['初值：int max = grid[0][0];——别用 0（全负数组会翻车）', '双重循环从 (0,0) 起步即可（擂主就是它，从 0 扫也不影响正确性）', '命中更新：if (grid[row][col] > max) { max = grid[row][col]; }']}
+/>
+
+## 让出题官出 Q4
+
+<LLMPractice id="td2-quiz" preset="quiz-master" instructions={'任务：告诉出题官「我刚学完 2D 数组的三种操作，想练 FRQ Q4（2D Array）风格的题」，让它出一道（如某行最大值位置或按条件计数）。规则：动笔前先说出「这是哪个模板的 2D 版」再写循环头；答错记进错题本。'} starterMessage="我刚学完 2D 数组的行最值、列求和、找位置，想练 FRQ Q4（2D Array）风格的题。请出一道考我。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 白纸手写「行内最大值所在列」完整骨架（记位置版）；2) 口头说出列求和的口诀（行变列定）；3) 手算 `{{2,4},{6,8}}` 的第 1 列之和（4+8=12）。下一课换个脑洞：方法自己调用自己——递归。</Callout>

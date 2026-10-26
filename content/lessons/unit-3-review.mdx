@@ -1,0 +1,63 @@
+---
+id: unit-3-review
+title: Unit 3 大检阅：类设计 15 题
+description: 类与对象、构造器与封装、方法与 static——三个方向各五题，全程无 AI。答对 11 题以上，Unit 3 毕业。
+order: 32
+group: Unit 3 · Class Creation
+minutes: 45
+---
+
+## 检测规则
+
+老规矩：**无 AI、无笔记**；15 题三组；**答对 11 题（70%）以上过关**；先在纸上写答案再点选项；错题进三栏错题本并设 +1 天提醒。
+
+## 第一组：类与对象（1–5 题）
+
+<MultipleChoice id="u3r-q1" question={'表达式 new Account("A001", 20.0) 执行时依次发生什么？'} options={[{id:'a',label:'声明变量 → 赋值 → 打印'},{id:'b',label:'在内存造出对象 → 执行构造器初始化字段 → 把新对象的引用返回（交给等号左边的变量）'},{id:'c',label:'把类复制一份'},{id:'d',label:'只分配变量名，对象在第一次调用方法时才造'}]} answer={['b']} explanation="new 三步：造对象、跑构造器、返回引用。变量里存的是地址（引用），不是对象本身——这是理解 aliasing 的地基。" />
+
+<MultipleChoice id="u3r-q2" question={'以下代码输出什么？\n\nAccount p = new Account("A001", 20.0);\nAccount q = p;\nq.deposit(30.0);\nSystem.out.println(p.getBalance());'} options={[{id:'a',label:'20.0，q 是另一张卡'},{id:'b',label:'50.0'},{id:'c',label:'0.0'},{id:'d',label:'编译错误'}]} answer={['b']} explanation="Account q = p 没有 new——两个引用指向同一个对象，通过任何一个改状态，另一个都看得见。想两张卡要两次 new。aliasing 是本单元的头号考点。" />
+
+<MultipleChoice id="u3r-q3" question="把实例变量声明成 private、外界只能通过 public 方法访问——这套做法解决的核心问题是？" options={[{id:'a',label:'让程序运行更快'},{id:'b',label:'对象状态只能走带安检的通道修改，外界无法绕过方法把数据弄脏（比如把年龄改成 -50）'},{id:'c',label:'让类更容易被继承'},{id:'d',label:'减少代码行数'}]} answer={['b']} explanation="封装的意义是状态的完整性：private 把门锁上，public 方法是唯一入口，入口里可以设检查。a、d 与封装无关。c 把封装说成是为了继承；考纲不要求设计或实现继承关系。" />
+
+<MultipleChoice id="u3r-q4" question={'以下代码输出什么？\n\npublic class Store {\n    private boolean open;\n\n    public Store() {\n    }\n\n    public boolean isOpen() { return open; }\n\n    public static void main(String[] args) {\n        Store s = new Store();\n        System.out.println(s.isOpen());\n    }\n}'} options={[{id:'a',label:'true'},{id:'b',label:'false'},{id:'c',label:'null'},{id:'d',label:'编译错误：open 没有初始化'}]} answer={['b']} explanation="实例字段未初始化时拿类型默认值：boolean 是 false、int 是 0、double 是 0.0、引用是 null。构造器为空不等于赋了值。想默认营业就得构造器里显式写 open = true。" />
+
+<MultipleChoice id="u3r-q5" question="实例变量和局部变量的核心区别是什么？" options={[{id:'a',label:'实例变量写在方法里，局部变量写在类里'},{id:'b',label:'实例变量属于对象、每 new 一份、方法结束后值仍保留在对象身上；局部变量在方法内声明、方法结束就消失'},{id:'c',label:'局部变量必须加 private'},{id:'d',label:'它们没有区别，只是名字不同'}]} answer={['b']} explanation="位置相反：字段在类里方法外，局部变量在方法里。生命周期不同：字段跟着对象活，局部变量跟着方法调用活。a 把位置说反了；局部变量加 public/private 反而是语法错误。" />
+
+## 第二组：构造器与封装（6–10 题）
+
+<MultipleChoice id="u3r-q6" question="以下哪个是合法的构造器（类名为 Ticket）？" options={[{id:'a',label:'public void Ticket() { ... }'},{id:'b',label:'public Ticket() { ... }'},{id:'c',label:'public int Ticket() { return 0; }'},{id:'d',label:'constructor Ticket() { ... }'}]} answer={['b']} explanation="构造器两个铁特征：名字等于类名、无返回类型。写了 void 或 int 就变成普通方法了——new 时根本不会调用它。" />
+
+<MultipleChoice id="u3r-q7" question={'构造器里写 this.name = name; 这行代码的意思是？\n\npublic Student(String name, int score) {\n    this.name = name;\n    this.score = score;\n}'} options={[{id:'a',label:'把参数 name 的值装进当前对象的字段 name（this.name 是字段，不带 this 的 name 是参数）'},{id:'b',label:'把字段的值复制给参数'},{id:'c',label:'声明一个新变量'},{id:'d',label:'删除参数'}]} answer={['a']} explanation="撞名规则：参数与字段同名时，this. 前缀指字段、裸名指参数（就近原则）。方向永远是参数进字段——赋值号右边读、左边写。" />
+
+<MultipleChoice id="u3r-q8" question={'一个类同时有 public Student() 和 public Student(String n) 两个构造器。new Student() 与 new Student("小明") 各匹配哪个？'} options={[{id:'a',label:'都走第一个，后写的覆盖先写的'},{id:'b',label:'编译器按调用时的参数自动挑：无参走无参版、带字符串走带参版'},{id:'c',label:'编译错误，同名方法不能并存'},{id:'d',label:'随机挑一个'}]} answer={['b']} explanation="重载的判定只看参数个数与类型。c 是最常见的误解：不能并存的是「签名完全相同」的方法——参数表不同就可以。" />
+
+<MultipleChoice id="u3r-q9" question={'字段 score 初值 80。执行 s.setScore(150)（setScore 只接受 0 到 100）后再执行 s.getScore() 返回多少？'} options={[{id:'a',label:'150'},{id:'b',label:'0'},{id:'c',label:'80'},{id:'d',label:'100'}]} answer={['c']} explanation="防呆 setter 的标准行为：条件不满足就不碰字段、原值原封不动。这正是封装的价值——无论外界怎么折腾，对象状态永远有效。" />
+
+<MultipleChoice id="u3r-q10" question="构造器漏初始化一个 double 字段 weight，对象造出来后它的值是？" options={[{id:'a',label:'null'},{id:'b',label:'随机数'},{id:'c',label:'编译错误'},{id:'d',label:'0.0'}]} answer={['d']} explanation="默认值速查：int 为 0、double 为 0.0、boolean 为 false、引用类型（String、对象）为 null。null 只属于引用类型——weight 是基本类型 double，不会是 null。" />
+
+## 第三组：方法与 static（11–15 题）
+
+<MultipleChoice id="u3r-q11" question="以下哪种写法会编译错误？" options={[{id:'a',label:'实例方法里读写 static 变量'},{id:'b',label:'static 方法里直接读实例变量'},{id:'c',label:'static 方法里调用另一个 static 方法'},{id:'d',label:'实例方法里调用 static 方法'}]} answer={['b']} explanation="方向规则：对象知道自己的类（实例成员能摸 static），类不知道自己有哪些对象（static 摸不到实例变量）。b 正是「static 手伸进实例口袋」虫型，编译器当场拦截。" />
+
+<MultipleChoice id="u3r-q12" question={'Dog 类有 static int created（初值 0），构造器里 created++。new 三只狗后 Dog.getCreated() 返回多少？'} options={[{id:'a',label:'1'},{id:'b',label:'3'},{id:'c',label:'0'},{id:'d',label:'编译错误'}]} answer={['b']} explanation="static 变量挂在类上不挂在对象上：三次 new 各加 1，共享格子最终是 3。「共享计数」和「每人编号」是两回事——后者需要实例变量。这题就是 static 课那只「我以为每只狗一份」的虫的正装版。" />
+
+<MultipleChoice id="u3r-q13" question="doIt() 是 void 方法。以下哪行会编译错误？" options={[{id:'a',label:'obj.doIt();'},{id:'b',label:'int result = obj.doIt();'},{id:'c',label:'if (x > 0) { obj.doIt(); }'},{id:'d',label:'System.out.println 打印一句完成提示'}]} answer={['b']} explanation="void 干完活不交货——没有值可以装进 result。a、c 是 void 方法的标准用法（叫它干活就行）。口诀：改东西用 void、问东西必有 return，反过来用就错。" />
+
+<MultipleChoice id="u3r-q14" question={'以下代码输出什么？\n\nAccount c = new Account("A001", 100.0);\nc.withdraw(30.0);\nSystem.out.println(c.getBalance());\n\n// withdraw：余额足够则扣款，返回 true；不足返回 false 不改余额'} options={[{id:'a',label:'100.0，withdraw 的效果出了方法就消失'},{id:'b',label:'70.0'},{id:'c',label:'30.0'},{id:'d',label:'编译错误'}]} answer={['b']} explanation="实例方法修改的是对象状态，不是临时变量——方法结束，对象带着新余额继续活。对比：方法内声明的局部变量才随方法消失。「改对象状态会保留」是 Q2 和 MCQ 的常客。" />
+
+<MultipleChoice id="u3r-q15" question="为什么 Math.sqrt(25) 不需要 new Math()？" options={[{id:'a',label:'因为 Math 被编译器特殊优待'},{id:'b',label:'因为 sqrt 是 static 方法'},{id:'c',label:'因为 Math 是基本类型'},{id:'d',label:'其实必须 new，只是可以省略'}]} answer={['b']} explanation="static 方法的定义就是不依附对象的成员：谁调用、结果都一样，挂在类上即可。你自己写的 isEven、Tool.isEven(...) 同理。判断口诀收尾：看对象状态的用实例成员，跟对象无关的用 static。" />
+
+## 对答案、算总分
+
+15 题对 **11 题以上**过关；蒙对不算；错题进三栏错题本并设 +1 天提醒。
+
+## 无 AI 手写任务（白纸两道）
+
+1. **完整 Account 类**：字段 id（String）、balance（double）；this 风格构造器；deposit 加款；withdraw 带余额检查（两个 return 出口）；两个 getter。限时 15 分钟；
+2. **静态计数器**：一个 Plane 类带 static int created 与实例字段 number（出生编号，先记录再加一），构造器两件事一起做。限时 10 分钟。
+
+写完在 IDE 逐字敲入验证，对照第 28–30 课的参考结构查漏。
+
+<LLMPractice id="u3r-concept" preset="concept-coach" instructions={'任务：数一数三组各自的错题数，把错得最多的一组主题告诉概念教练，按费曼四步讲透（它讲 → 你复述 → 它挑毛病 → 修正重讲）。检测后允许用 AI 补救，下一轮检测仍然无 AI。'} starterMessage="我在 Unit 3 检测里错题最多的主题是：/ 填入主题 /。请帮我把这个主题讲透，我是准备 AP CSA 的高中生。" />
+
+<Callout title="放下 AI · 错题三栏现在就写">1) 三栏错题本现在写；2) +1 天提醒现在设；3) 手写两题拍照存档。**Unit 3 收官——下一个单元是全卷权重之王：Unit 4 数据集合（30–40%），从一维数组开始。**</Callout>

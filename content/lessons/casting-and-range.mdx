@@ -1,0 +1,144 @@
+---
+id: casting-and-range
+title: 类型转换：7 除以 2 的正确答案
+description: int 与 double 的换算规则、cast 的截断本性、错位 cast 的陷阱——以及看懂 Math.random 公式的最后一块拼图。
+order: 14
+group: Unit 1 · Using Objects and Methods
+minutes: 30
+---
+
+## 历史遗留问题正式结案
+
+第 10 课你记了口诀「int 除 int，砍小数」。现在学正式解法：让除法里**至少有一个 double**。两种手段：
+
+```java
+double a = 7 / 2.0;                  // 手段一：把常量写成小数
+double b = (double) total / count;   // 手段二：cast 转换（本课主角）
+```
+
+## 自动转换：小水杯倒进大水杯
+
+**int 到 double 是自动的**（拓宽，widening）：int 最多约 21 亿，double 的地盘大得多，怎么装都装得下：
+
+```java
+int n = 42;
+double d = n;            // 自动，d 是 42.0
+double avg = n / 2.0;    // int 遇上 double，整条运算升级为 double 运算
+```
+
+规则一句话：**混合运算中，只要有一方是 double，结果就是 double**。
+
+## cast：大水杯倒进小水杯，自己动手
+
+**double 到 int 必须显式转换**（缩窄，narrowing）——用 cast 运算符 `(int)`，并且它是**截断（truncate），不是四舍五入**：
+
+```java
+double price = 9.99;
+int dollars = (int) price;      // 9 —— 小数直接砍掉，不是 10
+int negative = (int) -3.7;      // -3 —— 向零截断
+```
+
+想要四舍五入？加 0.5 的经典技巧（Math.round 不在考场 Quick Reference 上，不考）：
+
+```java
+double x = 9.99;
+int rounded = (int)(x + 0.5);   // 10 —— 正数的四舍五入
+```
+
+## cast 只贴着最近的一块
+
+`(double)` 只作用于**紧跟它的那一个值**。这是本课最大的陷阱墙：
+
+```java
+int a = 3;
+int b = 4;
+System.out.println((double)(a + b) / 2);   // 3.5 —— 括号包住 a+b：先算 7，转 7.0，再除 2
+System.out.println((double) a + b / 2);    // 5.0 —— 只转了 a 变 3.0；b/2 是整数除法得 2；3.0+2=5.0
+```
+
+两个式子只差一对括号，结果一个是 3.5、一个是 5.0。**cast 的括号包住谁，谁就被转换**——写 cast 时永远先问自己这句话。
+
+## 溢出与精度：int 的天花板，double 的宿命
+
+| 类型 | 范围与特性 |
+| --- | --- |
+| `int` | 约 −21.4 亿 到 +21.4 亿（`Integer.MAX_VALUE` / `MIN_VALUE`）；越界绕回，不报错 |
+| `double` | 范围极大，但只有约 15–16 位有效数字，且有微小算术误差 |
+
+```java
+System.out.println(0.1 + 0.2);   // 0.30000000000000004 —— 浮点误差的宿命
+```
+
+AP 考两点就够：int 溢出绕回（第 10 课已见）；double 精度有限（CED Topic 1.5）。
+
+## 解锁成就：看懂随机数公式
+
+第 12 课背的公式，现在全通了：
+
+```java
+int roll = (int)(Math.random() * 6) + 1;
+```
+
+逐步执行：random 是 double（[0, 1)）→ 乘 6 仍是 double（[0, 6)）→ `(int)` 截断成 0–5 → +1 平移到 1–6。**cast 的括号必须包住整个乘法**：写成 `(int) Math.random() * 6` 会先把 random 截成 0，乘 6 永远得 0——每次都掷出 1，史上最烂骰子。
+
+## 每日一虫 🐛：白干的 cast
+
+看这两行（sum = 7，n = 2，都是 int）：
+
+```java
+double right = (double) sum / n;      // 3.5，正确
+double wrong = (int) sum / n * 1.0;   // 虫在这行
+System.out.println(wrong);
+```
+
+<MultipleChoice id="cast-bug" question="wrong 的输出值是什么？病根是什么？" options={[{id:'a',label:'3.5，没有问题'},{id:'b',label:'3.0，cast 到 int 是白干的，整数除法 7/2 先发生，之后乘 1.0 只是亡羊补牢'},{id:'c',label:'3，整数运算贯穿到底'},{id:'d',label:'编译错误'}]} answer={['b']} explanation="sum 本来就是 int，(int) sum 什么都没转换；接着 sum / n 是 int 除 int 得 3；最后 3 * 1.0 才升级成 double，但小数早已砍掉——亡羊补牢为时已晚。修法：把 cast 换成 (double) 并放在除法之前。教训：cast 要在「错误运算发生之前」起作用。" />
+
+## 练习场
+
+把精确平均分的 cast 写对：
+
+<FillBlank
+  id="cast-fill"
+  question="补全精确平均分的写法（a、b 都是 int）。除数填小数 2.0，这样除法才是浮点除法。"
+  answers={['2.0']}
+  explanation="除数写成小数 2.0，除法当场就是浮点除法，整数和 9 除出 4.5。另一个等效写法是用 (double) 贴住括号里的 a + b——转换要发生在除法之前。"
+>
+
+```java
+int a = 7;
+int b = 2;
+double average = (a + b) / ??? (a + b);   // 4.5
+```
+
+</FillBlank>
+
+<MultipleChoice id="cast-truncate" question="表达式 (int) 7.9 + 0.5 的值是多少？" options={[{id:'a',label:'8'},{id:'b',label:'8.4'},{id:'c',label:'7.5'},{id:'d',label:'7'}]} answer={['c']} explanation="先看优先级：cast 只贴着 7.9，(int) 7.9 截断成 int 的 7；然后 7 + 0.5 发生自动拓宽，得 double 的 7.5。分两步拆开就不会错：cast 是一元运算，比加法先执行。" />
+
+<MultipleChoice id="cast-mixed" question="以下哪个表达式的值是 2.5？（a = 5，b = 2，都是 int）" options={[{id:'a',label:'a / b'},{id:'b',label:'(double) a / b'},{id:'c',label:'(double) (a / b)'},{id:'d',label:'a / (double) b * 0.5'}]} answer={['b']} explanation="a / b 是整数除法得 2；选项 b 先把 a 转成 5.0 再除，得 2.5；选项 c 的括号让整数除法先发生，转出来是 2.0——cast 括不住已经砍掉的小数；选项 d 是 2.5 的一半 1.25。记住顺序：先转换，再运算。" />
+
+## 动手：精确平均分
+
+<CodeExercise
+  id="cast-average-code"
+  title="average 精确版"
+  prompt="补全方法 average：接受两个 int 参数 a 和 b，返回它们的精确平均数（double 类型）。要求至少用到一次 cast 或等价手段避免整数除法。写完在本地验证：average(3, 4) 应为 3.5，average(7, 2) 应为 4.5，average(-1, 2) 应为 0.5。"
+  starter={`public class AverageTool {
+
+    // 返回 a 和 b 的精确平均数（double）
+    public static double average(int a, int b) {
+        // 用 cast 或 2.0 避免整数除法
+
+        return 0.0;
+    }
+}`}
+  rubric={['返回 a 与 b 的精确平均值', '正确避免了整数除法（cast 位置在除法之前，或除以 2.0）', '返回计算结果而不是固定值', '没有修改方法签名']}
+  hints={['整数除法发生在两个 int 相除时——想办法让除法的某一方先变成 double', '两种思路任选：把 a + b 先 cast 成 double，或把除数 2 写成小数字面量', '注意负数也要对：(-1 + 2) 是 1，1 / 2.0 = 0.5 ✓']}
+/>
+
+## 概念吃不准？问教练
+
+cast 位置和截断规则是本课两大易混点。按费曼四步循环把它彻底锁死：
+
+<LLMPractice id="cast-concept" preset="concept-coach" instructions={'任务：按四步循环学「cast 的作用范围与截断规则」：1) 让概念教练讲一遍（它会给类比、最小示例、中英术语表）；2) 合上讲解，用自己的话复述给它听，必须包含「为什么 (int) 7.9 + 0.5 是 7.5」的推导；3) 让它挑毛病；4) 修正后讲第二遍。'} starterMessage="请给我讲讲 Java 里 cast 的作用范围与截断规则，特别是 (double) a / b 和 (double)(a / b) 的区别，我是刚开始学 AP CSA 的高中生。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 口头说出 int 转 double 和 double 转 int 分别是自动还是显式，为什么；2) 手算三题：(int) 9.99、(int)(Math.random() * 10) 的可能取值、(double) 7 / 2 的值；3) 白纸写出掷骰子公式并逐步解释每一层括号在干什么。全对才点亮「Mark lesson complete」——下一课是 Unit 1 的大检阅。</Callout>

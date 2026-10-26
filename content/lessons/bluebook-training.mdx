@@ -1,0 +1,54 @@
+---
+id: bluebook-training
+title: Bluebook 适应：和考试工具和解
+description: 全真考试在 Bluebook 软件里进行——提前下载、跑官方练习、练打字手感。工具零陌生，考场上只剩题目本身。
+order: 48
+group: 模块 C · 备考冲刺
+minutes: 30
+---
+
+## 认识你的考场
+
+AP CSA 考试全程在 **Bluebook**（College Board 官方考试应用）里进行：42 道 MCQ 屏幕作答，4 道 FRQ 在它内置的**代码编辑器**里手打——没有 IDE、没有自动补全、没有运行按钮。
+
+工具陌生感是隐形扣分项：明明会写，却在编辑器里手忙脚乱。本课目标：**让 Bluebook 变成你熟悉的房间**。
+
+## 三步适应（本周完成）
+
+1. **下载安装**：在 College Board 官网下载 Bluebook（你的考试设备上装），用你的 College Board 账号登录；
+2. **跑一套官方练习**：Bluebook 内置 AP CSA 的 full-length practice test——按真实时长完整跑一遍（这就是模考①，见下一课的安排）；
+3. **重点体验 FRQ 编辑器**：练习里进入 FRQ 部分，感受它的行为——
+
+- 打什么字母出现什么字母：**没有自动补全**，括号引号全靠手打；
+- 缩进：编辑器帮你保持缩进层级，但**别依赖**——你的白纸手写训练正是为此；
+- 可以复制粘贴自己的代码块（在题目内），但**不能**从外部粘贴；
+- 翻题、标记、跳转按钮的位置，用一次就记住。
+
+## 打字手感自查
+
+用三行代码给自己计时（正常键盘）：
+
+```java
+public static int sum(int[] a) {
+```
+
+- 完整打出这行（含空格与括号）应在 **10 秒内**；
+- 慢的原因通常是：`public static` 的顺序卡壳、或 `[]` 与 `()` 打混。对策：把方法签名四件套当打字肌肉练——每天手打三遍，一周即成本能。
+
+## 考场工具纪律
+
+- MCQ 部分屏幕上有**标记**按钮——超过 2.5 分钟的题标记跳过，第二遍回来收；
+- **Java Quick Reference 在 Bluebook 里可随时查看**——但翻它有时间成本：Math 四法（abs 双版本）、String 六法、ArrayList 六法应当烂熟，Quick Reference 只用来确认冷门细节（如 nextBoolean 的存在）；
+- 提前到达、设备按监考指示设置——考试日流程见下一课清单。
+
+<MultipleChoice id="bb-quiz" question="关于考场上的 Quick Reference，最合理的用法是？" options={[{id:'a',label:'每道题都先翻一遍再答'},{id:'b',label:'常用方法（Math、String、ArrayList、Scanner 全家）烂熟于心不翻，只对拿不准的冷门方法名快速确认'},{id:'c',label:'考试没有 Quick Reference'},{id:'d',label:'Quick Reference 包含所有 Java 类'}]} answer={['b']} explanation="Quick Reference 只覆盖考纲类（String、Math、Integer/Double、ArrayList、File、Scanner、Object——附录 A 那张表）。它是保险绳不是拐杖：烂熟常用方法、冷门速查，才是它设计的用法。" />
+
+<MultipleChoice id="bb-quiz2" question="Bluebook 的 FRQ 编辑器里，哪件事是你**做不到**的？" options={[{id:'a',label:'打字输入代码'},{id:'b',label:'在题目之间来回翻看'},{id:'c',label:'运行和测试你写的代码'},{id:'d',label:'复制粘贴你自己已输入的代码'}]} answer={['c']} explanation="Bluebook 不运行代码——这正是 28 周以来「白纸手写 + 脑内追踪」训练的意义：你早已习惯不运行也能验证逻辑（追踪表、列取值序列）。c 之外都是能做到的。" />
+
+## 动手（设备上）
+
+1. 今天：装好 Bluebook、登录、随便点开一套练习**走到 FRQ 部分**（不求做完，只求见过编辑器）；
+2. 本周内：完整跑一套官方 practice（计作**模考①**，安排见下一课）；
+3. 每日：方法签名打字三遍（sum/max/count 各一遍），计时记进错题本首页。
+
+<Callout title="放下 AI · 检索练习">1) 口头说出 Bluebook FRQ 编辑器的三条特性（无补全/不能运行/可内部复制粘贴）；2) 完成一次打字自查并记录用时；3) 确认设备上 Bluebook 已登录可用。最后一课：全真模考与考前计划——终点线前最后一站。</Callout>

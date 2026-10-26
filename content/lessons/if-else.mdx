@@ -1,0 +1,141 @@
+---
+id: if-else
+title: if 与 else：程序的第一条岔路
+description: 让程序学会看条件办事——else if 链的顺序陷阱、悬空 else、以及 boolean 遇上单等号的惊天大坑。
+order: 17
+group: Unit 2 · Selection and Iteration
+minutes: 35
+---
+
+## 程序的第一个岔路口
+
+到目前为止，你的程序都是「一条道走到黑」——从 main 第一行执行到最后一行。`if` 让程序第一次拥有**岔路**：
+
+```java
+int score = 85;
+if (score >= 60) {
+    System.out.println("及格");
+} else {
+    System.out.println("不及格");
+}
+```
+
+解剖一下：
+
+- `if (条件)` —— 括号里必须是一个 **boolean 表达式**（上一课的成果在这里落地）；
+- 条件为 true → 执行 if 的花括号体；
+- 条件为 false → 跳过它，执行 `else` 的花括号体（else 可省略）。
+
+## else if 链：顺序就是逻辑
+
+多个区间判断用 `else if` 串起来——成绩分级是标准例子：
+
+```java
+if (score >= 90) {
+    grade = "A";
+} else if (score >= 80) {
+    grade = "B";
+} else if (score >= 60) {
+    grade = "C";
+} else {
+    grade = "F";
+}
+```
+
+`else if` 的隐含前提是「前面的条件都不成立」。所以 score = 85 走到 `score >= 80` 时，已经隐含「不满足 ≥ 90」——不需要写 `score >= 80 && score < 90`。
+
+**顺序就是逻辑**：把 `score >= 60` 写在最前面，后面的分支全部不可达——这是本课虫的主角。
+
+## 嵌套 if 与悬空 else
+
+if 里面可以再放 if（嵌套）。但省略花括号时，`else` 永远属于**离它最近的那个 if**——叫悬空 else（dangling else）：
+
+```java
+if (x > 5)
+    if (x > 20)
+        System.out.println("big");
+else
+    System.out.println("small");   // 这个 else 属于内层 if！缩进是骗人的
+```
+
+防御方法只有一条：**永远写花括号**，哪怕体里只有一行。这门课从头到尾都这么写，AP 阅卷也完全不扣花括号。
+
+## 每日一虫 🐛：单等号遇上 boolean
+
+上一课说过 `if (x = 5)` 对 int 是编译错误——安全的。但对 boolean 是**合法的灾难**：
+
+```java
+boolean isReady = true;
+if (isReady = false) {          // 虫在这：单等号是赋值
+    System.out.println("go");
+} else {
+    System.out.println("wait");
+}
+```
+
+<MultipleChoice id="if-bug" question="上面程序的输出是什么？" options={[{id:'a',label:'go'},{id:'b',label:'wait'},{id:'c',label:'编译错误'},{id:'d',label:'go 和 wait 各输出一次'}]} answer={['b']} explanation="赋值表达式本身也有值：isReady = false 的值就是 false——恰好还是 boolean 类型，编译器毫无怨言。于是 if 判的是刚赋进去的 false，且变量被偷偷改掉了。双重伤害：分支错 + 数据被改。病根：== 是比较，= 是赋值，对 boolean 写错不报错——写条件时念出声「等于等于」。" />
+
+## 练习场
+
+先补全一条 else if 链：
+
+<FillBlank
+  id="if-fill"
+  question="补全成绩分级链的两个关键词。数据里 score 是 100，第一空写 > 或 >= 它都会进 A；这里只认 >=，因为它覆盖 90 到 100 的全部取值。"
+  answers={['>=', 'else']}
+  explanation="第一空：90 分及以上是 A，用 >=（含 90）。第二空：串联下一个条件用 else if——它自带「前面都不成立」的前提。"
+>
+
+```java
+int score = 100;
+String grade = "";
+if (score ??? 90) {
+    grade = "A";
+} ??? if (score >= 80) {
+    grade = "B";
+} else {
+    grade = "C";
+}
+```
+
+</FillBlank>
+
+<MultipleChoice id="if-order" question={'以下代码输出什么？\n\nint score = 95;\nif (score >= 60) {\n    System.out.println("及格");\n} else if (score >= 90) {\n    System.out.println("优秀");\n}'} options={[{id:'a',label:'优秀'},{id:'b',label:'及格'},{id:'c',label:'及格 和 优秀 各输出一次'},{id:'d',label:'什么也不输出'}]} answer={['b']} explanation="else if 链从上往下逐个检查，命中即止。95 >= 60 为 true，打印「及格」，整条链结束——score >= 90 根本没机会被检查。这就是「顺序就是逻辑」：范围大的条件放前面，会把后面的分支全部吞掉。修法：条件按严格程度从高到低排列。" />
+
+<MultipleChoice id="if-dangling" question={'以下代码输出什么？\n\nint x = 10;\nif (x > 5)\n    if (x > 20)\n        System.out.println("big");\nelse\n    System.out.println("small");'} options={[{id:'a',label:'big'},{id:'b',label:'small'},{id:'c',label:'什么也不输出'},{id:'d',label:'编译错误'}]} answer={['b']} explanation="悬空 else 规则：else 配对最近的 if（内层的 x > 20），缩进的视觉提示不算数。执行路径：10 > 5 真 → 进入内层 → 10 > 20 假 → 走 else → 输出 small。防御方法：永远写花括号，让配对关系一目了然。" />
+
+把完整的分级程序排出来：
+
+<ParsonsProblem
+  id="if-parsons"
+  question="排出成绩分级程序（score = 85 时输出 B）。"
+  lines={['public class Grades {', '    public static void main(String[] args) {', '        int score = 85;', '        if (score >= 90) {', '            System.out.println("A");', '        } else if (score >= 80) {', '            System.out.println("B");', '        } else {', '            System.out.println("C");', '        }', '    }', '}']}
+  explanation="else if 链的固定顺序：最严的条件在前（>= 90），逐级放宽（>= 80），else 兜底。每个分支体一行打印，花括号层层闭合。记住：条件从严格到宽松排，程序才不会吞分支。"
+/>
+
+## 动手：闰年判断
+
+布尔、逻辑运算符、if——三个知识点在一道经典题里会师。
+
+<CodeExercise
+  id="if-leap-code"
+  title="闰年判断器 isLeapYear"
+  prompt="补全方法 isLeapYear：接受年份 year，返回是否为闰年（boolean）。规则：能被 4 整除且不能被 100 整除，或者能被 400 整除。写完在本地验证：2000 与 2024 是闰年，1900 与 2023 不是。"
+  starter={`public class CalendarTool {
+
+    // 闰年：能被 4 整除且不能被 100 整除，或能被 400 整除
+    public static boolean isLeapYear(int year) {
+        // 可以用布尔表达式直接返回，也可以用 if 判断
+
+        return false;
+    }
+}`}
+  rubric={['正确实现规则：被 4 整除且不被 100 整除，或被 400 整除', '整除判断使用 % 与 == / != 比较', '两个条件用 && 与 || 正确组合（且的优先级高于或，或加括号更清晰）', '返回 boolean 值且没有修改签名']}
+  hints={['整除就是余数为零：year % 4 == 0', '「且」用 && 连接，「或」用 || 连接；不确定优先级就加括号', '组装顺序：先拼「被 4 整除 && 不被 100 整除」这一段并加括号，再用 || 接上「被 400 整除」，整个表达式放进 return']}
+/>
+
+## 让出题官考考你
+
+<LLMPractice id="if-quiz" preset="quiz-master" instructions={'任务：告诉出题官「我刚学完 if、else if 链和悬空 else，重点想练分支顺序陷阱和条件写法」，让它出 3 道题。规则：每道题先在纸上画出分支判断的路径再作答；答错的题记进错题本；全对后让它出一道嵌套 if 的加难题。'} starterMessage="我刚学完 if、else if 链和悬空 else，重点想练分支顺序陷阱和条件写法。请出一道题考我。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 口头说出 else if 链「命中即止」的执行规则，以及为什么条件要从严格排到宽松；2) 默写悬空 else 的规则和唯一防御手段；3) 白纸手写 isLeapYear 的布尔表达式版本（不看提示）。三样全过再点亮完成——下一课是第一个项目：用方法、字符串和 if 做单词卡。while 循环紧跟在项目后面。</Callout>

@@ -1,0 +1,100 @@
+---
+id: bank-u4-mcx
+title: 题库 · Unit 4 选择题（26 题，含一组 set-based）
+description: 对齐真实考试 Unit 4（30–40% 权重，全卷最重单元）：数组、ArrayList、2D 数组、查找排序、递归、文件读取、数据伦理。中段含真题同款的 set-based 共享代码题组（两题共用一段 Playlist 代码）。
+order: 94
+group: Exam Bank · 题库
+minutes: 30
+---
+
+## 使用说明
+
+- Unit 4 占考试权重 30–40%，是选择题的最大题源；本组中段有一组**共用同一段 Playlist 代码**的两道 set-based 题（第 16、17 题，只有这两题共用代码；前后题各自独立，第 18 题起不用它）——真实考试的选择题就长这样（一段材料配多题）；
+- 覆盖新增考点：File/Scanner 读文件（Topic 4.6）与递归追踪（Topic 4.16，只考 trace 不考编写）。
+
+## 数据与文件
+
+<MultipleChoice id="bank-u4-q1" question={'学校想研究「参加社团的学生是否比不参加的学生平均每月去图书馆次数更多」。手头有四个数据集：\n\n· 数据集 1：每个学生一条记录——学生 ID、是否参加社团\n· 数据集 2：每本书一条记录——书名、单价\n· 数据集 3：每个学生一条记录——学生 ID、每月去图书馆次数\n· 数据集 4：每间教室一条记录——教室号、座位数\n\n哪两个数据集组合起来能回答这个问题？'} options={[{id:'a',label:'数据集 1 和 2'},{id:'b',label:'数据集 1 和 3'},{id:'c',label:'数据集 2 和 4'},{id:'d',label:'数据集 3 和 4'}]} answer={['b']} explanation="问题需要两个变量：是否参加社团（只有数据集 1 有）和去图书馆次数（只有数据集 3 有）。其他数据集的书价、座位数与问题无关——先想清楚要回答什么，再挑数据源。" />
+
+<MultipleChoice id="bank-u4-q2" question={'文件 scores.txt 内容如下（每行一条、行内无空格）：\n\nAmy-95\nBen-88\nCara-92\n\nscan 是已建好的、指向该文件的 Scanner。以下哪段代码能把名字加入 names（目标是 [Amy, Ben, Cara]）？'} options={[{id:'a',label:'while (scan.hasNext())\n{\nnames.add(scan.next().split("-")[0]);\n}'},{id:'b',label:'while (scan.hasNext())\n{\nnames.add(scan.next().split("-")[1]);\n}'},{id:'c',label:'while (scan.hasNext())\n{\nnames.add(scan.next());\n}'},{id:'d',label:'if (scan.hasNext())\n{\nnames.add(scan.next());\n}'}]} answer={['a']} explanation="split 按连字号切开，[0] 是连字号前面的名字、[1] 是后面的分数——a 加名字，b 加的是分数。c 加的是整行（Amy-95）；d 只读一行就停。hasNext + next 循环是 Topic 4.6 读文件的标准模式。" />
+
+<MultipleChoice id="bank-u4-q3" question={'以下方法意图返回数组中的最小值。哪种修改能让它对所有非空数组都正确？\n\n/** Precondition: nums contains at least one element. */\npublic int findMin(int[] nums)\n{\nint min = 0; // line 4\nfor (int v : nums)\n{\nif (v < min) // line 7\n{\nmin = v;\n}\n}\nreturn min;\n}'} options={[{id:'a',label:'把 line 4 改成 int min = nums[0];'},{id:'b',label:'把 line 4 改成 int min = Integer.MIN_VALUE;'},{id:'c',label:'把 line 7 改成 if (v > min)'},{id:'d',label:'把 line 7 改成 if (v != min)'}]} answer={['a']} explanation="min 初值 0 是「假选手」：全正数组里没有元素比 0 小，永远返回 0。用第一个元素当初值（a）对任何非空数组都安全——这正是题目 precondition 保证非空的原因。b 更糟：没有任何 int 比 Integer.MIN_VALUE 更小，v < min 永远不成立，min 停在最小值；c 求的是最大值；d 的条件毫无意义。" />
+
+<MultipleChoice id="bank-u4-q4" question={'以下哪个说法正确描述了 enhanced for 循环（for-each）的局限？'} options={[{id:'a',label:'它不能用来遍历数组，只能遍历 ArrayList'},{id:'b',label:'循环变量是元素值的副本，在循环体内给它赋值不会改变数组元素'},{id:'c',label:'它只能倒序遍历'},{id:'d',label:'它遍历时会自动跳过第一个元素'}]} answer={['b']} explanation="for (int v : arr) 里的 v 是每轮拷贝的副本——改 v 不影响数组本身；要修改数组必须用下标循环。它当然能遍历数组（a 错）、只能正序（c 错）、不会跳元素（d 错）。" />
+
+## ArrayList
+
+<MultipleChoice id="bank-u4-q5" question={'以下方法被调用时，参数列表内容为 [3, -1, 4, -5, 0]。调用后列表内容是什么？\n\npublic void adjust(ArrayList<Integer> list)\n{\nfor (int i = 0; i < list.size(); i++)\n{\nint temp = list.get(i);\nif (temp < 0)\n{\nlist.set(i, temp * -1);\n}\n}\n}'} options={[{id:'a',label:'[3, -1, 4, -5, 0]（没有变化）'},{id:'b',label:'[3, 1, 4, 5, 0]（负数原地取反）'},{id:'c',label:'[-3, 1, -4, 5, 0]（正数被取反）'},{id:'d',label:'抛出运行时异常'}]} answer={['b']} explanation="set(i, 新值) 是原地替换、不改变列表长度：-1 变 1、-5 变 5，正数和 0 不动。set 不像 remove 那样引起索引位移，所以正向遍历是安全的——set 和 remove 的安全性差别是高频考点。" />
+
+<MultipleChoice id="bank-u4-q6" question={'以下代码段的输出是什么？\n\nArrayList<Integer> nums = new ArrayList<Integer>();\nnums.add(10);\nnums.add(20);\nnums.add(30);\nint x = nums.remove(1);\nSystem.out.println(x + " " + nums.size());'} options={[{id:'a',label:'20 2'},{id:'b',label:'10 2'},{id:'c',label:'20 3'},{id:'d',label:'30 2'}]} answer={['a']} explanation="remove(1) 删除索引 1 的元素 20 并返回它——x 是 20；列表剩 [10, 30]，size 是 2。remove 的返回值是被删的那个元素，删除后后续元素左移。" />
+
+<MultipleChoice id="bank-u4-q7" question={'以下代码段想把 b 和 c 都删掉，实际结果是？\n\nArrayList<String> list = new ArrayList<String>();\nlist.add("a");\nlist.add("b");\nlist.add("c");\nlist.add("d");\nfor (int i = 0; i < list.size(); i++)\n{\nif (list.get(i).equals("b") || list.get(i).equals("c"))\n{\nlist.remove(i);\n}\n}'} options={[{id:'a',label:'[a, d]（两个都删掉了）'},{id:'b',label:'[a, c, d]（c 被跳过了）'},{id:'c',label:'[a, b, d]（b 没删掉）'},{id:'d',label:'抛出 IndexOutOfBoundsException'}]} answer={['b']} explanation="正向遍历中删除是经典坑：删掉索引 1 的 b 后，c 左移到索引 1，随后 i++ 跳到 2——c 没被检查。结果 [a, c, d]。安全删法：倒序遍历，或用 while 手动 i--。这对应 CED Topic 4.9 的边界声明。" />
+
+<MultipleChoice id="bank-u4-q8" question={'以下代码段的输出是什么？\n\nInteger a = 1000;\nInteger b = 1000;\nSystem.out.println(a.equals(b));\nSystem.out.println(a == b);'} options={[{id:'a',label:'true 然后 true'},{id:'b',label:'true 然后 false'},{id:'c',label:'false 然后 true'},{id:'d',label:'false 然后 false'}]} answer={['b']} explanation="Integer 是对象：equals 比较装的值（都是 1000）→ true；== 比较是不是同一个对象。1000 不在 Java 的装箱缓存（−128 到 127）里，两次赋值得到两个对象，所以 == 是 false。缓存范围内的小整数（例如 100）可能让 == 碰巧为 true，不能当规律用。装在 ArrayList 里的整数都是 Integer，比较值必须用 equals，或先拆箱再比。" />
+
+## 2D 数组
+
+<MultipleChoice id="bank-u4-q9" question={'以下代码段打印什么？\n\nint[][] grid = /* missing initialization */;\nint total = 0;\nfor (int r = 0; r < grid.length; r++)\n{\ntotal += grid[r][1];\n}\nSystem.out.println(total);\n\n哪个初始化能让输出为 6？'} options={[{id:'a',label:'{{1, 2, 3}, {4, 5, 6}}'},{id:'b',label:'{{0, 1, 2}, {0, 2, 4}}'},{id:'c',label:'{{6, 0, 0}, {6, 0, 0}}'},{id:'d',label:'{{5, 1, 1}, {5, 2, 3}, {9, 3, 0}}'}]} answer={['d']} explanation="循环把每一行索引 1（第二列）的元素加起来。a 是 2+5=7；b 是 1+2=3；c 的第二列是 0+0=0；d 的第二列是 1+2+3=6。grid[r][1] 固定列下标——第一个下标走行、第二个定列。" />
+
+<MultipleChoice id="bank-u4-q10" question={'以下代码段的输出是什么？\n\nint[][] arr = {{4, -2, 7}, {-5, 3, -1}};\nint prod = 1;\nfor (int[] row : arr)\n{\nfor (int v : row)\n{\nif (v < 0)\n{\nprod = prod * v;\n}\n}\n}\nSystem.out.println(prod);'} options={[{id:'a',label:'所有元素的乘积'},{id:'b',label:'所有正元素的乘积'},{id:'c',label:'-10（所有负元素的乘积）'},{id:'d',label:'程序因运行时错误不输出'}]} answer={['c']} explanation="双层 enhanced for 遍历全部 6 个元素，条件筛出负数 -2、-5、-1，累乘得 (-2)×(-5)×(-1) = -10。enhanced for 的外层循环变量类型是 int[]（一行），内层才是 int（一个元素）。" />
+
+<MultipleChoice id="bank-u4-q11" question={'以下代码段的输出是什么？\n\nint[][] table = new int[4][7];\nSystem.out.println(table.length + " " + table[0].length);'} options={[{id:'a',label:'4 7'},{id:'b',label:'7 4'},{id:'c',label:'28 7'},{id:'d',label:'4 28'}]} answer={['a']} explanation="二维数组是「数组的数组」：table.length 是行数 4；table[0] 是第一行（一个 int[7]），它的 length 是列数 7。默认值：整型数组的每个元素自动初始化为 0。" />
+
+## 查找、排序与递归
+
+<MultipleChoice id="bank-u4-q12" question={'对含 16 个元素的有序数组做 binary search（二分查找），最坏情况下最多比较几次？'} options={[{id:'a',label:'16 次'},{id:'b',label:'8 次'},{id:'c',label:'5 次'},{id:'d',label:'4 次'}]} answer={['c']} explanation="标准二分（while (low <= high)）最坏比较 floor(log2(n))+1 次。16 个元素会在范围大约还剩 16、8、4、2、1 时各比一次，共 5 次；最后剩下的那个元素也要比较。只数「砍半的刀数」（4 刀）会少算 1 次。前提仍然是：数组必须已排序。" />
+
+<MultipleChoice id="bank-u4-q13" question={'merge sort 的 merge 步骤把两个已排序的段合并成一个有序段。把 {2, 9} 和 {3, 8} 合并的结果是？'} options={[{id:'a',label:'{2, 3, 8, 9}'},{id:'b',label:'{3, 8, 2, 9}'},{id:'c',label:'{2, 9, 3, 8}'},{id:'d',label:'{9, 8, 3, 2}'}]} answer={['a']} explanation="merge 用双指针比较两段开头：2<3 取 2；3<9 取 3；8<9 取 8；剩 9——得 {2, 3, 8, 9}。merge sort 只考逐步执行/追踪级别（Topic 4.17），不考编写。" />
+
+<MultipleChoice id="bank-u4-q14" question={'对 {25, 10, 40, 20, 5} 执行 selection sort（从小到大），外层循环跑完两轮（j = 0 和 j = 1 各一轮）后，数组内容是什么？'} options={[{id:'a',label:'{5, 10, 40, 20, 25}'},{id:'b',label:'{5, 10, 20, 40, 25}'},{id:'c',label:'{5, 10, 25, 20, 40}'},{id:'d',label:'{5, 20, 40, 10, 25}'}]} answer={['a']} explanation="第 1 轮（j=0）：全数组最小是 5，与位置 0 交换 → {5, 10, 40, 20, 25}；第 2 轮（j=1）：剩余部分最小是 10，恰好已在位置 1，与自己交换等于没动 → {5, 10, 40, 20, 25}。selection sort 每轮确定一个位置，第二轮「最小值已在位」是常见情形。" />
+
+<MultipleChoice id="bank-u4-q15" question={'以下方法被调用 ping(10) 后输出什么？\n\npublic static void ping(int n)\n{\nif (n > 1)\n{\nping(n - 3);\n}\nSystem.out.print(n + " ");\n}'} options={[{id:'a',label:'10 7 4 1'},{id:'b',label:'1 4 7 10'},{id:'c',label:'10 7 4'},{id:'d',label:'4 7 10'}]} answer={['b']} explanation="调用链：ping(10) → ping(7) → ping(4) → ping(1)。ping(1) 时 1 > 1 为 false，直接打印 1 并返回；然后每一层在递归调用之后打印自己的 n：1、4、7、10。print 在递归调用之后——所以是从小到大。递归只考追踪（Topic 4.16），追踪时画调用栈最稳。" />
+
+## Set-based 组：第 16、17 题共用下面这段代码（真实考试形式）
+
+考虑以下 Playlist 类（**只有这两题用到它**）：
+
+```java
+public class Playlist
+{
+    private ArrayList<String> songs;
+
+    public Playlist()
+    { songs = new ArrayList<String>(); }
+
+    public void addSong(String s)
+    { songs.add(s); }
+
+    /** Precondition: songs.size() > 0 */
+    public String swapFirstLast()
+    {
+        return songs.set(0, songs.remove(songs.size() - 1));
+    }
+}
+```
+
+<MultipleChoice id="bank-u4-q16" question={'（共用上文 Playlist 类）songs 依次加入 X、Y、Z 后调用 swapFirstLast()，返回值是什么？'} options={[{id:'a',label:'X'},{id:'b',label:'Z'},{id:'c',label:'Y'},{id:'d',label:'null'}]} answer={['a']} explanation="set(index, obj) 返回被替换的旧值：remove(size()-1) 先删掉末尾 Z 并返回 Z；set(0, Z) 把 Z 放进索引 0，返回原来的索引 0 元素 X。链式调用时从里往外读。" />
+
+<MultipleChoice id="bank-u4-q17" question={'（共用上文 Playlist 类）接上题，swapFirstLast() 执行完后 songs 的内容是？'} options={[{id:'a',label:'[Z, Y]（末尾元素换到了开头）'},{id:'b',label:'[X, Y]（没有变化）'},{id:'c',label:'[Y, Z]（开头的元素去了末尾）'},{id:'d',label:'[X, Y, Z]（remove 没有生效）'}]} answer={['a']} explanation="remove 删掉 Z 后列表是 [X, Y]；set(0, Z) 把索引 0 的 X 换成 Z，得 [Z, Y]。remove 返回被删元素、set 返回旧值——两个返回值都用在了这条链上。" />
+
+## 单题（下面各题互不共用代码，也不共用上面的 Playlist）
+
+<MultipleChoice id="bank-u4-q18" question={'学校图书馆想找出「同时被 9 年级和 10 年级学生借阅的书」。手头有四个数据集：\n\n· 数据集 1：每次借阅一条记录——学生 ID、书名\n· 数据集 2：每本书一条记录——书名、页数\n· 数据集 3：每个学生一条记录——学生 ID、年级\n· 数据集 4：每个书架一条记录——书架号、所在楼层\n\n哪两个数据集组合能回答？'} options={[{id:'a',label:'数据集 1 和 2'},{id:'b',label:'数据集 1 和 3'},{id:'c',label:'数据集 2 和 3'},{id:'d',label:'数据集 2 和 4'}]} answer={['b']} explanation="需要「谁借了什么」（数据集 1：学生 ID + 书名）和「谁是几年级」（数据集 3：学生 ID + 年级），通过共同的学生 ID 关联。页数、楼层与问题无关。这是数据集题的标准解法：列变量 → 找含变量的数据集 → 找共同键。" />
+
+## 第二批：遍历算法、排序细节与递归返回值
+
+<MultipleChoice id="bank-u4-q19" question={'以下代码段的输出是什么？\n\nint[] data = {8, 3, 15, 6, 15};\nint idx = 0;\nfor (int i = 1; i < data.length; i++)\n{\nif (data[i] > data[idx])\n{\nidx = i;\n}\n}\nSystem.out.println(data[idx]);'} options={[{id:'a',label:'15'},{id:'b',label:'4'},{id:'c',label:'6'},{id:'d',label:'2'}]} answer={['a']} explanation="找最大值的下标：条件用严格 > 时，并列的最大值保留**最先**出现的（索引 2 的 15），第二个 15 不会替换它。输出的是 data[idx] 即 15——若是 >=，保留的就是最后那个，但值仍相同；题目问的是值还是下标要读清。" />
+
+<MultipleChoice id="bank-u4-q20" question={'对 {7, 3, 9, 1} 做 insertion sort（从小到大）。处理完第二个元素（把 3 插入前部）后，数组状态是？'} options={[{id:'a',label:'{3, 7, 9, 1}'},{id:'b',label:'{3, 7, 1, 9}'},{id:'c',label:'{1, 3, 7, 9}'},{id:'d',label:'{3, 9, 7, 1}'}]} answer={['a']} explanation="insertion sort 每轮把下一个元素插进前面已排序部分：处理索引 1 的 3 时，前部 {7} 变成 {3, 7}——{3, 7, 9, 1}。后面的 9、1 还没轮到。c 是全部排完的结果。" />
+
+<MultipleChoice id="bank-u4-q21" question={'以下方法被调用 find(arr, "blue")，其中 arr = {red, blue, green, blue}，返回什么？\n\npublic static int find(String[] arr, String target)\n{\nfor (int i = 0; i < arr.length; i++)\n{\nif (arr[i].equals(target))\n{\nreturn i;\n}\n}\nreturn -1;\n}'} options={[{id:'a',label:'3'},{id:'b',label:'1'},{id:'c',label:'2'},{id:'d',label:'-1'}]} answer={['b']} explanation="顺序查找命中即 return——第一次出现 blue 在索引 1，立刻返回，第二个 blue 根本不看。找不到才走循环后的 return -1。这一题同时考「提前返回」和「哨兵值」两个考点。" />
+
+<MultipleChoice id="bank-u4-q22" question={'以下代码段执行后 list 的内容是？\n\nArrayList<Integer> list = new ArrayList<Integer>();\nlist.add(10);\nlist.add(20);\nlist.add(30);\nlist.remove(1);'} options={[{id:'a',label:'[10, 30]'},{id:'b',label:'[10, 20]'},{id:'c',label:'[20, 30]'},{id:'d',label:'编译错误'}]} answer={['a']} explanation="字面量 1 是 int，匹配 remove(int index) 重载——按**下标**删，删掉的是索引 1 上的 20。想按值删要写 list.remove(Integer.valueOf(1)) 这种写法——但那不在 AP 考纲内，考纲内记住：remove(整数) 就是按下标。" />
+
+<MultipleChoice id="bank-u4-q23" question={'以下代码段的输出是什么？\n\nint[][] g = {{1, 2}, {3, 4}, {5, 6}};\nint sum = 0;\nfor (int c = 0; c < g[0].length; c++)\n{\nsum += g[2][c];\n}\nSystem.out.println(sum);'} options={[{id:'a',label:'11'},{id:'b',label:'9'},{id:'c',label:'12'},{id:'d',label:'21'}]} answer={['a']} explanation="g[2] 固定行下标 2（第三行 {5, 6}），列下标 c 遍历 0、1——5 + 6 = 11。固定行走行内列：第一个下标定行、第二个下标随循环走。" />
+
+<MultipleChoice id="bank-u4-q24" question={'文件 nums.txt 每行一个整数：5、10、15（共三行）。scan 是指向该文件的 Scanner。以下代码段输出什么？\n\nint total = 0;\nwhile (scan.hasNext())\n{\ntotal += scan.nextInt();\n}\nSystem.out.println(total);'} options={[{id:'a',label:'30'},{id:'b',label:'5'},{id:'c',label:'15'},{id:'d',label:'死循环'}]} answer={['a']} explanation="hasNext() 在还有内容时返回 true，nextInt() 逐个读整数：5 + 10 + 15 = 30。读文件的标准骨架就是 while (scan.hasNext()) { 处理一个 }，读完循环自动结束。" />
+
+<MultipleChoice id="bank-u4-q25" question={'以下方法被调用 f(7) 时返回什么？\n\npublic static int f(int n)\n{\nif (n <= 0)\n{\nreturn 0;\n}\nreturn n + f(n - 2);\n}'} options={[{id:'a',label:'16'},{id:'b',label:'12'},{id:'c',label:'25'},{id:'d',label:'7'}]} answer={['a']} explanation="逐层展开：f(7) = 7 + f(5) = 7 + 5 + f(3) = 7 + 5 + 3 + f(1) = 7 + 5 + 3 + 1 + f(-1)；f(-1) 触发 base case 返回 0——总和 7+5+3+1 = 16。递归追踪的关键：先冲到底，再逐层带值返回。" />
+
+<MultipleChoice id="bank-u4-q26" question={'一款App想收集用户的位置数据来改进服务。从数据伦理（Topic 4.1）出发，哪个做法是正确的？'} options={[{id:'a',label:'能收集多少收集多少，将来总有用处'},{id:'b',label:'明确告知收集目的并取得同意，只收集实现功能所必需的最少数据'},{id:'c',label:'只要数据做了匿名化，就不需要告知用户'},{id:'d',label:'数据存在用户自己的手机里，所以无需任何说明'}]} answer={['b']} explanation="数据收集的伦理底线：知情同意 + 最小必要。匿名数据仍有再识别风险（c 错）；存哪里与要不要告知是两回事（d 错）。这是 CED 在 Unit 4 明确列出的伦理考点，也是 Practice 5（Responsible Use）的出题来源。" />

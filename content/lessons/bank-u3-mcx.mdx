@@ -1,0 +1,43 @@
+---
+id: bank-u3-mcx
+title: 题库 · Unit 3 选择题（14 题）
+description: 对齐真实考试 Unit 3（10–18% 权重）：类设计图、访问权限、封装理由、static、引用别名。
+order: 93
+group: Exam Bank · 题库
+minutes: 15
+---
+
+## 使用说明
+
+- Unit 3 是 FRQ 第 2 题（Class Design）的直接来源，MCQ 爱考设计判断与访问权限；
+- 本组包含一道「责任使用 / 伦理」题——真实考试每个单元都会带 1–2 道 Practice 5 题。
+
+<MultipleChoice id="bank-u3-q1" question={'要设计一个 Student 类：实例变量 name（String）和 gpa（double）都不允许类外直接修改；提供公开的 getName 和 getGpa 方法读取。以下哪个设计描述是正确的？'} options={[{id:'a',label:'两个字段都声明为 private，两个方法都声明为 public'},{id:'b',label:'两个字段都声明为 public，方便外部直接赋值'},{id:'c',label:'方法声明为 private，字段声明为 public'},{id:'d',label:'name 声明为 public，gpa 声明为 private'}]} answer={['a']} explanation="类设计图约定：- 表示 private、+ 表示 public。数据字段私有（封装），对外只暴露读取方法——这是 Topic 3.1 与 3.8 的标准设计。b 让外部可以绕过校验直接改值，正是封装要防的。" />
+
+<MultipleChoice id="bank-u3-q2" question={'一家公司希望其他开发者能够在审查代码之后，在自己的项目里合法复用这个方法。以下哪种做法最可能支持这一目标？'} options={[{id:'a',label:'把方法声明为 public'},{id:'b',label:'把方法声明为 static'},{id:'c',label:'以开源许可证发布方法的代码'},{id:'d',label:'删除方法用到的数据中的个人信息'}]} answer={['c']} explanation="能不能被别人合法复用是版权/许可证问题，不是访问修饰符问题：public 只解决「编译器允许调用」，开源许可证才解决「法律允许复用」。d 是隐私保护（也重要），但与复用许可无关。这对应考纲的 Responsible Use 实践。" />
+
+<MultipleChoice id="bank-u3-q3" question={'考虑以下两个类声明。Car 的 printSpec 方法中，哪个替换 /* missing code */ 能通过编译？\n\npublic class Engine\n{\npublic int getHorsepower()\n{ /* implementation not shown */ }\nprivate String getSerial()\n{ /* implementation not shown */ }\n}\npublic class Car\n{\nprivate Engine motor;\npublic void printSpec()\n{\nSystem.out.println( /* missing code */ );\n}\n}'} options={[{id:'a',label:'Engine.getHorsepower()'},{id:'b',label:'motor.getHorsepower()'},{id:'c',label:'motor.getSerial()'},{id:'d',label:'Engine.getSerial()'}]} answer={['b']} explanation="getHorsepower 是实例方法，要通过对象调用：motor.getHorsepower()。a 用类名调实例方法（编译错误）；c 调用的是 private 方法，Car 类无权访问；d 同样错在类名调用 + private。" />
+
+<MultipleChoice id="bank-u3-q4" question={'Rectangle 类已声明私有字段 width、height 及对应的 getWidth/getHeight 方法。isLargerThan 方法应返回「本矩形面积是否大于 other 的面积」，哪个表达式正确？\n\npublic boolean isLargerThan(Rectangle other)'} options={[{id:'a',label:'width * height > other.getWidth() * other.getHeight()'},{id:'b',label:'width > other.getWidth() && height > other.getHeight()'},{id:'c',label:'this.area() > other.area()'},{id:'d',label:'width * height > other'}]} answer={['a']} explanation="面积 = 长 × 宽，逐个访问 other 的公开 getter 计算——a 正确。b 是经典误区：3×10 比 5×5 面积大却两维不全大（b 会漏判）；c 里根本没有 area 方法，编译错误；d 拿 int 和 Rectangle 对象比较，类型不符。" />
+
+<MultipleChoice id="bank-u3-q5" question={'考虑以下类。连续创建两个对象后，b.getId() 的返回值是什么？\n\npublic class IdGenerator\n{\nprivate static int nextId = 1;\nprivate int id;\npublic IdGenerator()\n{\nid = nextId;\nnextId++;\n}\npublic int getId()\n{ return id; }\n}\n\nIdGenerator a = new IdGenerator();\nIdGenerator b = new IdGenerator();'} options={[{id:'a',label:'1'},{id:'b',label:'2'},{id:'c',label:'0'},{id:'d',label:'编译错误，构造器不能访问 static 变量'}]} answer={['b']} explanation="nextId 是 static 变量，被所有对象共享：创建 a 时 a.id = 1，nextId 变 2；创建 b 时 b.id = 2。static 是类级的「大家共用的一个」，实例变量是每个对象自己的。" />
+
+<MultipleChoice id="bank-u3-q6" question={'把实例变量设为 private、只通过公开方法读写，最主要的理由是？'} options={[{id:'a',label:'代码行数更少'},{id:'b',label:'外部无法直接塞进非法值（如负的年龄），修改必须经过方法校验；内部表示日后可以自由更换'},{id:'c',label:'private 变量的运行速度更快'},{id:'d',label:'private 会让变量自动变成 static'}]} answer={['b']} explanation="封装的两个价值：防呆（所有修改都过方法这道闸门，可以校验）和解耦（外部只依赖方法签名，内部实现随便改）。它不是性能优化，也不改变存储方式。" />
+
+<MultipleChoice id="bank-u3-q7" question={'Point 类有 move(int x, int y) 方法（把坐标改为参数值）和 getX() 方法。以下代码段输出什么？\n\nPoint p1 = new Point(2, 3);\nPoint p2 = p1;\np2.move(5, 5);\nSystem.out.println(p1.getX());'} options={[{id:'a',label:'2'},{id:'b',label:'5'},{id:'c',label:'3'},{id:'d',label:'编译错误'}]} answer={['b']} explanation="p2 = p1 复制的是引用（住址），不是对象本身——p1 和 p2 现在指向同一个对象，通过 p2 的 move 改的就是那一个对象，p1 去看自然也是 5。这就是引用别名（aliasing，Topic 3.6）。" />
+
+<MultipleChoice id="bank-u3-q8" question={'Box 类的四个方法头中，哪几个有编译错误？\n\nI. public Box() { size = 1.0; }\nII. public double getSize() { return size; }\nIII. public double setSize(double s) { size = s; }\nIV. public void reset() { size = 0; return size; }'} options={[{id:'a',label:'只有 III'},{id:'b',label:'只有 IV'},{id:'c',label:'III 和 IV'},{id:'d',label:'都没有错误'}]} answer={['c']} explanation="III 声明返回 double 却没有 return 语句——non-void 方法必须每条路径都返回值；IV 声明 void 却试图返回值——void 方法不能 return 东西。I（构造器没有返回类型，正确）和 II（正常返回）都没问题。non-void 必有 return、void 不返回，是一对镜像规则。" />
+
+## 第二批：this、重载、传参与作用域
+
+<MultipleChoice id="bank-u3-q9" question={'在构造器 public Cat(String name) { this.name = name; } 中，this.name 指的是什么？'} options={[{id:'a',label:'实例变量 name'},{id:'b',label:'参数 name'},{id:'c',label:'类名 Cat'},{id:'d',label:'一个 static 变量'}]} answer={['a']} explanation="参数名和字段名相同时，裸写 name 指参数（就近原则）；this.name 明确指「本对象的字段」。没有 this，赋值语句变成参数自己赋值给自己，字段永远是默认值。" />
+
+<MultipleChoice id="bank-u3-q10" question={'Pizza 类有两个构造器：Pizza(String s) 和 Pizza(String s, int n)。new Pizza("L", 12) 调用的是哪个？'} options={[{id:'a',label:'双参数版本 Pizza(String, int)'},{id:'b',label:'单参数版本 Pizza(String)'},{id:'c',label:'两个构造器依次各调用一次'},{id:'d',label:'编译错误，一个类不允许两个构造器'}]} answer={['a']} explanation="重载解析看实参的个数和类型：给了 String 和 int 就匹配双参数版本。一个类可以有多个参数列表不同的构造器。" />
+
+<MultipleChoice id="bank-u3-q11" question={'以下方法会怎样？\n\npublic class Dog\n{\nprivate String name;\nprivate static int count = 0;\npublic static void rename(String n)\n{\nname = n;\n}\n}'} options={[{id:'a',label:'编译错误'},{id:'b',label:'正常运行，修改调用对象的 name'},{id:'c',label:'运行时异常'},{id:'d',label:'自动修改所有 Dog 对象的 name'}]} answer={['a']} explanation="static 方法属于类、没有「当前对象」，而 name 属于每个对象——没有对象却要摸它的字段，编译器直接拒绝。这是 Topic 3.7 的明确考点：static 方法只能直接访问 static 成员。" />
+
+<MultipleChoice id="bank-u3-q12" question={'Point 类有 move(int x, int y)（把坐标改为参数值）和 getX() 方法。以下代码段输出什么？\n\npublic static void bump(Point p)\n{\np.move(p.getX() + 1, p.getY());\n}\n\nPoint q = new Point(4, 4);\nbump(q);\nSystem.out.println(q.getX());'} options={[{id:'a',label:'4'},{id:'b',label:'5'},{id:'c',label:'编译错误'},{id:'d',label:'0'}]} answer={['b']} explanation="对象作为参数传递的是引用（住址的拷贝）——p 和 q 指向同一个对象，方法内的 move 永久生效。如果参数是 int，方法内改的只是副本，外面不变——对象与 primitive 的传参差异是 Topic 3.6 的核心。" />
+
+<MultipleChoice id="bank-u3-q13" question={'以下代码段中调用 go() 后输出什么？\n\npublic class Test\n{\nprivate int x = 1;\npublic void go()\n{\nint x = 100;\nSystem.out.println(x);\n}\n}'} options={[{id:'a',label:'1'},{id:'b',label:'100'},{id:'c',label:'101'},{id:'d',label:'编译错误，变量不允许重名'}]} answer={['b']} explanation="方法内的局部变量会遮蔽（shadow）同名的实例变量：裸写 x 就近取局部变量 100。想拿字段得写 this.x。局部变量和字段重名合法，但读代码时要盯住作用域。" />
+
+<MultipleChoice id="bank-u3-q14" question={'以下 setter 写法的最大价值是什么？\n\npublic void setAge(int a)\n{\nif (a >= 0)\n{\nage = a;\n}\n}'} options={[{id:'a',label:'挡住非法值（负年龄）'},{id:'b',label:'让 age 变量运行更快'},{id:'c',label:'Java 语法要求字段必须通过 setter 修改'},{id:'d',label:'让 age 自动变成 static'}]} answer={['a']} explanation="字段若声明为 public，任何外部代码都能塞进 -5；私有字段 + 带校验的 setter 保证 age 永远合法。这是封装「防呆」价值在代码层面的样子（Topic 3.8）。" />

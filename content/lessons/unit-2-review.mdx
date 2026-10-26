@@ -1,0 +1,69 @@
+---
+id: unit-2-review
+title: Unit 2 大检阅：循环与分支的 15 题
+description: 布尔与分支、循环、模板与效率——三个方向各五题，全程无 AI。答对 11 题以上，Unit 2 知识部分毕业。
+order: 25
+group: Unit 2 · Selection and Iteration
+minutes: 45
+---
+
+## 检测规则
+
+与 Unit 1 检测同规矩：
+
+1. **全程无 AI、无笔记、无资料**；
+2. 15 题分三组：布尔与分支、循环、模板与效率；
+3. **答对 11 题（70%）以上过关**；先在纸上写下答案再点选项；
+4. 答错的题全部进错题本三栏，并设好 +1 天重做提醒。
+
+## 第一组：布尔与分支（1–5 题）
+
+<MultipleChoice id="u2r-q1" question="表达式 !(a && b) 与下面哪个完全等价？" options={[{id:'a',label:'!a || !b'},{id:'b',label:'!a && !b'},{id:'c',label:'a || b'},{id:'d',label:'!(a || b)'}]} answer={['a']} explanation="De Morgan 律：NOT 进括号，且变或、每项取反。验算 a 为 true、b 为 false 时：!(true && false) = !false = true；!a || !b = false || true = true——一致。口诀：非进括号，且或互换。" />
+
+<MultipleChoice id="u2r-q2" question={'n = 0 时，表达式 (n != 0) && (100 / n > 5) 的结果是？'} options={[{id:'a',label:'false，且右边的除法因短路根本不会执行'},{id:'b',label:'false，除以零后程序崩溃'},{id:'c',label:'true'},{id:'d',label:'编译错误'}]} answer={['a']} explanation="n != 0 为 false，&& 短路——右边 100 / n 不执行，不会除以零。短路是护身符：安全检查写左边，危险操作写右边。" />
+
+<MultipleChoice id="u2r-q3" question={'以下代码输出什么？\n\nint score = 72;\nif (score >= 90) {\n    System.out.println("A");\n} else if (score >= 70) {\n    System.out.println("B");\n} else {\n    System.out.println("C");\n}'} options={[{id:'a',label:'A'},{id:'b',label:'B'},{id:'c',label:'C'},{id:'d',label:'B 和 C 各一次'}]} answer={['b']} explanation="else if 链从上往下、命中即止：72 >= 90 不成立，72 >= 70 成立——输出 B，后面不再看。验算路径就两步，别心算整条链。" />
+
+<MultipleChoice id="u2r-q4" question={'以下代码输出什么？\n\nboolean flag = true;\nif (flag = false) {\n    System.out.println("开");\n} else {\n    System.out.println("关");\n}\nSystem.out.println(flag);'} options={[{id:'a',label:'关，然后 false'},{id:'b',label:'开，然后 true'},{id:'c',label:'关，然后 true'},{id:'d',label:'编译错误'}]} answer={['a']} explanation="flag = false 是赋值，表达式的值就是 false——条件为假走 else 打印「关」，而且 flag 被偷偷改成 false，第二行打印 false。双重伤害一次记牢：分支错 + 变量被改。对 boolean 用单等号不报错，这是它比 int 版本更毒的地方。" />
+
+<MultipleChoice id="u2r-q5" question="想在 Java 里表达「x 在 0 到 100 之间（含两端）」，正确的写法是？" options={[{id:'a',label:'0 <= x <= 100'},{id:'b',label:'x >= 0 && x <= 100'},{id:'c',label:'x >= 0 || x <= 100'},{id:'d',label:'x > 0 && x < 100'}]} answer={['b']} explanation="数学的连写在 Java 里是编译错误——必须拆成两个比较用 && 连接（同时成立）。c 的 || 恒成立（任何数至少满足一边），是最典型的逻辑错；d 把两端丢了（0 和 100 不含）。" />
+
+## 第二组：循环（6–10 题）
+
+<MultipleChoice id="u2r-q6" question="循环 for (int i = 2; i <= 8; i += 3) 的循环体执行几次？" options={[{id:'a',label:'2 次'},{id:'b',label:'3 次'},{id:'c',label:'4 次'},{id:'d',label:'7 次'}]} answer={['b']} explanation="列取值序列：i = 2、5、8，下一个 11 不满足 <= 8——共 3 次。步长不是 1 时更要列序列，别用（8-2）÷3 之类的心算公式。" />
+
+<MultipleChoice id="u2r-q7" question={'以下代码的运行表现是？\n\nint k = 5;\nwhile (k != 0) {\n    k -= 2;\n}'} options={[{id:'a',label:'正常结束，k 最终为 0'},{id:'b',label:'死循环：k 依次是 3、1、−1、−3……步长 2 会从 1 直接跨到 −1，永远踩不到 0'},{id:'c',label:'编译错误'},{id:'d',label:'循环体一次都不执行'}]} answer={['b']} explanation="列序列：5 → 3 → 1 → −1 → −3 ……每步减 2，从 1 直接跳过 0 到 −1，k != 0 永远成立。这是「步长跳过终点」型死循环——判断 while 是否能停，永远老实列前几个取值。" />
+
+<MultipleChoice id="u2r-q8" question={'以下代码输出什么？\n\nint x = 10;\nwhile (x > 7) {\n    System.out.print(x + " ");\n    x--;\n}'} options={[{id:'a',label:'10 9 8'},{id:'b',label:'10 9 8 7'},{id:'c',label:'8 9 10'},{id:'d',label:'10 9 8 7 6'}]} answer={['a']} explanation="x 为 10、9、8 时条件成立打印，然后 x 变 7，条件 7 > 7 不成立停止——输出 10 9 8。注意打印发生在减 1 之前，且 7 不打印（条件先判后进）。" />
+
+<MultipleChoice id="u2r-q9" question={'以下代码中 count++ 总共执行几次？\n\nint count = 0;\nfor (int i = 0; i < 4; i++) {\n    for (int j = 0; j < 3; j++) {\n        count++;\n    }\n}'} options={[{id:'a',label:'7 次'},{id:'b',label:'12 次'},{id:'c',label:'9 次'},{id:'d',label:'4 次'}]} answer={['b']} explanation="固定次数嵌套直接相乘：外层 4 轮 × 内层每轮 3 次 = 12。嵌套相乘、顺序相加、依赖累加——三句口诀在这里就是考法。" />
+
+<MultipleChoice id="u2r-q10" question={'以下代码打印多少颗星？\n\nfor (int i = 1; i <= 5; i++) {\n    for (int j = 1; j <= i; j++) {\n        System.out.print("*");\n    }\n    System.out.println();\n}'} options={[{id:'a',label:'25 颗'},{id:'b',label:'15 颗'},{id:'c',label:'5 颗'},{id:'d',label:'10 颗'}]} answer={['b']} explanation="依赖型嵌套逐行累加：第 i 行 i 颗，总共 1+2+3+4+5 = 15。选 25 是把内层当成了固定 5 次（j <= 5 的矩形）——依赖外层的内层不能直接乘。" />
+
+## 第三组：模板与效率（11–15 题）
+
+<MultipleChoice id="u2r-q11" question="「1 到 200 中有多少个数是 11 的倍数」——用哪个模板解决最直接？" options={[{id:'a',label:'计数模板，条件写 n % 11 == 0'},{id:'b',label:'求和模板'},{id:'c',label:'最值模板'},{id:'d',label:'查找模板，命中即 return'}]} answer={['a']} explanation="「有多少个」是计数的识别信号；倍数判断用取余等于零。查找模板的 return 只留第一个命中，数不全。" />
+
+<MultipleChoice id="u2r-q12" question={'以下代码输出什么？\n\nint max = 0;\nint a = -1;\nint b = -2;\nint c = -3;\nif (a > max) { max = a; }\nif (b > max) { max = b; }\nif (c > max) { max = c; }\nSystem.out.println(max);'} options={[{id:'a',label:'-1，最大的数'},{id:'b',label:'0：三个数都赢不过初值 0，max 从未被替换'},{id:'c',label:'-3'},{id:'d',label:'编译错误'}]} answer={['b']} explanation="全负序列撞上 max = 0：-1、-2、-3 都不大于 0，三次替换全不发生。修法：初值用 Integer.MIN_VALUE 或第一个元素。症状识别：答案永远等于初值本身。" />
+
+<MultipleChoice id="u2r-q13" question="查找模板中，循环全程未命中目标时，方法通常返回什么来表示「不存在」？" options={[{id:'a',label:'0'},{id:'b',label:'-1'},{id:'c',label:'false 之外随便什么'},{id:'d',label:'直接不返回，让方法结束'}]} answer={['b']} explanation="-1 哨兵是全 Java 世界的惯例（indexOf 同款）：0 不能用，因为 0 可能是合法的第一个位置。判存在性永远和 -1 比。" />
+
+<MultipleChoice id="u2r-q14" question="1 到 100（含两端）中有多少个数既是 3 的倍数又是 5 的倍数？" options={[{id:'a',label:'6 个'},{id:'b',label:'20 个'},{id:'c',label:'33 个'},{id:'d',label:'7 个'}]} answer={['a']} explanation="既是 3 又是 5 的倍数 = 15 的倍数：15、30、45、60、75、90——共 6 个。20 是 5 的倍数的个数、33 是 3 的倍数的个数（都是陷阱）。识别信号：「既是……又是」用 && 连两个取余条件。" />
+
+<MultipleChoice id="u2r-q15" question="方案 A 是两个顺序执行的循环、各跑 50 次；方案 B 是一个嵌套循环、外层 50 次、内层 50 次。B 的总步数是 A 的多少倍？" options={[{id:'a',label:'2 倍'},{id:'b',label:'25 倍：A 是 50 + 50 = 100 步，B 是 50 × 50 = 2500 步'},{id:'c',label:'50 倍'},{id:'d',label:'一样多'}]} answer={['b']} explanation="顺序相加 100，嵌套相乘 2500——差 25 倍。效率题不用背倍数，现场算：乘法对加法的碾压就是嵌套对顺序的碾压。" />
+
+## 对答案、算总分
+
+和 Unit 1 同标准：15 题对 **11 题以上**过关；蒙对不算；错题全进错题本三栏并设 +1 天提醒。
+
+## 无 AI 手写任务（白纸三道）
+
+1. **成绩等级方法**：手写 `public static String gradeOf(int score)`——90 以上返回 A、80 以上 B、60 以上 C、否则 F（else if 链，条件从严格到宽松）；
+2. **倒计时**：手写打印 5 到 1 的 while 循环（三要素齐备：初始化、条件、推进方向）；
+3. **星号三角**：手写 printTriangle(4) 的两层循环（外层行、内层 `j <= i`、换行位置在两层之间）。
+
+写完在 IDE 里逐字敲入验证——三道全对，Bluebook 手感 +1。
+
+<LLMPractice id="u2r-concept" preset="concept-coach" instructions={'任务：数一数三组各自的错题数，把错得最多的一组主题告诉概念教练，按费曼四步把它讲透（它讲一遍 → 你复述 → 它挑毛病 → 修正重讲）。这是检测后的补救环节，允许用 AI——下一轮检测仍然无 AI。'} starterMessage="我在 Unit 2 检测里错题最多的主题是：/ 填入主题 /。请帮我把这个主题讲透，我是准备 AP CSA 的高中生。" />
+
+<Callout title="放下 AI · 错题三栏现在就写">1) 三栏错题本（题目/错因/重做日期）现在写，别等明天；2) 每个 +1 天提醒现在设；3) 手写三道拍照存档。Unit 2 至此收官——下一课推开 Unit 3 的大门：你自己来当「造物主」，设计第一个类。</Callout>

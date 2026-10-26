@@ -1,0 +1,138 @@
+---
+id: arraylist-algorithms
+title: ArrayList 算法：边删边走的攻防战
+description: 边遍历边删除是 Unit 4 最著名的陷阱——正序跳元素、倒序才安全。这也是 FRQ 第三题的主场。
+order: 36
+group: Unit 4 · Data Collections
+minutes: 35
+---
+
+## 上一课埋的雷，今天正式引爆
+
+删除后元素**集体左移**——那么「边遍历边删除」会发生什么？先看事故现场：
+
+```java
+// 意图：删除列表里所有的 4
+ArrayList<Integer> list = new ArrayList<Integer>();
+list.add(2);
+list.add(4);
+list.add(4);      // list = [2, 4, 4]
+
+for (int i = 0; i < list.size(); i++) {
+    if (list.get(i) == 4) {
+        list.remove(i);
+    }
+}
+```
+
+逐步追踪（条件里的 size 是**动态**的，每轮重新读）：
+
+| 轮次 | i | 状态 | 发生什么 |
+| --- | --- | --- | --- |
+| 1 | 0 | [2, 4, 4] | 元素 2 不是 4，跳过 |
+| 2 | 1 | [2, 4, 4] | 是 4，删除 → [2, 4]，**第二个 4 左移到下标 1** |
+| 3 | 2 | [2, 4] | 2 >= size(2)，循环结束——**下标 1 的 4 成了漏网之鱼** |
+
+最终 `[2, 4]`——**漏删一个**。如果条件写成固定的旧长度还会越界崩溃。病根一句话：**删除后 i 停在原地，但元素左移了一位——i++ 一走，就跳过了刚补位上来的元素**。
+
+## 解法：倒序遍历
+
+**从尾往头删，左移就伤不到你**——删掉后面的元素，前面的下标纹丝不动：
+
+```java
+for (int i = list.size() - 1; i >= 0; i--) {
+    if (list.get(i) == 4) {
+        list.remove(i);
+    }
+}
+```
+
+倒序时被删元素右边的都在已处理区，左移只影响右侧——安稳。这段骨架请整段默写，它是 FRQ Q3 的高频构件。
+
+<Callout title="考纲边界">遍历 ArrayList 时增删元素的另一条安全路是新建列表（把想留的抄过去）。AP 两种都认，但**倒序删除是考场上的标准答案**——Quick Reference 只给 API 不给算法，这段骨架要靠平时默写进肌肉记忆。另外，用 for-each 遍历 ArrayList 时增删元素通常会抛 ConcurrentModificationException；碰巧删到末尾的元素时可能安静结束、不报错，但结果照样是错的。记住「for-each 只读」铁律。</Callout>
+
+## 每日一虫 🐛：正序删除的三宗罪
+
+上面的正序删除已经看到一宗罪（漏删）。完整的三宗罪：
+
+1. **漏删**：相邻的目标元素只删到一个；
+2. **越界**：若条件用固定长度（比如先存了 int n = list.size()），删到后面 i 冲出缩短后的列表；
+3. **假象**：某些数据（目标元素不相邻）下恰好正确——虫在测试里隐身，考场上爆发。
+
+<MultipleChoice id="al2-bug" question="正序边遍历边删除漏删的病根，一句话说清是？" options={[{id:'a',label:'remove 方法有 bug'},{id:'b',label:'删除后元素左移补位，而下标 i 随即加一跳过了刚补上来的元素'},{id:'c',label:'size() 返回值不准确'},{id:'d',label:'循环条件写错了方向'}]} answer={['b']} explanation="左移 + i++ 的组合拳：删除的那一刻，下一个目标元素恰好滑到当前下标，而 i++ 带你越过它。倒序删除为何安全？被删元素右侧都是处理过的，左移影响不到未检区。说清这句话，Q3 的删除题你就有了免疫。" />
+
+## 练习场
+
+<FillBlank
+  id="al2-fill"
+  question="补全倒序删除的循环头。"
+  answers={['size', '>=']}
+  explanation="倒序骨架：起点 i = list.size() - 1（最后一个下标，size 带括号）；终点条件 i >= 0（下标 0 必须包含）。两个空合起来就是「从最后一个合法下标走到 0」。"
+>
+
+```java
+for (int i = list.???() - 1; i ??? 0; i--) {
+    if (list.get(i) < 0) {
+        list.remove(i);
+    }
+}
+```
+
+</FillBlank>
+
+<MultipleChoice id="al2-safe" question={'list = [1, 2, 3, 4, 5]。用倒序循环（i 从 4 到 0）删除所有偶数（2 和 4）。删除完成后 list 是什么？'} options={[{id:'a',label:'[1, 3, 5]'},{id:'b',label:'[1, 2, 3, 5]，漏删 2'},{id:'c',label:'[1, 3, 4, 5]，漏删 4'},{id:'d',label:'抛异常'}]} answer={['a']} explanation="倒序追踪：i=4 元素 5 非偶跳过；i=3 元素 4 是偶 → 删除得 [1,2,3,5]（5 左移）；i=2 元素 3 跳过；i=1 元素 2 是偶 → 删除得 [1,3,5]；i=0 元素 1 跳过。全部命中、零漏删——倒序的安全性要亲手 trace 一遍才算真懂。" />
+
+## Q3 题型解剖
+
+FRQ 第三题（Data Analysis with ArrayList，5 分）的固定长相：**给一个类，类里有个 ArrayList 字段，让你写方法处理它**。骨架示例：
+
+```java
+public class Gradebook {
+    private ArrayList<Integer> scores;      // 题目给的字段
+
+    public Gradebook() {                    // 题目给的构造器
+        scores = new ArrayList<Integer>();
+    }
+
+    // 题目让你写的方法，比如：
+    public int countAbove(int limit) { ... }        // 遍历统计
+    public void dropBelow(int limit) { ... }        // 倒序删除
+}
+```
+
+Q3 的三个识别信号：方法**操作字段里的列表**、不需要 new 新对象、遍历骨架直接上。你已具备全部零件——现在把它们组装成方法。
+
+把倒序删除方法排出来：
+
+<ParsonsProblem
+  id="al2-parsons"
+  question="排出方法 dropNegatives：删除列表里所有负数（倒序）。"
+  lines={['public static void dropNegatives(ArrayList<Integer> list) {', '    for (int i = list.size() - 1; i >= 0; i--) {', '        if (list.get(i) < 0) {', '            list.remove(i);', '        }', '    }', '}']}
+  explanation="Q3 删除题的标准骨架，七行一段背下来：倒序循环头（size()-1 到 0）→ get 判断 → remove。判断在内层 if 里，remove 只在命中时执行。void 方法——修改发生在传入的列表上。"
+/>
+
+## 动手：删掉不及格
+
+<CodeExercise
+  id="al2-drop-code"
+  title="dropFailing 倒序删除"
+  prompt="补全方法 dropFailing：接受 ArrayList<Integer> scores，删除其中所有小于 60 的元素（原地修改，必须用倒序遍历）。写完在本地验证：[88, 55, 92, 40, 60] 处理后应为 [88, 92, 60]（60 恰好等于阈值，保留——条件是严格小于）；[70, 80] 处理后不变；空列表不崩溃。"
+  starter={`import java.util.ArrayList;
+
+public class Gradebook {
+
+    // 删除 scores 中所有小于 60 的元素（倒序遍历）
+    public static void dropFailing(ArrayList<Integer> scores) {
+        // 倒序骨架 + 判断 + remove
+
+    }
+}`}
+  rubric={['使用倒序 for 循环：i 从 scores.size() - 1 到 0', '删除条件是 get(i) 严格小于 60（等于 60 保留）', '命中才 remove，未命中不动', '原地修改且空列表自然安全（循环不执行）']}
+  hints={['倒序循环头照骨架默写：for (int i = scores.size() - 1; i >= 0; i--)', '命中判断：if (scores.get(i) < 60)——严格小于，不带等号', '命中时一行 scores.remove(i);']}
+/>
+
+## 让出题官出 Q3
+
+<LLMPractice id="al2-quiz" preset="quiz-master" instructions={'任务：告诉出题官「我刚学完 ArrayList 遍历和倒序删除，想练 FRQ Q3 风格的题」，让它出一道（如统计某条件个数 + 一道删除）。规则：删除题必须先在纸上写出倒序循环头再作答；答错记进错题本并注明「我第一反应用的什么顺序」。'} starterMessage="我刚学完 ArrayList 遍历和倒序删除，想练 FRQ Q3（Data Analysis with ArrayList）风格的题。请出一道考我。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 口头讲清正序删除漏删的完整链条（左移 → i++ → 跳过），并举 [2,4,4] 的例子；2) 默写倒序删除七行骨架；3) 说出 Q3 的三个识别信号。下一课，Unit 4 的重头戏之一：查找与排序。</Callout>

@@ -1,0 +1,122 @@
+---
+id: arraylist-basics
+title: ArrayList：会自己长大的数组
+description: 数组长度出生定死，ArrayList 想加就加——六个方法、Integer 装箱，还有删除时元素集体左移的陷阱。
+order: 35
+group: Unit 4 · Data Collections
+minutes: 35
+---
+
+## 数组的烦恼，ArrayList 来解
+
+P3 校园卡开三张卡用了三个变量；上一课你学会了用数组装它们——但数组**长度出生定死**：开第四张卡就得新建数组。真实世界里卡的数目天天变，你需要一个**会自己长大的数组**：ArrayList。
+
+```java
+ArrayList<String> names = new ArrayList<String>();
+names.add("小明");     // 加一个，长度变 1
+names.add("小红");     // 再加一个，长度变 2——不用预先报数
+```
+
+## 尖括号里装什么：Integer 的登场
+
+`ArrayList<int>` 是**非法的**——尖括号里只能放引用类型。于是每种基本类型都有个「包装类」（wrapper class）表亲：
+
+| 基本类型 | 包装类 |
+| --- | --- |
+| int | Integer |
+| double | Double |
+
+存 int 用 `ArrayList<Integer>`。放进去和取出来时 Java 自动转换（**装箱** autoboxing / **拆箱** unboxing），你只管当 int 用：
+
+```java
+ArrayList<Integer> scores = new ArrayList<Integer>();
+scores.add(88);              // int 自动装箱成 Integer 存入
+int first = scores.get(0);   // Integer 自动拆箱成 int 交给你
+```
+
+一句话：**尖括号写 Integer，用起来当 int**。
+
+## 六个方法打天下（考场 Quick Reference 全表）
+
+| 方法 | 作用 | 例 |
+| --- | --- | --- |
+| `list.size()` | 当前元素个数 | 加了 3 个就是 3 |
+| `list.add(x)` | 追加到末尾 | `[a, b]` add c → `[a, b, c]` |
+| `list.add(i, x)` | 插到下标 i，后面元素右移 | `[a, c]` add(1, b) → `[a, b, c]` |
+| `list.get(i)` | 读下标 i 的元素 | 不删不改 |
+| `list.set(i, x)` | 替换下标 i，返回旧值 | `[a, b]` set(0, z) → `[z, b]` |
+| `list.remove(i)` | 删下标 i，后面元素左移，返回被删元素 | `[a, b, c]` remove(0) → `[b, c]` |
+
+注意 ArrayList 的长度是 **size()（带括号）**——和数组的 length（无括号）、String 的 length() 凑成三兄弟，年年混考。
+
+## 每日一虫 🐛：删除后的集体左移
+
+```java
+ArrayList<String> list = new ArrayList<String>();
+list.add("a");
+list.add("b");
+list.add("c");
+list.remove(0);
+System.out.println(list.get(0));
+```
+
+<MultipleChoice id="al-bug" question="最后打印的是什么？" options={[{id:'a',label:'a'},{id:'b',label:'b'},{id:'c',label:'null'},{id:'d',label:'抛异常'}]} answer={['b']} explanation="ArrayList 不留洞：删除后每个后面的元素前移一位，size 同时减一。所以 get(0) 拿到的是原来的 b。这个「左移」正是下一课「边遍历边删除会跳元素」虫的病根——删除之后，你正盯着的下标里已经是下一个元素了。" />
+
+## 练习场
+
+<FillBlank
+  id="al-fill"
+  question="补全 ArrayList 的三个常用方法名。"
+  answers={['add', 'get', 'size']}
+  explanation="追加用 add（不指定位置则加到末尾）；按下标读取用 get（只读不改）；当前元素个数用 size()（注意带括号——数组才是无括号的 length）。"
+>
+
+```java
+ArrayList<String> list = new ArrayList<String>();
+list.???("小明");            // 追加一个元素
+String s = list.???(0);      // 读下标 0
+int n = list.???();          // 当前元素个数
+```
+
+</FillBlank>
+
+<MultipleChoice id="al-insert" question="list 内容为 [a, c]。执行 list.add(1, b) 后，list 内容与 size 分别是？" options={[{id:'a',label:'[a, b, c]，size 为 3'},{id:'b',label:'[b, a, c]，size 为 3'},{id:'c',label:'[a, c]，b 覆盖了下标 1'},{id:'d',label:'[a, b]，c 被挤掉了'}]} answer={['a']} explanation="带下标的 add 是**插入**不是替换：新元素落位，后面的元素依次右移，size 加一。对比 set(1, b) 才是替换（c 消失，size 不变）。insert 靠右移、remove 靠左移——一右一左，方向别记反。" />
+
+<MultipleChoice id="al-integer" question="要声明一个能存放 int 分数的 ArrayList，正确的写法是？" options={[{id:'a',label:'ArrayList<int> scores = new ArrayList<int>();'},{id:'b',label:'ArrayList<Integer> scores = new ArrayList<Integer>();'},{id:'c',label:'ArrayList<int[]> scores = new ArrayList<int[]>();'},{id:'d',label:'int[] list = new ArrayList();'}]} answer={['b']} explanation="尖括号里的类型参数必须是引用类型——基本类型 int、double 都不合法，要用包装类 Integer、Double。日常使用无需操心装箱拆箱：add(88) 和 int x = get(0) 都是自动的。a 直接编译错误。" />
+
+<MultipleChoice id="al-remove" question="list 内容为 [10, 20, 30, 40]。执行 list.remove(1) 后，list 内容是？list.remove(1) 的返回值是？" options={[{id:'a',label:'[10, 30, 40]；返回被删的 20（Integer）'},{id:'b',label:'[10, 30, 40]；返回 true'},{id:'c',label:'[20, 30, 40]；返回 10'},{id:'d',label:'[10, 20, 40]；返回 30'}]} answer={['a']} explanation="remove(i) 干两件事：删掉下标 i 的元素（后面左移），并把被删的那个元素交回来（返回值）。删 1 号位：20 出局，30、40 左移，返回 20。AP 只考按下标删除的版本。" />
+
+把一个 ArrayList 程序排出来：
+
+<ParsonsProblem
+  id="al-parsons"
+  question="排出「装三个名字并打印第二个」的程序。"
+  lines={['import java.util.ArrayList;', 'public class Names {', '    public static void main(String[] args) {', '        ArrayList<String> list = new ArrayList<String>();', '        list.add("小明");', '        list.add("小红");', '        list.add("小刚");', '        System.out.println(list.get(1));', '    }', '}']}
+  explanation="ArrayList 属于 java.util 包，文件开头要 import（File/Scanner 同理）。骨架顺序：导入 → 类 → main → 声明 → 三个 add → get(1) 打印（下标 1 是第二个元素「小红」）。"
+/>
+
+## 动手：给每个元素加工
+
+<CodeExercise
+  id="al-toeach-code"
+  title="addToEach 批量加分"
+  prompt="补全方法 addToEach：接受 ArrayList<Integer> scores 和 int bonus，把列表里每个元素都加上 bonus（原地修改，不新建列表）。写完在本地验证：对 [88, 92, 79] 加 5 后应为 [93, 97, 84]。"
+  starter={`import java.util.ArrayList;
+
+public class BonusTool {
+
+    // 把 scores 中每个元素加上 bonus（原地修改）
+    public static void addToEach(ArrayList<Integer> scores, int bonus) {
+        // 遍历并修改：需要下标吗？想想 get 与 set 的分工
+
+    }
+}`}
+  rubric={['用带下标的 for 循环遍历，条件 i < scores.size()', '用 get(i) 读出当前元素、加上 bonus、用 set(i, 新值) 写回', '原地修改，未新建列表', '方法无返回值（void，修改直接发生在传入的列表上）']}
+  hints={['修改元素要下标——for-each 拿不到位置，用传统 for', '更新一格 = set(i, 新值) 写回、get(i) 读旧值——把「get(i) 加上 bonus」作为 set 的新值，两个调用嵌在一行', 'size() 带括号；条件是小于，无等号']}
+/>
+
+## 让导师引导你想透左移
+
+<LLMPractice id="al-socratic" preset="socratic-tutor" instructions={'任务：向导师复述今天的虫：remove(0) 之后为什么 get(0) 变成了原来的 b？让它用提问检验你真的想通了「左移」——直到它确认你能讲清：删除后 size 怎么变、每个元素去了哪。只答不问，不许它直接讲解。'} starterMessage="我想给你复述 ArrayList 删除时的元素左移，请用提问检验我是否真的理解了。" />
+
+<Callout title="放下 AI · 检索练习">合上一切材料：1) 默写 ArrayList 六个方法的签名和各自对元素位置的影响；2) 说出 size() / length() / length 三兄弟分别属于谁；3) 白纸手写 addToEach 完整方法。下一课，左移的陷阱全面爆发——边遍历边删除的攻防战。</Callout>
